@@ -1,0 +1,47 @@
+ObjectArray will have 3 things as data member :-
+data (json) - actual data in json format
+logicPlan (array) - array of operations
+columns (array) - current situation of the columns as per the oprations array. updated on every OA's method calls.
+static pipelines (array) - stores the objects of this class when a object instantiated. array reference stored so, won't no issue updating them separately
+
+-----------------------------------------------------------
+
+when ObjectArray's objects are created, put them immediately inside the static pipelines array
+
+-----------------------------------------------------------
+
+[TRY THIS OUT IN SEPARATE BRANCH AS EXPERIMENT]
+Wrap all the manipulation methods inside a proxy which will call GlobalRegistry to save the columns.
+This way I can validate them inside Generators.
+This should not create any issue & errors should point to exact line in file.
+
+-----------------------------------------------------------
+
+implement a explain() function to check when pipeline as log
+
+-----------------------------------------------------------
+
+having columns updated every method call I can do this -
+
+newDf = df.filter(...).withColumn(...).groupby(...).agg(...)
+sorted_columns = sort(newDf.columns, lambda...)
+sortedColsDf = newDf.select(sorted_columns).write.csv(output_path)
+
+newDf.columns will have the latest situation as per the operation.
+NOTE: don't know how exactly column validation is going to work for operations like join, groupby.
+      maybe use the existing columns array for validation with called methods parameters in method call it self.
+
+-----------------------------------------------------------
+
+The class ObjectArray will hold all the data (json), column names (array), logic plan (array) as its data member. As JS doesn't have any synchronous way of reading / writing files, so I thought about storing the operations along with file reads into the logic plan. And then all those objects into an static array (pipelines) of the class. I thought about putting the objects into an static array so that all asynchronous operations don't trigger simultaneously (I can call them using await), this way the if more than 1 files are read into different pipelines & then those pipelines are used in common operation like join, then the common operation's pipeline will not trigger unless the previous are completed.
+
+-----------------------------------------------------------
+
+NOTE: first implement without 'static pipelines'. see when this becomes necessary. then implement this.
+      This is a really powerful approach for
+	- managing depedency pipelines
+	- preventing asynchronous pipeline execution
+	- allows system to have full control over all the pipelines for
+		observation (monitoring),
+		access between pipelines (dependency),
+		triggering (gives user a way to control pipeline execution order & parallelism using asynchronous calls)

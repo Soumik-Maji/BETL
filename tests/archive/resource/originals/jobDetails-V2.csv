@@ -1,0 +1,210 @@
+SlNo|Job name|Frequency|Status|Start time
+1|tbdp_ng_cloud_job_schedule_tqcn_trn|Daily|Completed|6:30 PM
+2|tbdp_NHTSA_DBX_Job_Schedule|Daily|Completed|9:00 PM
+3|tbdp_ng_cloud_job_schedule_legal|Daily|Completed|8:20 PM
+4|tbdp_cust_sf_callcenter_api_plan|Daily|In progress|9:00 PM
+5|tbdp_TAS_DBX_JOB_SCHEDULE|Daily|Completed|11:45 PM
+6|tbdp_DAS_WARRANTY_DBX_JOB_SCHEDULE|Daily|Completed|3:00 PM
+7|tbdp_ng_cloud_job_schedule_campaign_trn|Daily|Completed|12:00 AM
+8|tbdp_ng_ingress_qlik_npps_pt_aq|Daily|Completed|12:10 AM
+9|tbdp_ng_ingress_qlik_npps_pr_aq|Daily|Completed|12:00 AM
+10|tbdp_ng_file_gfk_cloud|Monthly(once in 1 month)|Completed|9:00 AM
+11|tbdp_ng_file_brri_cloud|Daily|Completed|1:00 PM
+12|tbdp_ng_job_schedule_fdm_transhdr_tl|Daily(Mon-Sat)|Completed|11:10 AM
+13|tbdp_ng_job_schedule_npps_p3|Daily|Completed|10:30 AM
+14|tbdp_ccpa_rtd_delta_refresh|Daily|Completed|12:00 AM
+15|tbdp_ng_file_tpna_cloud|Daily(Mon-Fri)|Completed|11:30 PM
+16|tbdp_ng_file_kantar_cloud|Monthly(once in 2 months)|Completed|10:30 AM
+17|tbdp_NG_NAPO_Qlik_INGRESS_JOB|Daily|Completed|3:03 AM
+18|tbdp_ng_job_schedule_DSM_1_Monthly|Monthly(1st)|Scheduled|4:00 AM
+19|tbdp_ng_job_schedule_DSM_7_Monthly|Monthly(7th)|Scheduled|4:00 AM
+20|tbdp_ng_ingress_npps_talend_schedule_mtm_aq|Daily|Completed|12:00 PM
+21|tbdp_ng_Job_schedule_DSM_5_Monthly|Monthly(5th)|Scheduled|4:00 AM
+22|tbdp_ng-ingress-py-npps-talend_schedule_sf_vh|Daily|Completed|8:00 AM
+23|tbdp_ng_ingress_qlik_npps_ja_aq|Daily|Completed|12:00 AM
+24|tbdp_ng_ingress_npps_talend_schedule_mtm_aq|Daily|Completed|12:00 AM
+25|tbdp_ccpa_rtd_batch1_process|Weekly(Sat)|Scheduled|12:00 PM
+26|tbdp_ccpa_rtd_batch2_process|Weekly(Sat)|Scheduled|12:00 PM
+27|tbdp_ccpa_rtd_batch3_process|Weekly(Sat)|Scheduled|12:00 PM
+28|tbdp_ng_job_schedule_revops_plan|Daily(Mon-Sat)|Completed|1:10 PM
+29|tbdp_ng_job_schedule_DSM_4_Monthly|Monthly(4th)|Scheduled|4:00 AM
+30|tbdp_ng_job_schedule_DSM_3_Monthly|Monthly(3rd)|Scheduled|4:00 AM
+31|tbdp_ng_file_elms_cloud_put|Daily|Completed|1:00 PM
+32|tbdp_ng_cloud_job_schedule_rts|Daily|Completed|8:00 AM
+33|tbdp_ng_job_schedule_quality_reborn_ing|Daily|Completed|8:00 PM
+34|tbdp_ng_ingress_qlik_npps_ky_aq|Daily|Completed|12:02 AM
+35|tbdp_ng_dealer_parts|Daily|Completed|12:15 AM
+36|tbdp_CAD_DBX_Ingress_Job|Daily|Completed|2:15 AM
+37|tbdp_ng_file_staffmaster_cloud|Daily(Mon-Fri)|Completed|11:00 PM
+38|tbdp_ng_file_elms_Py_cloud_get|Daily|Failed|2:00 AM
+39|tbdp_ccpa_rtd_batch4_process|Weekly(Sat)|Scheduled|12:00 PM
+40|tbdp_ng_job_schedule_pinincentive|Weekly(Fri)|Scheduled|11:00 PM
+41|tbdp_ccpa_rtd_batch5_process|Weekly(Sat)|Scheduled|12:00 PM
+42|tbdp_ng_ingress_qlik_npps_ny_aq|Daily|Completed|12:06 AM
+43|tbdp_ng_job_schedule_DSM_2_Monthly|Monthly(2nd)|Scheduled|4:00 AM
+44|tbdp_ng-ingress-nvs-talend_tms_dly_sls_dtl_schedule_cloud|Daily|Completed|1:00 AM
+45|tbdp_ng_nvs_tcntry_qlik_job|Daily|Completed|4:00 AM
+46|tbdp_ng_job_schedule_ccpa_process|Daily|Completed|7:00 AM, 7:00PM
+47|tbdp_ng_job_schedule_acxiom_cloud|Daily|Failed|5:00 AM
+48|tbdp_ng-ingress-py-npps-talend_schedule_ws_vh|Daily|Completed|4:30 AM
+49|tbdp_ng-ingress-py-npps-talend_schedule_ca_vh|Daily|Completed|4:30 AM
+50|tbdp_ng-ingress-py-npps-talend_schedule_ky_vh|Daily|Completed|4:30 AM
+51|tbdp_ng_job_schedule_veh_del_sales_daily|Daily|Completed|4:30 AM
+52|tbdp_ccpa_rtd_redshift_job|Weekly(Sun)|Scheduled|5:00 AM
+53|tbdp_ng_Job_schedule_DSM_Weekly|Weekly(Sun)|Scheduled|5:00 AM
+54|tbdp_ng_dealer_parts_ing|Daily|Completed|8:05 AM
+55|tbdp_ng-ingress-qlik_npps-talend_schedule_mv|Daily(Every 2 Hours)|Completed|3:20 AM
+56|tbdp_ng_file_rmd_dlr_finance_15th_to_21st_cloud|Monthly(15th-21st)|Scheduled|5:30 AM
+57|tbdp_ng-ingress-py-npps-talend_schedule_sd1_vh|Daily|Completed|8:15 AM
+58|tbdp_NG_EBOM_QLIK_INGRESS_JOB|Daily|Completed|1:30 PM
+59|tbdp_ng_job_schedule_vdw_pipeline_tl|Daily(Mon-Sat)|Completed|9:10 AM
+60|tbdp_ng-ingress-py-npps-talend_schedule_tp_vh|Daily|Completed|5:30 AM
+61|tbdp_ng-ingress-py-npps-talend_schedule_pr_vh|Daily|Completed|5:30 AM
+62|tbdp_ng-ingress-py-npps-talend_schedule_sa_vh|Daily|Completed|5:30 AM
+63|tbdp_ng-ingress-py-npps-talend_schedule_gj_vh|Daily|Failed|9:00 AM
+64|tbdp_ng-ingress-py-npps-talend_schedule_ja_vh|Daily|Completed|5:15 AM
+65|tbdp_ng_file_das_vehicle_cloud|Daily(Mon-Sat)|Completed|9:05 AM
+66|tbdp_ng_ingress_qlik_npps_sa_aq|Daily|Completed|12:12 AM
+67|tbdp_ng_ingress_qlik_npps_la_aq|Daily|Completed|12:00 AM
+68|tbdp_ng_file_cps_cloud|Daily|Completed|3:10 AM
+69|tbdp_ng_ingress_qlik_npps_ws_aq|Daily|Completed|12:00 AM
+70|tbdp_ng_ingress_qlik_npps_sd1_aq|Daily|Completed|12:14 AM
+71|tbdp_ng_cloud_job_schedule_energytrane|Daily|In progress|2:00 AM
+72|tbdp_ng_ingress_qlik_npps_sf_aq|Daily|Completed|12:16 AM
+73|tbdp_ng_job_schedule_qlik_ircm_mdw|Daily|On hold|2:40 AM
+74|tbdp_ng_ingress_qlik_npps_gj_aq|Daily|Completed|12:00 AM
+75|tbdp_ng_signalsmartpath_incr|Daily|Completed|3:00 PM
+76|tbdp_ng_job_schedule_ing_tfslfs_pre_mnt_pdt_int|Daily|Completed|8:00 PM
+77|tbdp_ng_job_schedule_tfslfs_pre_mnt_pdt|Weekly(Sat)|Scheduled|5:00 AM
+78|tbdp_ng_file_cloud_digital_garage|Weekly(manual load)|Scheduled|5:45 AM
+79|tbdp_ng_nsh_py_job_schedule|Daily(Mon-Sat)|In progress|4:30 AM
+80|tbdp_ng-ingress-qlik-nvs-talend_schedule|Daily|Completed|4:30 AM
+81|tbdp_ng_file_tdpr_nsh_cloud|Daily(Mon-Sat)|Failed|5:00 AM
+82|tbdp_TST_phase2_optimize_load|Daily|Completed|2:15 AM
+83|tbdp_ng_ingress_qlik_npps_ca_aq|Daily|Completed|12:00 AM
+84|tbdp_ng_ingress_qlik_npps_tp_aq|Daily|Completed|12:18 AM
+85|tbdp_T3_BATTERY_DBX_JOB_SCHEDULE|Daily|Completed|8:00 AM
+86|tbdp_ng_schedule_job_qims_qlik_batch|Weekly(Sun)|Scheduled|8:05 AM
+87|tbdp_ng_job_schedule_py_rmd_workout_extract|Monthly(3rd Sun)|Scheduled|11:00 PM
+88|tbdp_ng-ingress-py-npps-talend_schedule_ny_vh|Daily|Completed|6:00 AM
+89|tbdp_ng_Job_schedule_DSM_Daily|Daily|Completed|6:00 AM
+90|tbdp_TProms_DBX_Ingress_Job|Daily|In progress|7:01 AM
+91|tbdp_ng_job_schedule_mst_optimize|Weekly(Sun)|Scheduled|4:00 PM
+92|tbdp_ng_job_schedule_ecom_dashboard|Daily|Completed|7:00 AM
+93|tbdp_ng_job_schedule_DSM_6_Monthly|Monthly(6th)|Scheduled|4:00 AM
+94|tbdp_ng-ingress-py-npps-talend_schedule_la_vh|Daily|Completed|7:30 AM
+95|tbdp_ng_runDataBricksJob_nshtfs_ing|Daily(Mon-Fri)|In progress|7:30 AM
+96|tbdp_ng_job_schedule_adobegxp|Daily|Completed|3:00 AM
+97|tbdp_OneHC_Hourly_load|Every 6 hours|Completed|4:00 AM
+98|tbdp_TST_Phase2_TRN|Daily|Completed|11:00 PM
+99|tbdp_ng_job_schedule_veh_del_sales_monthly|Monthly(1st)|Scheduled|5:30 PM
+100|tbdp_ng_ingress_npps_talend_schedule_mtm_dl1|Daily|Completed|7:37 AM
+101|tbdp_ng_job_schedule_ecom_reporting|Daily|Completed|2:04 AM
+102|tbdp_Incentives_DBX_Ingress_Job|Daily|Completed|9:30 AM
+103|tbdp_ng-ingress-py-npps-talend_schedule_pt_vh|Daily|In progress|7:45 AM
+104|tbdp_ng_runDataBricksJob_nshtc_ing|Daily(Mon-Fri)|Completed|8:50 PM
+105|tbdp_ng_job_schedule_vehicle_mdm|Daily|Completed|6:00 PM
+106|tbdp_ng_ingress_npps_talend_schedule_mtm_mv|Daily(Every 2 Hours)|Completed|1:45 AM
+107|tbdp_ng-ingress-py-npps-talend_schedule_mtm_mvh|Daily|Completed|5:30 AM
+108|tbdp_ng_job_schedule_cqpe|Weekly(Sun)|Scheduled|9:30 AM
+109|tbdp_ng_file_workout_cloud|Monthly (5th)|Scheduled|8:00 PM
+110|tbdp_ng_file_simplepart_cloud|Weekly(Sun)|Scheduled|1:00 PM
+111|tbdp_cor_ilx_py_plan|Daily|Completed|5:10 AM
+112|tbdp_ng-ingress-qlik_npps-talend_schedule_pdl|Daily|Completed|9:30 AM
+113|tbdp_ng_file_sap_ebom_cloud|Daily|Completed|9:40 AM
+114|tbdp_customer_demographic_cloud|Weekly(Sat)|Scheduled|8:00 PM
+115|tbdp_ng_warranty_cps_6PM_job|Daily|Completed|6:00 PM
+116|tbdp_ng_warranty_cps_1AM_job|Daily|Completed|1:00 AM
+117|tbdp_ng_job_schedule_mst|Daily|In progress|2:00 AM
+118|tbdp_ng_cloudjob_cdb_tfs|Daily|Completed|11:30 PM
+119|tbdp_ng_cloud_job_schedule_cdbcustomer|Daily|Failed|2:30 AM
+120|tbdp_ng_slp_schedule|Daily|Completed|9:00 PM
+121|tbdp_ng_slp_optimize_schedule|Weekly(Sun)|Scheduled|5:00 PM
+122|tbdp_ng_api_rmd_cloud|Daily|Completed|1:00 AM
+123|tbdp_serviceconbrri_DBX_Ingress_Job|Daily|In progress|7:30 AM
+124|cps_streaming|Daily|Streaming|12:00 AM, 04:00 PM
+125|tbdp_ng_adobe_omniture_raw_batch_plan_cloud|Daily|In progress|7:03 AM
+126|tbdp_ng_adobe_omniture_mobile_attrs_plan_cloud|Daily|Completed|6:00 AM
+127|tbdp_DIS_Load|Daily|Completed|11:00 PM
+128|ueta_streaming|Daily|Streaming|12:00 AM, 04:00 PM
+129|tbdp_ng_runDataBricksJob_ueta_streaming_dq|Daily|Completed|10:00 AM
+130|tbdp_usmca_datapipeline|Monthly (8, 15)|Scheduled|8:45 AM
+131|tbdp_Acxiom_deletes_cloud|Weekly(Sun)|Scheduled|9:30 AM
+132|tbdp_NREL_API_INGESTION|Daily|Completed|3:00 AM
+133|tbdp_warranty_area_hub_global|Daily(Mon-Fri)|Completed|7:00 PM
+134|tbdp_Acxiom_Ingestion_Mainflow_Propensity_Cloud|Weekly(Sun)|Scheduled|4:00 AM
+135|tbdp_OneHC_Daily_load|Daily|Completed|6:00 AM
+136|tbdp_gualc_schedule|Daily|In progress|6:30 AM
+137|tbdp_evgo_data_load|Monthly(1st)|Scheduled|7:30 AM
+138|tbdp_nvcs_file_ingestion_august_february|(feb-15to21)(june-8to14)|Scheduled|6:00 AM
+139|tbdp_nvas_file_ingestion_november_may|(apr-21to28)(oct-15to21)|Scheduled|8:00 AM
+140|tbdp_ebs_file_ingestion|Monthly(15th)|Scheduled|9:00 AM
+141|tbdp_PARR_QLIK_LOAD_WORKFLOW|Daily|Completed|5:00 AM
+142|tbdp_bz4x_egress|Monthly(3rd)|Scheduled|7:45 AM
+143|tbdp_BAT_tmmi|Daily 1AM, 7AM and 5PM|Completed|1:00 AM
+144|tbdp_AMEX_FILE_INGESTION|Monthly(1st)|Scheduled|11:00 AM
+145|tbdp_ng_job_schedule_ia_chrome_river|Daily(Mon-Fri)|Completed|9:30 PM
+146|One_hotcall_streaming_first|Daily|Streaming|12:00 AM, 04:00 PM
+147|One_hotcall_streaming_second|Daily|Streaming|12:00 AM, 04:00 PM
+148|tbdp_ng_job_schedule_nvs_shipment_plan_eta_accuracy|Daily(Every 15 min)|Completed|3:00 AM
+149|tbdp_FSS_QLIK_Ingestion|Weekly(Wednesday)|Scheduled|11:05 PM
+150|tbdp_c2ap-mf-full-load|Monthly(21st)|Scheduled|3:00 AM
+151|lexus_standard_opcode_file_ingestion|Daily(Mon-Sat)|Completed|6:00 AM
+152|tbdp_ccpa_rtd_batch_validation_job|Weekly(Mon)|In progress|12:00 PM
+153|tbdp_ccpa_rtd_c360_batch_process|Weekly(Sun)|Scheduled|8:00 AM
+154|tbdp_ccpa_rtd_cust_batch_process|Weekly(Sun)|Scheduled|5:00 AM
+155|tbdp_ccpa_rtd_join_batch_process|Weekly(Fri)|Scheduled|9:00 PM
+156|tbdp_ccpa_rtd_join_batch_validation|Weekly(Sun)|Scheduled|12:00 PM
+157|tbdp_ccpa_rtd_noid_batch_process|Weekly(Fri)|Scheduled|11:00 PM
+158|tbdp_ccpa_rtd_noid_batch_validation|Weekly(Sun)|Scheduled|12:00 PM
+159|tbdp_recon_trend_metrics-new-mar-08|Weekly(Sat)|Scheduled|10:00 AM
+160|tbdp_ng_runDataBricksJob_ng_ingress_dealer_parts|Daily|Completed|10:50 PM
+161|ng_job_schedule_ebom_mfg_build_ing_workflow|Daily|Completed|6:00 AM
+162|ng_job_schedule_ebom_arch_raw_trn_workflow|Daily|Completed|6:00 AM
+163|ng_job_schedule_ebom_bidw_raw_trn_workflow|Daily|Completed|6:00 AM
+164|CCPA_Onetrust_API_Ingestion|Daily|Failed|7:30 AM
+165|qmerit_file_ingestion|Monthly(1st Mon)|Scheduled|7:00 AM
+166|echo_data_ingestion|Monthly(1st and 16th)|Scheduled|1:00 AM
+167|ng_file_echo_epa|Monthly(1st and 16th)|Scheduled|3:00 AM
+168|tera_data_ingestion|Daily|Completed|3:00 AM, 3:00PM
+169|tbdp_mfg_productivity_sensitive_trn_ibp_workflow|Daily|Completed|7:00 AM
+170|ng_aws_sftp_egress_pace_parts|Weekly(Mon)|Scheduled|6:00 AM
+171|tbdp_ng_runDataBricksJob_cpa_redacted_trn|Daily|Completed|4:30 AM
+172|tbdp_ng_runDataBricksJob_customer_master_redacted_trn_mst_vehicles - DBX job|Daily|Completed|7:30 AM
+173|tbdp_ng_runDataBricksJob_customer_demographics_redacted_trn-DBX-Job|Weekly(Sun)|Scheduled|8:00 PM
+174|quality_survey_redacted_trn-DBX-Job Daily|Daily|Completed|5:30 AM
+175|TMEX/LMEX_FILE_INGESTION|Daily(Mon-Sat)|Completed|11:00 AM
+176|quality_survey_redacted_trn_yearly-DBX-Job|One time load|Ondemand|
+177|tbdp_ng_job_schedule_signal_adobe|Daily|Completed|3:00 AM
+178|MS_Graph_API_Ingestion|Daily|Failed|6:00 PM
+179|OSHA_API_INGESTION|Monthly(1st and 16th)|Scheduled|3:00 AM
+180|quality1_dealer_data_extract|Daily|Completed|5:00 AM
+181|MARITZ_ONE_TIME_WORKFLOW|One time load|Ondemand|
+182|tbdp_ng_schedule_sap_delta_ingestion|Daily |In progress|4:00 AM
+183|ng_job_schedule_hygo_facility_workflow|Every 30 mins|Completed|12:00 AM
+184|ng_job_schedule_hygo_facility_stations_dq_workflow|Daily|Completed|7:00 AM
+185|CCAAS_Transcript_Ingestion|Daily|Completed|1:00 AM
+186|CCAAS_survey_Ingestion|Daily|Completed|12:00 AM
+187|acx_redacted_trn - DBX job|Weekly(Sun)|Scheduled|10:00 AM
+188|EngageHubKPI_Egress_Extract_Plan|Daily|Completed|4:00 AM
+189|tbdp_ng_acxiom_dealeroptout|Weekly(Fri)|Scheduled|11:00 PM
+190|tbdp_efc_job_schedule|Weekly(Sun)|Scheduled|11:00 PM
+191|NHTSA_EGRESS_EXTRACT|Monthly( 1st and 15th)|Scheduled|11:00 PM
+192|tbdp_ccpa_rtd_response_process|Weekly(Sun)|Scheduled|4:00 PM
+193|tbdp_ng_runDataBricksJob_ircm_usmca_ing|Daily|Completed|7:00 AM
+194|ng_job_schedule_ct_dat_brri_workflow|Daily|Failed|5:30 AM
+195|ng_job_schedule_dpi_workflow|Daily|In progress|7:00 AM
+196|Parts_Pricing_Engine_Manual_Files_Workflow|Daily(Every 20 mins)|On hold|7:00 AM
+197|Parts_Pricing_Engine_Workflow|Daily(Every 30 mins)|Completed|12:00 AM
+198|ng_job_schedule_vehicle_orders_trn|Daily(Mon-Sat)|Completed|12:45 AM
+199|tbdp_TPCO_api_ingestion|Daily|Completed|5:00 AM
+200|CSOD_Qlik_Ingestion_weekly|Weekly(Sun)|Scheduled|4:00 AM
+201|ng_ingress_evds_api_workflow|Ondemand|Ondemand|
+202|ng_ingress_evds_files_workflow|Ondemand|Ondemand|
+203|tbdp_vehicle_allocation_workflow|Daily|Completed|1:00 AM
+204|CLARIOS_API_INGESTION|Daily|Completed|3:00 AM
+205|tbdp_EHS_OSHA_FILE_INGESTION|Monthly(1st and 16th)|Scheduled|3:00 AM
+206|CPRA_RTC_WORKFLOW|Weekly(Sat)|Scheduled|4:30 AM
+207|CSOD_Qlik_Ingestion|Daily(Mon-Sat)|Completed|4:00 AM
+208|tbdp_identity_mangement_workflow|Daily|Completed|5:00 AM
+209|ng_ingress_evds_site_selection_adhoc_final|Daily(Every 4 hours)|Scheduled|3:57 AM

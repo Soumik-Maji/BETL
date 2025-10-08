@@ -1,0 +1,73 @@
+Don't know what the fuck is going on in codebase.
+TODOs are like git commit messages with no timestamps or reasons.
+
+IMPORTANT NOTE - everything is working fine probably
+
+Huge list of tips for me :-
+1. study todo.txt & comments in codebase for better understanding what is going on
+2. create a new repo to test & commit each exsiting/upcoming feature properly & separately
+3. copy every functionality into new repo with previous point in consideration
+    (preferred order - read file, transformation)
+4. implement new funtions & features step by step
+5. preferred implementation order - explode, pivot, melt, merge (similar to merge in databricks)
+6. implement some file writer function. write file in json or csv
+
+architecture change (experimental, maybe create a separate branch for this) :-
+ObjectArray.js will have operations list which when executed will execute the functions as per list's order
+this way all functions & their options creator or helper can be separated & maybe even made less repeatable (like in case of groupby & window aggregators)
+
+check below link for actual architecture change idea. summary below that.
+https://chatgpt.com/share/687fffee-ded0-800e-8eb4-8f9a008d19fc
+
+📦 ObjectArray Data Transformation Library – Design Summary
+1. Data Structure
+    Each ObjectArray instance contains:
+    originalData: Deep copy of input data (array of objects from CSV)
+    operations[]: Array of transformation descriptors (e.g., rename, update, sort)
+
+2. Transformation Pipeline
+    Methods like .renameMany(), .updateColumn(), .sort(), etc.:
+    Don’t execute immediately
+    Append operation descriptors to operations[]
+    Return this (same instance) for chaining
+    Methods mutate operations[] only, not the data
+
+3. Execution
+    .execute():
+    Deep copies originalData
+    Applies all operations in order
+    Clears operations[] of the current instance
+    Returns a new ObjectArray containing the transformed data and an empty operations array
+
+4. Immutability via Cloning
+    clone() method:
+    Returns a deep clone of the current ObjectArray (copies both data and operations)
+    Allows parallel pipelines/branches from any intermediate point
+
+5. Logger Method
+    .showHTML(label):
+    Logs or displays current pipeline state (data preview)
+    Doesn't alter the data or the pipeline
+    Useful for debugging in-browser
+
+6. Stateful vs Immutable Design
+    Design is stateful, not purely functional
+    Allows in-place chaining for convenience
+    Encourages explicit control via .clone() to preserve immutability when needed
+
+🚀 Optimization Strategy (For Later)
+Goals:
+    Reduce number of data passes
+    Optimize memory use
+    Speed up execution for large datasets
+
+Techniques:
+    Operation Fusion: Merge compatible steps (e.g., multiple updateColumn() calls into one loop)
+    Execution Planning: Compact operations[] into a minimal instruction set
+    Column Tracking: Avoid processing untouched columns
+    Single-Pass Execution: Convert pipeline into a single iteration where feasible
+
+🧩 Optional Enhancements
+    .reset() – Restore to original data & clear operations[]
+    .clear() – Only clears operations[] without affecting original data
+    .execute({ inplace: true }) – (Advanced) Apply operations without deep copying
