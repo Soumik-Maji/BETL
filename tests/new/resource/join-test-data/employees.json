@@ -1,0 +1,38 @@
+[
+    {
+        "empid": "1",
+        "name": "Sally",
+        "role": "backend",
+        "managerid": ""
+    },
+    {
+        "empid": "2",
+        "name": "Josh",
+        "role": "frontend",
+        "managerid": "1"
+    },
+    {
+        "empid": "3",
+        "name": "Becky",
+        "role": "database",
+        "managerid": "5"
+    },
+    {
+        "empid": "4",
+        "name": "Bob",
+        "role": "backend",
+        "managerid": "1"
+    },
+    {
+        "empid": "5",
+        "name": "Eric",
+        "role": "database",
+        "managerid": "1"
+    },
+    {
+        "empid": "6",
+        "name": "Rose",
+        "role": "backend",
+        "managerid": "4"
+    }
+]

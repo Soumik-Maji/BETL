@@ -1,0 +1,122 @@
+[
+    {
+        "dept": "HR",
+        "team": "A",
+        "name": "Alice",
+        "salary": "6000"
+    },
+    {
+        "dept": "HR",
+        "team": "B",
+        "name": "Bob",
+        "salary": "7000"
+    },
+    {
+        "dept": "IT",
+        "team": "A",
+        "name": "Charlie",
+        "salary": "7000"
+    },
+    {
+        "dept": "HR",
+        "team": "A",
+        "name": "David",
+        "salary": "7000"
+    },
+    {
+        "dept": "IT",
+        "team": "B",
+        "name": "Eve",
+        "salary": "5000"
+    },
+    {
+        "dept": "Finance",
+        "team": "A",
+        "name": "Frank",
+        "salary": "8000"
+    },
+    {
+        "dept": "Finance",
+        "team": "B",
+        "name": "Grace",
+        "salary": "7500"
+    },
+    {
+        "dept": "Marketing",
+        "team": "A",
+        "name": "Hannah",
+        "salary": "7200"
+    },
+    {
+        "dept": "Marketing",
+        "team": "B",
+        "name": "Ian",
+        "salary": "6800"
+    },
+    {
+        "dept": "Operations",
+        "team": "A",
+        "name": "Jack",
+        "salary": "6500"
+    },
+    {
+        "dept": "Operations",
+        "team": "B",
+        "name": "Karen",
+        "salary": "6900"
+    },
+    {
+        "dept": "HR",
+        "team": "B",
+        "name": "Liam",
+        "salary": "7100"
+    },
+    {
+        "dept": "IT",
+        "team": "A",
+        "name": "Mona",
+        "salary": "7300"
+    },
+    {
+        "dept": "Finance",
+        "team": "B",
+        "name": "Nina",
+        "salary": "7700"
+    },
+    {
+        "dept": "Marketing",
+        "team": "A",
+        "name": "Owen",
+        "salary": "6600"
+    },
+    {
+        "dept": "Operations",
+        "team": "B",
+        "name": "Paul",
+        "salary": "6400"
+    },
+    {
+        "dept": "Legal",
+        "team": "A",
+        "name": "Quinn",
+        "salary": "8500"
+    },
+    {
+        "dept": "Legal",
+        "team": "B",
+        "name": "Rachel",
+        "salary": "8700"
+    },
+    {
+        "dept": "IT",
+        "team": "A",
+        "name": "Steve",
+        "salary": "7800"
+    },
+    {
+        "dept": "Finance",
+        "team": "B",
+        "name": "Tina",
+        "salary": "7900"
+    }
+]

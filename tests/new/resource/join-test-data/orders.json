@@ -1,0 +1,32 @@
+[
+    {
+        "orderid": "101",
+        "customerid": "A",
+        "productid": "P1",
+        "quantity": "2"
+    },
+    {
+        "orderid": "102",
+        "customerid": "B",
+        "productid": "P2",
+        "quantity": "1"
+    },
+    {
+        "orderid": "103",
+        "customerid": "A",
+        "productid": "P3",
+        "quantity": "3"
+    },
+    {
+        "orderid": "104",
+        "customerid": "C",
+        "productid": "P1",
+        "quantity": "1"
+    },
+    {
+        "orderid": "105",
+        "customerid": "C",
+        "productid": "P4",
+        "quantity": "1"
+    }
+]

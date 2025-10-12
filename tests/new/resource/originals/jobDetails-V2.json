@@ -1,0 +1,1465 @@
+[
+    {
+        "SlNo": "1",
+        "Job name": "tbdp_ng_cloud_job_schedule_tqcn_trn",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:30 PM"
+    },
+    {
+        "SlNo": "2",
+        "Job name": "tbdp_NHTSA_DBX_Job_Schedule",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "9:00 PM"
+    },
+    {
+        "SlNo": "3",
+        "Job name": "tbdp_ng_cloud_job_schedule_legal",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:20 PM"
+    },
+    {
+        "SlNo": "4",
+        "Job name": "tbdp_cust_sf_callcenter_api_plan",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "9:00 PM"
+    },
+    {
+        "SlNo": "5",
+        "Job name": "tbdp_TAS_DBX_JOB_SCHEDULE",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "11:45 PM"
+    },
+    {
+        "SlNo": "6",
+        "Job name": "tbdp_DAS_WARRANTY_DBX_JOB_SCHEDULE",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:00 PM"
+    },
+    {
+        "SlNo": "7",
+        "Job name": "tbdp_ng_cloud_job_schedule_campaign_trn",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "8",
+        "Job name": "tbdp_ng_ingress_qlik_npps_pt_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:10 AM"
+    },
+    {
+        "SlNo": "9",
+        "Job name": "tbdp_ng_ingress_qlik_npps_pr_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "10",
+        "Job name": "tbdp_ng_file_gfk_cloud",
+        "Frequency": "Monthly(once in 1 month)",
+        "Status": "Completed",
+        "Start time": "9:00 AM"
+    },
+    {
+        "SlNo": "11",
+        "Job name": "tbdp_ng_file_brri_cloud",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:00 PM"
+    },
+    {
+        "SlNo": "12",
+        "Job name": "tbdp_ng_job_schedule_fdm_transhdr_tl",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "11:10 AM"
+    },
+    {
+        "SlNo": "13",
+        "Job name": "tbdp_ng_job_schedule_npps_p3",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "10:30 AM"
+    },
+    {
+        "SlNo": "14",
+        "Job name": "tbdp_ccpa_rtd_delta_refresh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "15",
+        "Job name": "tbdp_ng_file_tpna_cloud",
+        "Frequency": "Daily(Mon-Fri)",
+        "Status": "Completed",
+        "Start time": "11:30 PM"
+    },
+    {
+        "SlNo": "16",
+        "Job name": "tbdp_ng_file_kantar_cloud",
+        "Frequency": "Monthly(once in 2 months)",
+        "Status": "Completed",
+        "Start time": "10:30 AM"
+    },
+    {
+        "SlNo": "17",
+        "Job name": "tbdp_NG_NAPO_Qlik_INGRESS_JOB",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:03 AM"
+    },
+    {
+        "SlNo": "18",
+        "Job name": "tbdp_ng_job_schedule_DSM_1_Monthly",
+        "Frequency": "Monthly(1st)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "19",
+        "Job name": "tbdp_ng_job_schedule_DSM_7_Monthly",
+        "Frequency": "Monthly(7th)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "20",
+        "Job name": "tbdp_ng_ingress_npps_talend_schedule_mtm_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "21",
+        "Job name": "tbdp_ng_Job_schedule_DSM_5_Monthly",
+        "Frequency": "Monthly(5th)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "22",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_sf_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:00 AM"
+    },
+    {
+        "SlNo": "23",
+        "Job name": "tbdp_ng_ingress_qlik_npps_ja_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "24",
+        "Job name": "tbdp_ng_ingress_npps_talend_schedule_mtm_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "25",
+        "Job name": "tbdp_ccpa_rtd_batch1_process",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "26",
+        "Job name": "tbdp_ccpa_rtd_batch2_process",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "27",
+        "Job name": "tbdp_ccpa_rtd_batch3_process",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "28",
+        "Job name": "tbdp_ng_job_schedule_revops_plan",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "1:10 PM"
+    },
+    {
+        "SlNo": "29",
+        "Job name": "tbdp_ng_job_schedule_DSM_4_Monthly",
+        "Frequency": "Monthly(4th)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "30",
+        "Job name": "tbdp_ng_job_schedule_DSM_3_Monthly",
+        "Frequency": "Monthly(3rd)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "31",
+        "Job name": "tbdp_ng_file_elms_cloud_put",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:00 PM"
+    },
+    {
+        "SlNo": "32",
+        "Job name": "tbdp_ng_cloud_job_schedule_rts",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:00 AM"
+    },
+    {
+        "SlNo": "33",
+        "Job name": "tbdp_ng_job_schedule_quality_reborn_ing",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:00 PM"
+    },
+    {
+        "SlNo": "34",
+        "Job name": "tbdp_ng_ingress_qlik_npps_ky_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:02 AM"
+    },
+    {
+        "SlNo": "35",
+        "Job name": "tbdp_ng_dealer_parts",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:15 AM"
+    },
+    {
+        "SlNo": "36",
+        "Job name": "tbdp_CAD_DBX_Ingress_Job",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "2:15 AM"
+    },
+    {
+        "SlNo": "37",
+        "Job name": "tbdp_ng_file_staffmaster_cloud",
+        "Frequency": "Daily(Mon-Fri)",
+        "Status": "Completed",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "38",
+        "Job name": "tbdp_ng_file_elms_Py_cloud_get",
+        "Frequency": "Daily",
+        "Status": "Failed",
+        "Start time": "2:00 AM"
+    },
+    {
+        "SlNo": "39",
+        "Job name": "tbdp_ccpa_rtd_batch4_process",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "40",
+        "Job name": "tbdp_ng_job_schedule_pinincentive",
+        "Frequency": "Weekly(Fri)",
+        "Status": "Scheduled",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "41",
+        "Job name": "tbdp_ccpa_rtd_batch5_process",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "42",
+        "Job name": "tbdp_ng_ingress_qlik_npps_ny_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:06 AM"
+    },
+    {
+        "SlNo": "43",
+        "Job name": "tbdp_ng_job_schedule_DSM_2_Monthly",
+        "Frequency": "Monthly(2nd)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "44",
+        "Job name": "tbdp_ng-ingress-nvs-talend_tms_dly_sls_dtl_schedule_cloud",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:00 AM"
+    },
+    {
+        "SlNo": "45",
+        "Job name": "tbdp_ng_nvs_tcntry_qlik_job",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "46",
+        "Job name": "tbdp_ng_job_schedule_ccpa_process",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:00 AM, 7:00PM"
+    },
+    {
+        "SlNo": "47",
+        "Job name": "tbdp_ng_job_schedule_acxiom_cloud",
+        "Frequency": "Daily",
+        "Status": "Failed",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "48",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_ws_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "49",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_ca_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "50",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_ky_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "51",
+        "Job name": "tbdp_ng_job_schedule_veh_del_sales_daily",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "52",
+        "Job name": "tbdp_ccpa_rtd_redshift_job",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "53",
+        "Job name": "tbdp_ng_Job_schedule_DSM_Weekly",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "54",
+        "Job name": "tbdp_ng_dealer_parts_ing",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:05 AM"
+    },
+    {
+        "SlNo": "55",
+        "Job name": "tbdp_ng-ingress-qlik_npps-talend_schedule_mv",
+        "Frequency": "Daily(Every 2 Hours)",
+        "Status": "Completed",
+        "Start time": "3:20 AM"
+    },
+    {
+        "SlNo": "56",
+        "Job name": "tbdp_ng_file_rmd_dlr_finance_15th_to_21st_cloud",
+        "Frequency": "Monthly(15th-21st)",
+        "Status": "Scheduled",
+        "Start time": "5:30 AM"
+    },
+    {
+        "SlNo": "57",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_sd1_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:15 AM"
+    },
+    {
+        "SlNo": "58",
+        "Job name": "tbdp_NG_EBOM_QLIK_INGRESS_JOB",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:30 PM"
+    },
+    {
+        "SlNo": "59",
+        "Job name": "tbdp_ng_job_schedule_vdw_pipeline_tl",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "9:10 AM"
+    },
+    {
+        "SlNo": "60",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_tp_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:30 AM"
+    },
+    {
+        "SlNo": "61",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_pr_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:30 AM"
+    },
+    {
+        "SlNo": "62",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_sa_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:30 AM"
+    },
+    {
+        "SlNo": "63",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_gj_vh",
+        "Frequency": "Daily",
+        "Status": "Failed",
+        "Start time": "9:00 AM"
+    },
+    {
+        "SlNo": "64",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_ja_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:15 AM"
+    },
+    {
+        "SlNo": "65",
+        "Job name": "tbdp_ng_file_das_vehicle_cloud",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "9:05 AM"
+    },
+    {
+        "SlNo": "66",
+        "Job name": "tbdp_ng_ingress_qlik_npps_sa_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:12 AM"
+    },
+    {
+        "SlNo": "67",
+        "Job name": "tbdp_ng_ingress_qlik_npps_la_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "68",
+        "Job name": "tbdp_ng_file_cps_cloud",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:10 AM"
+    },
+    {
+        "SlNo": "69",
+        "Job name": "tbdp_ng_ingress_qlik_npps_ws_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "70",
+        "Job name": "tbdp_ng_ingress_qlik_npps_sd1_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:14 AM"
+    },
+    {
+        "SlNo": "71",
+        "Job name": "tbdp_ng_cloud_job_schedule_energytrane",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "2:00 AM"
+    },
+    {
+        "SlNo": "72",
+        "Job name": "tbdp_ng_ingress_qlik_npps_sf_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:16 AM"
+    },
+    {
+        "SlNo": "73",
+        "Job name": "tbdp_ng_job_schedule_qlik_ircm_mdw",
+        "Frequency": "Daily",
+        "Status": "On hold",
+        "Start time": "2:40 AM"
+    },
+    {
+        "SlNo": "74",
+        "Job name": "tbdp_ng_ingress_qlik_npps_gj_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "75",
+        "Job name": "tbdp_ng_signalsmartpath_incr",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:00 PM"
+    },
+    {
+        "SlNo": "76",
+        "Job name": "tbdp_ng_job_schedule_ing_tfslfs_pre_mnt_pdt_int",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:00 PM"
+    },
+    {
+        "SlNo": "77",
+        "Job name": "tbdp_ng_job_schedule_tfslfs_pre_mnt_pdt",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "78",
+        "Job name": "tbdp_ng_file_cloud_digital_garage",
+        "Frequency": "Weekly(manual load)",
+        "Status": "Scheduled",
+        "Start time": "5:45 AM"
+    },
+    {
+        "SlNo": "79",
+        "Job name": "tbdp_ng_nsh_py_job_schedule",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "In progress",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "80",
+        "Job name": "tbdp_ng-ingress-qlik-nvs-talend_schedule",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "81",
+        "Job name": "tbdp_ng_file_tdpr_nsh_cloud",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Failed",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "82",
+        "Job name": "tbdp_TST_phase2_optimize_load",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "2:15 AM"
+    },
+    {
+        "SlNo": "83",
+        "Job name": "tbdp_ng_ingress_qlik_npps_ca_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "84",
+        "Job name": "tbdp_ng_ingress_qlik_npps_tp_aq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:18 AM"
+    },
+    {
+        "SlNo": "85",
+        "Job name": "tbdp_T3_BATTERY_DBX_JOB_SCHEDULE",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "8:00 AM"
+    },
+    {
+        "SlNo": "86",
+        "Job name": "tbdp_ng_schedule_job_qims_qlik_batch",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "8:05 AM"
+    },
+    {
+        "SlNo": "87",
+        "Job name": "tbdp_ng_job_schedule_py_rmd_workout_extract",
+        "Frequency": "Monthly(3rd Sun)",
+        "Status": "Scheduled",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "88",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_ny_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "89",
+        "Job name": "tbdp_ng_Job_schedule_DSM_Daily",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "90",
+        "Job name": "tbdp_TProms_DBX_Ingress_Job",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "7:01 AM"
+    },
+    {
+        "SlNo": "91",
+        "Job name": "tbdp_ng_job_schedule_mst_optimize",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "4:00 PM"
+    },
+    {
+        "SlNo": "92",
+        "Job name": "tbdp_ng_job_schedule_ecom_dashboard",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:00 AM"
+    },
+    {
+        "SlNo": "93",
+        "Job name": "tbdp_ng_job_schedule_DSM_6_Monthly",
+        "Frequency": "Monthly(6th)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "94",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_la_vh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:30 AM"
+    },
+    {
+        "SlNo": "95",
+        "Job name": "tbdp_ng_runDataBricksJob_nshtfs_ing",
+        "Frequency": "Daily(Mon-Fri)",
+        "Status": "In progress",
+        "Start time": "7:30 AM"
+    },
+    {
+        "SlNo": "96",
+        "Job name": "tbdp_ng_job_schedule_adobegxp",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "97",
+        "Job name": "tbdp_OneHC_Hourly_load",
+        "Frequency": "Every 6 hours",
+        "Status": "Completed",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "98",
+        "Job name": "tbdp_TST_Phase2_TRN",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "99",
+        "Job name": "tbdp_ng_job_schedule_veh_del_sales_monthly",
+        "Frequency": "Monthly(1st)",
+        "Status": "Scheduled",
+        "Start time": "5:30 PM"
+    },
+    {
+        "SlNo": "100",
+        "Job name": "tbdp_ng_ingress_npps_talend_schedule_mtm_dl1",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:37 AM"
+    },
+    {
+        "SlNo": "101",
+        "Job name": "tbdp_ng_job_schedule_ecom_reporting",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "2:04 AM"
+    },
+    {
+        "SlNo": "102",
+        "Job name": "tbdp_Incentives_DBX_Ingress_Job",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "9:30 AM"
+    },
+    {
+        "SlNo": "103",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_pt_vh",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "7:45 AM"
+    },
+    {
+        "SlNo": "104",
+        "Job name": "tbdp_ng_runDataBricksJob_nshtc_ing",
+        "Frequency": "Daily(Mon-Fri)",
+        "Status": "Completed",
+        "Start time": "8:50 PM"
+    },
+    {
+        "SlNo": "105",
+        "Job name": "tbdp_ng_job_schedule_vehicle_mdm",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 PM"
+    },
+    {
+        "SlNo": "106",
+        "Job name": "tbdp_ng_ingress_npps_talend_schedule_mtm_mv",
+        "Frequency": "Daily(Every 2 Hours)",
+        "Status": "Completed",
+        "Start time": "1:45 AM"
+    },
+    {
+        "SlNo": "107",
+        "Job name": "tbdp_ng-ingress-py-npps-talend_schedule_mtm_mvh",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:30 AM"
+    },
+    {
+        "SlNo": "108",
+        "Job name": "tbdp_ng_job_schedule_cqpe",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "9:30 AM"
+    },
+    {
+        "SlNo": "109",
+        "Job name": "tbdp_ng_file_workout_cloud",
+        "Frequency": "Monthly (5th)",
+        "Status": "Scheduled",
+        "Start time": "8:00 PM"
+    },
+    {
+        "SlNo": "110",
+        "Job name": "tbdp_ng_file_simplepart_cloud",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "1:00 PM"
+    },
+    {
+        "SlNo": "111",
+        "Job name": "tbdp_cor_ilx_py_plan",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:10 AM"
+    },
+    {
+        "SlNo": "112",
+        "Job name": "tbdp_ng-ingress-qlik_npps-talend_schedule_pdl",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "9:30 AM"
+    },
+    {
+        "SlNo": "113",
+        "Job name": "tbdp_ng_file_sap_ebom_cloud",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "9:40 AM"
+    },
+    {
+        "SlNo": "114",
+        "Job name": "tbdp_customer_demographic_cloud",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "8:00 PM"
+    },
+    {
+        "SlNo": "115",
+        "Job name": "tbdp_ng_warranty_cps_6PM_job",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 PM"
+    },
+    {
+        "SlNo": "116",
+        "Job name": "tbdp_ng_warranty_cps_1AM_job",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:00 AM"
+    },
+    {
+        "SlNo": "117",
+        "Job name": "tbdp_ng_job_schedule_mst",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "2:00 AM"
+    },
+    {
+        "SlNo": "118",
+        "Job name": "tbdp_ng_cloudjob_cdb_tfs",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "11:30 PM"
+    },
+    {
+        "SlNo": "119",
+        "Job name": "tbdp_ng_cloud_job_schedule_cdbcustomer",
+        "Frequency": "Daily",
+        "Status": "Failed",
+        "Start time": "2:30 AM"
+    },
+    {
+        "SlNo": "120",
+        "Job name": "tbdp_ng_slp_schedule",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "9:00 PM"
+    },
+    {
+        "SlNo": "121",
+        "Job name": "tbdp_ng_slp_optimize_schedule",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "5:00 PM"
+    },
+    {
+        "SlNo": "122",
+        "Job name": "tbdp_ng_api_rmd_cloud",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:00 AM"
+    },
+    {
+        "SlNo": "123",
+        "Job name": "tbdp_serviceconbrri_DBX_Ingress_Job",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "7:30 AM"
+    },
+    {
+        "SlNo": "124",
+        "Job name": "cps_streaming",
+        "Frequency": "Daily",
+        "Status": "Streaming",
+        "Start time": "12:00 AM, 04:00 PM"
+    },
+    {
+        "SlNo": "125",
+        "Job name": "tbdp_ng_adobe_omniture_raw_batch_plan_cloud",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "7:03 AM"
+    },
+    {
+        "SlNo": "126",
+        "Job name": "tbdp_ng_adobe_omniture_mobile_attrs_plan_cloud",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "127",
+        "Job name": "tbdp_DIS_Load",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "128",
+        "Job name": "ueta_streaming",
+        "Frequency": "Daily",
+        "Status": "Streaming",
+        "Start time": "12:00 AM, 04:00 PM"
+    },
+    {
+        "SlNo": "129",
+        "Job name": "tbdp_ng_runDataBricksJob_ueta_streaming_dq",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "10:00 AM"
+    },
+    {
+        "SlNo": "130",
+        "Job name": "tbdp_usmca_datapipeline",
+        "Frequency": "Monthly (8, 15)",
+        "Status": "Scheduled",
+        "Start time": "8:45 AM"
+    },
+    {
+        "SlNo": "131",
+        "Job name": "tbdp_Acxiom_deletes_cloud",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "9:30 AM"
+    },
+    {
+        "SlNo": "132",
+        "Job name": "tbdp_NREL_API_INGESTION",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "133",
+        "Job name": "tbdp_warranty_area_hub_global",
+        "Frequency": "Daily(Mon-Fri)",
+        "Status": "Completed",
+        "Start time": "7:00 PM"
+    },
+    {
+        "SlNo": "134",
+        "Job name": "tbdp_Acxiom_Ingestion_Mainflow_Propensity_Cloud",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "135",
+        "Job name": "tbdp_OneHC_Daily_load",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "136",
+        "Job name": "tbdp_gualc_schedule",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "6:30 AM"
+    },
+    {
+        "SlNo": "137",
+        "Job name": "tbdp_evgo_data_load",
+        "Frequency": "Monthly(1st)",
+        "Status": "Scheduled",
+        "Start time": "7:30 AM"
+    },
+    {
+        "SlNo": "138",
+        "Job name": "tbdp_nvcs_file_ingestion_august_february",
+        "Frequency": "(feb-15to21)(june-8to14)",
+        "Status": "Scheduled",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "139",
+        "Job name": "tbdp_nvas_file_ingestion_november_may",
+        "Frequency": "(apr-21to28)(oct-15to21)",
+        "Status": "Scheduled",
+        "Start time": "8:00 AM"
+    },
+    {
+        "SlNo": "140",
+        "Job name": "tbdp_ebs_file_ingestion",
+        "Frequency": "Monthly(15th)",
+        "Status": "Scheduled",
+        "Start time": "9:00 AM"
+    },
+    {
+        "SlNo": "141",
+        "Job name": "tbdp_PARR_QLIK_LOAD_WORKFLOW",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "142",
+        "Job name": "tbdp_bz4x_egress",
+        "Frequency": "Monthly(3rd)",
+        "Status": "Scheduled",
+        "Start time": "7:45 AM"
+    },
+    {
+        "SlNo": "143",
+        "Job name": "tbdp_BAT_tmmi",
+        "Frequency": "Daily 1AM, 7AM and 5PM",
+        "Status": "Completed",
+        "Start time": "1:00 AM"
+    },
+    {
+        "SlNo": "144",
+        "Job name": "tbdp_AMEX_FILE_INGESTION",
+        "Frequency": "Monthly(1st)",
+        "Status": "Scheduled",
+        "Start time": "11:00 AM"
+    },
+    {
+        "SlNo": "145",
+        "Job name": "tbdp_ng_job_schedule_ia_chrome_river",
+        "Frequency": "Daily(Mon-Fri)",
+        "Status": "Completed",
+        "Start time": "9:30 PM"
+    },
+    {
+        "SlNo": "146",
+        "Job name": "One_hotcall_streaming_first",
+        "Frequency": "Daily",
+        "Status": "Streaming",
+        "Start time": "12:00 AM, 04:00 PM"
+    },
+    {
+        "SlNo": "147",
+        "Job name": "One_hotcall_streaming_second",
+        "Frequency": "Daily",
+        "Status": "Streaming",
+        "Start time": "12:00 AM, 04:00 PM"
+    },
+    {
+        "SlNo": "148",
+        "Job name": "tbdp_ng_job_schedule_nvs_shipment_plan_eta_accuracy",
+        "Frequency": "Daily(Every 15 min)",
+        "Status": "Completed",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "149",
+        "Job name": "tbdp_FSS_QLIK_Ingestion",
+        "Frequency": "Weekly(Wednesday)",
+        "Status": "Scheduled",
+        "Start time": "11:05 PM"
+    },
+    {
+        "SlNo": "150",
+        "Job name": "tbdp_c2ap-mf-full-load",
+        "Frequency": "Monthly(21st)",
+        "Status": "Scheduled",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "151",
+        "Job name": "lexus_standard_opcode_file_ingestion",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "152",
+        "Job name": "tbdp_ccpa_rtd_batch_validation_job",
+        "Frequency": "Weekly(Mon)",
+        "Status": "In progress",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "153",
+        "Job name": "tbdp_ccpa_rtd_c360_batch_process",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "8:00 AM"
+    },
+    {
+        "SlNo": "154",
+        "Job name": "tbdp_ccpa_rtd_cust_batch_process",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "155",
+        "Job name": "tbdp_ccpa_rtd_join_batch_process",
+        "Frequency": "Weekly(Fri)",
+        "Status": "Scheduled",
+        "Start time": "9:00 PM"
+    },
+    {
+        "SlNo": "156",
+        "Job name": "tbdp_ccpa_rtd_join_batch_validation",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "157",
+        "Job name": "tbdp_ccpa_rtd_noid_batch_process",
+        "Frequency": "Weekly(Fri)",
+        "Status": "Scheduled",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "158",
+        "Job name": "tbdp_ccpa_rtd_noid_batch_validation",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "12:00 PM"
+    },
+    {
+        "SlNo": "159",
+        "Job name": "tbdp_recon_trend_metrics-new-mar-08",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "10:00 AM"
+    },
+    {
+        "SlNo": "160",
+        "Job name": "tbdp_ng_runDataBricksJob_ng_ingress_dealer_parts",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "10:50 PM"
+    },
+    {
+        "SlNo": "161",
+        "Job name": "ng_job_schedule_ebom_mfg_build_ing_workflow",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "162",
+        "Job name": "ng_job_schedule_ebom_arch_raw_trn_workflow",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "163",
+        "Job name": "ng_job_schedule_ebom_bidw_raw_trn_workflow",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "164",
+        "Job name": "CCPA_Onetrust_API_Ingestion",
+        "Frequency": "Daily",
+        "Status": "Failed",
+        "Start time": "7:30 AM"
+    },
+    {
+        "SlNo": "165",
+        "Job name": "qmerit_file_ingestion",
+        "Frequency": "Monthly(1st Mon)",
+        "Status": "Scheduled",
+        "Start time": "7:00 AM"
+    },
+    {
+        "SlNo": "166",
+        "Job name": "echo_data_ingestion",
+        "Frequency": "Monthly(1st and 16th)",
+        "Status": "Scheduled",
+        "Start time": "1:00 AM"
+    },
+    {
+        "SlNo": "167",
+        "Job name": "ng_file_echo_epa",
+        "Frequency": "Monthly(1st and 16th)",
+        "Status": "Scheduled",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "168",
+        "Job name": "tera_data_ingestion",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:00 AM, 3:00PM"
+    },
+    {
+        "SlNo": "169",
+        "Job name": "tbdp_mfg_productivity_sensitive_trn_ibp_workflow",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:00 AM"
+    },
+    {
+        "SlNo": "170",
+        "Job name": "ng_aws_sftp_egress_pace_parts",
+        "Frequency": "Weekly(Mon)",
+        "Status": "Scheduled",
+        "Start time": "6:00 AM"
+    },
+    {
+        "SlNo": "171",
+        "Job name": "tbdp_ng_runDataBricksJob_cpa_redacted_trn",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "172",
+        "Job name": "tbdp_ng_runDataBricksJob_customer_master_redacted_trn_mst_vehicles - DBX job",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:30 AM"
+    },
+    {
+        "SlNo": "173",
+        "Job name": "tbdp_ng_runDataBricksJob_customer_demographics_redacted_trn-DBX-Job",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "8:00 PM"
+    },
+    {
+        "SlNo": "174",
+        "Job name": "quality_survey_redacted_trn-DBX-Job Daily",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:30 AM"
+    },
+    {
+        "SlNo": "175",
+        "Job name": "TMEX/LMEX_FILE_INGESTION",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "11:00 AM"
+    },
+    {
+        "SlNo": "176",
+        "Job name": "quality_survey_redacted_trn_yearly-DBX-Job",
+        "Frequency": "One time load",
+        "Status": "Ondemand",
+        "Start time": ""
+    },
+    {
+        "SlNo": "177",
+        "Job name": "tbdp_ng_job_schedule_signal_adobe",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "178",
+        "Job name": "MS_Graph_API_Ingestion",
+        "Frequency": "Daily",
+        "Status": "Failed",
+        "Start time": "6:00 PM"
+    },
+    {
+        "SlNo": "179",
+        "Job name": "OSHA_API_INGESTION",
+        "Frequency": "Monthly(1st and 16th)",
+        "Status": "Scheduled",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "180",
+        "Job name": "quality1_dealer_data_extract",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "181",
+        "Job name": "MARITZ_ONE_TIME_WORKFLOW",
+        "Frequency": "One time load",
+        "Status": "Ondemand",
+        "Start time": ""
+    },
+    {
+        "SlNo": "182",
+        "Job name": "tbdp_ng_schedule_sap_delta_ingestion",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "183",
+        "Job name": "ng_job_schedule_hygo_facility_workflow",
+        "Frequency": "Every 30 mins",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "184",
+        "Job name": "ng_job_schedule_hygo_facility_stations_dq_workflow",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:00 AM"
+    },
+    {
+        "SlNo": "185",
+        "Job name": "CCAAS_Transcript_Ingestion",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:00 AM"
+    },
+    {
+        "SlNo": "186",
+        "Job name": "CCAAS_survey_Ingestion",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "187",
+        "Job name": "acx_redacted_trn - DBX job",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "10:00 AM"
+    },
+    {
+        "SlNo": "188",
+        "Job name": "EngageHubKPI_Egress_Extract_Plan",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "189",
+        "Job name": "tbdp_ng_acxiom_dealeroptout",
+        "Frequency": "Weekly(Fri)",
+        "Status": "Scheduled",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "190",
+        "Job name": "tbdp_efc_job_schedule",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "191",
+        "Job name": "NHTSA_EGRESS_EXTRACT",
+        "Frequency": "Monthly( 1st and 15th)",
+        "Status": "Scheduled",
+        "Start time": "11:00 PM"
+    },
+    {
+        "SlNo": "192",
+        "Job name": "tbdp_ccpa_rtd_response_process",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "4:00 PM"
+    },
+    {
+        "SlNo": "193",
+        "Job name": "tbdp_ng_runDataBricksJob_ircm_usmca_ing",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "7:00 AM"
+    },
+    {
+        "SlNo": "194",
+        "Job name": "ng_job_schedule_ct_dat_brri_workflow",
+        "Frequency": "Daily",
+        "Status": "Failed",
+        "Start time": "5:30 AM"
+    },
+    {
+        "SlNo": "195",
+        "Job name": "ng_job_schedule_dpi_workflow",
+        "Frequency": "Daily",
+        "Status": "In progress",
+        "Start time": "7:00 AM"
+    },
+    {
+        "SlNo": "196",
+        "Job name": "Parts_Pricing_Engine_Manual_Files_Workflow",
+        "Frequency": "Daily(Every 20 mins)",
+        "Status": "On hold",
+        "Start time": "7:00 AM"
+    },
+    {
+        "SlNo": "197",
+        "Job name": "Parts_Pricing_Engine_Workflow",
+        "Frequency": "Daily(Every 30 mins)",
+        "Status": "Completed",
+        "Start time": "12:00 AM"
+    },
+    {
+        "SlNo": "198",
+        "Job name": "ng_job_schedule_vehicle_orders_trn",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "12:45 AM"
+    },
+    {
+        "SlNo": "199",
+        "Job name": "tbdp_TPCO_api_ingestion",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "200",
+        "Job name": "CSOD_Qlik_Ingestion_weekly",
+        "Frequency": "Weekly(Sun)",
+        "Status": "Scheduled",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "201",
+        "Job name": "ng_ingress_evds_api_workflow",
+        "Frequency": "Ondemand",
+        "Status": "Ondemand",
+        "Start time": ""
+    },
+    {
+        "SlNo": "202",
+        "Job name": "ng_ingress_evds_files_workflow",
+        "Frequency": "Ondemand",
+        "Status": "Ondemand",
+        "Start time": ""
+    },
+    {
+        "SlNo": "203",
+        "Job name": "tbdp_vehicle_allocation_workflow",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "1:00 AM"
+    },
+    {
+        "SlNo": "204",
+        "Job name": "CLARIOS_API_INGESTION",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "205",
+        "Job name": "tbdp_EHS_OSHA_FILE_INGESTION",
+        "Frequency": "Monthly(1st and 16th)",
+        "Status": "Scheduled",
+        "Start time": "3:00 AM"
+    },
+    {
+        "SlNo": "206",
+        "Job name": "CPRA_RTC_WORKFLOW",
+        "Frequency": "Weekly(Sat)",
+        "Status": "Scheduled",
+        "Start time": "4:30 AM"
+    },
+    {
+        "SlNo": "207",
+        "Job name": "CSOD_Qlik_Ingestion",
+        "Frequency": "Daily(Mon-Sat)",
+        "Status": "Completed",
+        "Start time": "4:00 AM"
+    },
+    {
+        "SlNo": "208",
+        "Job name": "tbdp_identity_mangement_workflow",
+        "Frequency": "Daily",
+        "Status": "Completed",
+        "Start time": "5:00 AM"
+    },
+    {
+        "SlNo": "209",
+        "Job name": "ng_ingress_evds_site_selection_adhoc_final",
+        "Frequency": "Daily(Every 4 hours)",
+        "Status": "Scheduled",
+        "Start time": "3:57 AM"
+    }
+]

@@ -1,22 +1,23 @@
 {
-  "name": "betl",
-  "version": "1.0.0",
-  "description": "Simple browser based ETL tool with Spark like API",
-  "main": "index.js",
-  "scripts": {
-    "test": "\"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Soumik-Maji/BETL.git"
-  },
-  "keywords": [
-    "ETL"
-  ],
-  "author": "Soumik Maji",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/Soumik-Maji/BETL/issues"
-  },
-  "homepage": "https://github.com/Soumik-Maji/BETL#readme"
+    "name": "betl",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Simple browser based ETL tool with Spark like API",
+    "main": "index.js",
+    "scripts": {
+        "test": "\"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Soumik-Maji/BETL.git"
+    },
+    "keywords": [
+        "ETL"
+    ],
+    "author": "Soumik Maji",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/Soumik-Maji/BETL/issues"
+    },
+    "homepage": "https://github.com/Soumik-Maji/BETL#readme"
 }

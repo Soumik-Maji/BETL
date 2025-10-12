@@ -1,0 +1,32 @@
+[
+    {
+        "product id": "P1",
+        "productname": "Laptop",
+        "category": "Tech",
+        "price": "1200"
+    },
+    {
+        "product id": "P2",
+        "productname": "Keyboard",
+        "category": "Tech",
+        "price": "75"
+    },
+    {
+        "product id": "P2",
+        "productname": "Mouse",
+        "category": "Tech",
+        "price": "25"
+    },
+    {
+        "product id": "P3",
+        "productname": "Notebook",
+        "category": "Office",
+        "price": "5"
+    },
+    {
+        "product id": "P5",
+        "productname": "Monitor",
+        "category": "Office",
+        "price": "500"
+    }
+]
