@@ -1,4 +1,4 @@
-async function readJSON(path) {
+export async function readJSON(path) {
     try {
         let data = await fetch(path);
         data = await data.json();
