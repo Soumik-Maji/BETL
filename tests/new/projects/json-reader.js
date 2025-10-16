@@ -9,6 +9,9 @@ async function readJSON(path) {
     }
 }
 
-const path = "../resource/join-test-data/employees.json";
-const data = await readJSON(path);
-console.log(data);
+export async function devTest() {
+    const path = "./tests/new/resource/join-test-data/employees.json";
+
+    const data = await readJSON(path);
+    console.table(data);
+}
