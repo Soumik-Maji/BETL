@@ -1,5 +1,5 @@
 import { readJSON } from "./json-reader.js";
-import { ObjectArray } from "../../../scripts/jsoar/ObjectArray.js";
+import { ObjectArray } from "../../../scripts/ObjectArray.js";
 
 export async function main() {
     const path = "./tests/new/resource/join-test-data/employees.json";

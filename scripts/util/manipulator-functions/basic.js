@@ -1,5 +1,5 @@
-import { JsonModifier } from "../../json-modifier/JsonModifier.js";
-import { DataTypes, customValidator } from "../newparamvalid.js";
+import { JsonModifier } from "../JsonModifier.js";
+import { DataTypes, customValidator } from "../ParameterValidator.js";
 
 export function log(arr, { limit, columns }) {
     if (limit > 0)

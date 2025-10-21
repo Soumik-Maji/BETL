@@ -6,8 +6,8 @@
 // import { RenameMapGenerator } from "../generators/RenameMapGenerator.js";
 // import { DeduplicateGenerator } from "../generators/DeduplicateGenerator.js";
 
-import { addColumn, drop, filter, log, rename, select, take, updateColumn } from "./manipulator-functions/basic.js";
-import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./newparamvalid.js";
+import { addColumn, drop, filter, log, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
+import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
