@@ -2,10 +2,12 @@
 // import { MappingGenerator } from "../generators/MappingGenerator.js";
 // import { ParameterValidator } from "./ParameterValidator.js";
 // import { SortLogicGenerator } from "../generators/SortLogicGenerator.js";
-// import { JsonModifier } from "../json-modifier/JsonModifier.js";
 // import { HTMLOutput } from "../outputs/HTMLOutput.js";
 // import { RenameMapGenerator } from "../generators/RenameMapGenerator.js";
 // import { DeduplicateGenerator } from "../generators/DeduplicateGenerator.js";
+
+import { addColumn, drop, filter, log, rename, select, take, updateColumn } from "./manipulator-functions/basic.js";
+import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./newparamvalid.js";
 
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
@@ -19,10 +21,10 @@ export class ObjectArray {
     constructor(passedKey) {
         if (passedKey !== constructorKey)
             throw new Error("Cannot initialize using 'new'. Call createInstance() instead.");
+
         this.#data = [];
         this.#logicPlan = [];
         this.#columns = [];
-        return this;
     }
 
     // INSTANCE CREATOR
@@ -97,74 +99,199 @@ export class ObjectArray {
      * @returns {Array}
      */
     get logicPlan() {
-        return structuredClone(this.#logicPlan);
+        return this.#logicPlan.map(operation => {
+            return {
+                "method": operation.method.name,
+                "param": operation.param
+            };
+        });
+        // console.log(this.#logicPlan);
     }
+
+    // METHODS
+
+    // NOTE: THIS EXECUTE METHOD IS FOR DEBUG PURPOSE. NEED A LOGIC PLAN OPTIMISER & OPTIONS FOR DIFFERENT MODES OF EXECUTE METHOD
+    execute() {
+        if (this.count === 0) {
+            console.warn("Nothing to do on empty data.");
+            return this;    // need to clear out logicPlan for consistency
+        }
+
+        const workingData = this.data;  // create a clone
+
+        // loop through all operations applying them 1 by 1
+        this.#logicPlan.forEach(operation => {
+            operation.method(workingData, operation.param);
+        });
+
+        // create a new instance of result & return
+        return ObjectArray.createInstance(workingData);
+    }
+
+    /**
+     * logs the current ObjectArray data.
+     * positive limit show first N, negative limit shows last N, (default) 0 shows all.
+     * @param {Number} limit till which the data is logged
+     * @returns {ObjectArray}
+     */
+    log(limit = 0) {
+        validateDataType(limit, DataTypes.number);
+
+        this.#logicPlan.push({
+            "method": log,
+            "param": { limit, columns: this.columns }
+        });
+
+        return this;
+    }
+
+    /**
+     * renames the column name.
+     * @param {string} oldKey old column name
+     * @param {string} newKey new column name
+     * @returns {ObjectArray}
+     */
+    rename(oldKey, newKey) {
+        validateColumnPresence(this.#columns, oldKey);
+        validateNewColumn(this.#columns, newKey);
+
+        this.#logicPlan.push({
+            "method": rename,
+            "param": { oldKey, newKey }
+        });
+
+        // replacing the column name
+        const colNameIdx = this.#columns.indexOf(oldKey);
+        if (colNameIdx !== -1)
+            this.#columns[colNameIdx] = newKey;
+
+        return this;
+    }
+
+    /**
+     * filters, keeping only the rows satisfying customFilter function.
+     * @param {function} customFilter
+     * @returns {ObjectArray}
+     */
+    filter(customFilter) {
+        validateDataType(customFilter, DataTypes.function);
+
+        this.#logicPlan.push({
+            "method": filter,
+            "param": { customFilter }
+        });
+
+        return this;
+    }
+
+    /**
+     * applies simple transformation functions on pre-existing columns.
+     * like type casting, string manipulation, date-time conversions, conditionally transforming the column based on other columns, etc.
+     * @param {string} columnName
+     * @param {function} transformationFunction
+     * @returns {ObjectArray}
+     */
+    updateColumn(columnName, transformationFunction) {
+        validateColumnPresence(this.#columns, columnName);
+
+        this.#logicPlan.push({
+            "method": updateColumn,
+            "param": { columnName, transformationFunction }
+        });
+
+        return this;
+    }
+
+    /**
+     * creates new columns using simple transformation functions on pre-existing columns. like type concatenation, etc.
+     * @param {string} columnName
+     * @param {function} transformationFunction
+     * @returns {ObjectArray}
+     */
+    // CON: for separate columns separate functions need to called by function chaining
+    addColumn(columnName, transformationFunction) {
+        validateNewColumn(this.#columns, columnName);
+
+        this.#logicPlan.push({
+            "method": addColumn,
+            "param": { columnName, transformationFunction }
+        });
+
+        this.#columns.push(columnName); // adding the column name
+
+        return this;
+    }
+
+    /**
+     * select specific columns as per provided column names in spread operator syntax
+     * @param  {...string} columnNames
+     * @returns {ObjectArray}
+     */
+    select(...columnNames) {
+        // if no parameter passed just return the existing object. Practically no use.
+        if (columnNames.length === 0)
+            return this;
+
+        // validating the column names
+        columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
+
+        this.#logicPlan.push({
+            "method": select,
+            "param": { columnNames, columns: this.columns }
+        });
+
+        this.#columns = [...columnNames];    // copying to store the column names as passed to this function
+
+        return this;
+    }
+
+    /**
+     * deletes the columns provided as spread operator syntax
+     * @param  {...string} columnNames
+     * @returns {ObjectArray}
+     */
+    drop(...columnNames) {
+        // validating the parameters
+        customValidator(columnNames.length <= 0, "No column names to drop.");
+        columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
+
+        this.#logicPlan.push({
+            "method": drop,
+            "param": { columnNames }
+        });
+
+        // removing the columns names
+        this.#columns = this.#columns.filter(col => !columnNames.includes(col));
+
+        return this;
+    }
+
+    /**
+     * copies & passes forward the selected part of the data only
+     * @param {number} limit number of rows that need to be copied
+     * @param {number} offset number of rows that need to be skipped
+     * @returns {ObjectArray}
+     */
+    take(limit, offset = 0) {
+        validateDataType(limit, DataTypes.number);
+        validateDataType(offset, DataTypes.number);
+        customValidator(limit < 0, "limit cannot be negative.");
+        customValidator(offset < 0 || offset >= this.length, "offset cannot be negative or more than data count.");
+
+        this.#logicPlan.push({
+            "method": take,
+            "param": { limit, offset }
+        });
+
+        return this;
+    }
+
 
 }
 
 
-
-//     // METHODS
 //     /**
-//      * Logs the current ObjectArray data & returns the instance.
-//      * Positive limit show first N, negative limit shows last N, (default) 0 shows all
-//      * @param {Number} limit till which the data is logged
-//      * @returns ObjectArray instance
-//      */
-//     show(limit = 0) {
-//         this.#validator.validateDataType(limit, ParameterValidator.dataTypes.number);
-
-//         if (limit > 0)
-//             console.table(this.#data.slice(0, limit));
-//         else if (limit < 0)
-//             console.table(this.#data.slice(limit));
-//         else if (limit === 0)
-//             console.table(this.#data);
-//         return this;
-//     }
-
-//     /**
-//      * Display the current ObjectArray data in webpage & returns the instance.
-//      * Positive limit show first N, negative limit shows last N, (default) 0 shows all
-//      * @param {string} tableName name for table
-//      * @param {Number} limit till which the data is displayed
-//      * @param {string} theme for web page table (light/dark). default is dark
-//      * @returns ObjectArray instance
-//      */
-//     showHTML(tableName, limit = 0, theme) {
-//         this.#validator.validateDataType(limit, ParameterValidator.dataTypes.number);
-
-//         if (limit > 0)
-//             HTMLOutput.createTable(tableName, this.#data.slice(0, limit), theme);
-//         else if (limit < 0)
-//             HTMLOutput.createTable(tableName, this.#data.slice(limit), theme);
-//         else if (limit === 0)
-//             HTMLOutput.createTable(tableName, this.#data, theme);
-//         return this;
-//     }
-
-//     /**
-//      * renames the object key
-//      * @param {string} oldKey
-//      * @param {string} newKey
-//      * @returns ObjectArray instance
-//      */
-//     rename(oldKey, newKey) {
-//         this.#validator.validateColumnPresence(oldKey);
-//         this.#validator.validateNewColumn(newKey);
-
-//         return ObjectArray.#internalCreateInstance(
-//             this.data.map(item => {
-//                 const newItem = {};
-//                 Object.keys(item).forEach(key =>
-//                     newItem[key === oldKey ? newKey : key] = item[key]
-//                 );
-//                 return newItem;
-//             })
-//         );
-//     }
-
-//     /**
+//        DON'T ADD THIS METHOD (WILL BE IMPLEMENTING SINGLE PASS LATER TO OVERCOME THIS)
 //      * bulk renames column names using RenameMapGenerator
 //      * @param {RenameMapGenerator} renameMap
 //      * @returns ObjectArray instance
@@ -181,30 +308,6 @@ export class ObjectArray {
 //                 });
 //                 return newItem;
 //             })
-//         );
-//     }
-
-//     /**
-//      * plain javascript array filter function
-//      * @param {function} customFilter
-//      * @returns ObjectArray instance
-//      */
-//     filter(customFilter) {
-//         this.#validator.validateDataType(customFilter, ParameterValidator.dataTypes.function);
-
-//         // clone the data
-//         const jsonData = this.data;
-
-//         // APPLY CUSTOM FUNCTION ON PROXIED EXAMPLE OBJECT
-//         // THIS WAY ALL GET, DELETE & PROPER FILTER FUNCTION IS CHECKED
-//         const boolVal = customFilter(JsonModifier.objectProxy(jsonData[0]));
-//         this.#validator.customValidator(
-//             typeof boolVal !== ParameterValidator.dataTypes.boolean,
-//             "Filter function does not return boolean"
-//         );
-
-//         return ObjectArray.#internalCreateInstance(
-//             jsonData.filter(customFilter)
 //         );
 //     }
 
@@ -234,46 +337,6 @@ export class ObjectArray {
 //                     }
 //                 }
 //                 return 0;
-//             })
-//         );
-//     }
-
-//     /**
-//      * applies simple transformation functions on pre-existing columns. Like type casting, string manipulation, date-time conversions, conditionally transforming the column based on other columns, etc.
-//      * @param {string} columnName
-//      * @param {function} transformationFunction
-//      * @returns ObjectArray instance
-//      */
-//     // CON: for separate columns separate functions need to called by function chaining
-//     updateColumn(columnName, transformationFunction) {
-//         this.#validator.validateColumnPresence(columnName);
-
-//         const jsonData = this.data;
-//         transformationFunction(JsonModifier.objectProxy(jsonData[0]));
-
-//         return ObjectArray.#internalCreateInstance(
-//             jsonData.map(item => {
-//                 return { ...item, [columnName]: transformationFunction(item) };
-//             })
-//         );
-//     }
-
-//     /**
-//      * creates new columns using simple transformation functions on pre-existing columns. Like type concatenation, etc.
-//      * @param {string} columnName
-//      * @param {function} transformationFunction
-//      * @returns ObjectArray instance
-//      */
-//     // CON: for separate columns separate functions need to called by function chaining
-//     addColumn(columnName, transformationFunction) {
-//         this.#validator.validateNewColumn(columnName);
-
-//         const jsonData = this.data;
-//         transformationFunction(JsonModifier.objectProxy(jsonData[0]));
-
-//         return ObjectArray.#internalCreateInstance(
-//             jsonData.map(item => {
-//                 return { ...item, [columnName]: transformationFunction(item) };
 //             })
 //         );
 //     }
@@ -342,61 +405,6 @@ export class ObjectArray {
 //             newData.push(tmpObject);
 //         }
 //         return ObjectArray.createInstance(newData);
-//     }
-
-//     /**
-//      * reorder/select specific columns as per provided column names in spread operator syntax
-//      * @param  {...string} columnNames
-//      * @returns ObjectArray instance
-//      */
-//     select(...columnNames) {
-//         // if no parameter passed just return the existing object. Practically no use.
-//         if (columnNames.length === 0)
-//             return this;
-
-//         // validating the parameters
-//         columnNames.forEach(columnName => this.#validator.validateColumnPresence(columnName));
-
-//         return ObjectArray.#internalCreateInstance(
-//             this.data.map(item => {    // loop through all objects
-//                 const tmpObject = {};   // create a temporary object
-//                 columnNames.forEach(key => tmpObject[key] = item[key]); // save key-value pairs in new order
-//                 return tmpObject;
-//             })
-//         );
-//     }
-
-//     /**
-//      * copies & passes forward the selected part of the data only
-//      * @param {number} limit number of rows that need to be copied
-//      * @param {number} offset number of rows that need to be skipped
-//      * @returns ObjectArray instance
-//      */
-//     take(limit, offset = 0) {
-//         this.#validator.validateDataType(limit, ParameterValidator.dataTypes.number);
-//         this.#validator.validateDataType(offset, ParameterValidator.dataTypes.number);
-//         this.#validator.customValidator(limit < 0, "limit cannot be negative.");
-//         this.#validator.customValidator(offset < 0 || offset >= this.length, "offset cannot be negative or more than data count.");
-
-//         return ObjectArray.#internalCreateInstance(this.data.slice(offset, offset + limit));
-//     }
-
-//     /**
-//      * deletes the columns provided as spread operator syntax
-//      * @param  {...string} columnNames
-//      * @returns ObjectArray instance
-//      */
-//     drop(...columnNames) {
-//         // validating the parameters
-//         this.#validator.customValidator(columnNames.length <= 0, "No column names to drop.");
-//         columnNames.forEach(columnName => this.#validator.validateColumnPresence(columnName));
-
-//         return ObjectArray.#internalCreateInstance(
-//             this.data.map(item => {     // working with a deep clone of data
-//                 columnNames.forEach(key => delete item[key]);
-//                 return item;
-//             })
-//         );
 //     }
 
 //     /**

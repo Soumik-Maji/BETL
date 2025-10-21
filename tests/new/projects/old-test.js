@@ -45,8 +45,42 @@ export async function main() {
     // ];
 
     const oa = ObjectArray.createInstance(jsonData);
+    // debug(oa);
 
+    const startTimer = performance.now();
+
+    let newOA = oa
+        .log()
+        .rename("empid", "id").rename("managerid", "mid")
+        // .filter(item => { return item.role === "database" })
+        .updateColumn("id", item => Number(item.id))
+        .updateColumn("mid", item => item.mid === "" ? null : Number(item.mid))
+        .updateColumn("role", item => item.role.toUpperCase())
+        .addColumn("username", item => {
+            let usn = `${item.name.substring(0, 2).toUpperCase()}-${item.id}.`;
+            usn += item.mid === null ? "T" : item.mid;
+            return usn;
+        })
+        .rename("username", "uid")
+        .log()
+        // .select("uid", "name", "role")
+        .drop("id", "role")
+        .take(2)
+        .log();
+
+    console.log(newOA.columns);
+
+    console.log(newOA.logicPlan);
+    newOA = newOA.execute();
+    // console.log(newOA.logicPlan);
+
+    // debug(newOA);
+
+    const endTimer = performance.now();
+    console.log(`${endTimer - startTimer} ms`);
+}
+
+function debug(oa) {
+    console.log("This is for debugging");
     console.log(oa);
-    // oa.show();
-
 }
