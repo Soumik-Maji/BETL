@@ -1,5 +1,6 @@
 import { readJSON } from "./json-reader.js";
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
+import { SortLogicGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
 
 export async function main() {
     const path = "./tests/new/resource/join-test-data/employees.json";
@@ -55,7 +56,7 @@ export async function main() {
         // .filter(item => { return item.role === "database" })
         .updateColumn("id", item => Number(item.id))
         .updateColumn("mid", item => item.mid === "" ? null : Number(item.mid))
-        .updateColumn("role", item => item.role.toUpperCase())
+        // .updateColumn("role", item => item.role.toUpperCase())
         .addColumn("username", item => {
             let usn = `${item.name.substring(0, 2).toUpperCase()}-${item.id}.`;
             usn += item.mid === null ? "T" : item.mid;
@@ -63,9 +64,17 @@ export async function main() {
         })
         .rename("username", "uid")
         .log()
+
+        .sort(
+            SortLogicGenerator.createInstance()
+                .asc("role", item => item.toUpperCase())
+                .desc("name", item => item.toLowerCase())
+            // .desc("name", item => ["Rose", "Becky"].includes(item) ? undefined : item)
+        )
+
         // .select("uid", "name", "role")
-        .drop("id", "role")
-        .take(2)
+        // .drop("id", "role")
+        // .take(2)
         .log();
 
     console.log(newOA.columns);

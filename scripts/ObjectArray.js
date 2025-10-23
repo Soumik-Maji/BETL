@@ -7,6 +7,7 @@
 // import { DeduplicateGenerator } from "../generators/DeduplicateGenerator.js";
 
 import { addColumn, drop, filter, log, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
+import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 
 
@@ -20,7 +21,7 @@ export class ObjectArray {
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
-            throw new Error("Cannot initialize using 'new'. Call createInstance() instead.");
+            throw new Error("Cannot initialize ObjectArray using 'new'. Call static method createInstance() instead.");
 
         this.#data = [];
         this.#logicPlan = [];
@@ -208,7 +209,6 @@ export class ObjectArray {
      * @param {function} transformationFunction
      * @returns {ObjectArray}
      */
-    // CON: for separate columns separate functions need to called by function chaining
     addColumn(columnName, transformationFunction) {
         validateNewColumn(this.#columns, columnName);
 
@@ -286,6 +286,27 @@ export class ObjectArray {
         return this;
     }
 
+    /**
+     * accepts SortLogicGenerator instance.
+     * need to call correct sorting order method.
+     * need to mention the column name correctly.
+     * [OPTIONALLY] can send a temporary transformation function to sort without storing them for long term.
+     * @param {SortLogicGenerator} comparisonLogics
+     * @returns {ObjectArray}
+     */
+    sort(comparisonLogics) {
+        customValidator(!(comparisonLogics instanceof SortLogicGenerator), "Configuration must be an instance of SortLogicGenerator.");
+        comparisonLogics = comparisonLogics.build();
+        comparisonLogics.forEach(logic => validateColumnPresence(this.#columns, logic.column));
+
+        this.#logicPlan.push({
+            "method": sort,
+            "param": { comparisonLogics }
+        });
+
+        return this;
+    }
+
 
 }
 
@@ -307,36 +328,6 @@ export class ObjectArray {
 //                     newItem[renameKey] = item[key];
 //                 });
 //                 return newItem;
-//             })
-//         );
-//     }
-
-//     /**
-//      * accepts an array of objects of keys, their order (optional) & transformationFunction (optional) to apply on them when comparing; and sort accordingly to return new array.
-//      * @param {SortLogicGenerator} comparisonLogics
-//      * @returns ObjectArray instance
-//      */
-//     sort(comparisonLogics) {
-//         const parsedComparisonLogics = this.#validator.sortParameterValidator(comparisonLogics);
-
-//         return ObjectArray.#internalCreateInstance(
-//             this.data.toSorted((a, b) => {
-//                 for (const { column, order, transformationFunction } of parsedComparisonLogics) {
-//                     const aVal = transformationFunction(a[column]),
-//                         bVal = transformationFunction(b[column]);
-//                     if (typeof aVal === "string" && typeof bVal === "string") {
-//                         const comparison = aVal.localeCompare(bVal);
-//                         if (comparison !== 0)
-//                             return order === "desc" ? -comparison : comparison;
-//                     }
-//                     else {
-//                         if (aVal < bVal)
-//                             return order === "desc" ? 1 : -1;
-//                         if (aVal > bVal)
-//                             return order === "desc" ? -1 : 1;
-//                     }
-//                 }
-//                 return 0;
 //             })
 //         );
 //     }
