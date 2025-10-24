@@ -51,45 +51,44 @@ export async function main() {
     const startTimer = performance.now();
 
     let newOA = oa
-        .log()
-        .rename("empid", "id").rename("managerid", "mid")
-        // .filter(item => { return item.role === "database" })
+        .rename("empid", "id")
+        .rename("managerid", "mid")
+
         .updateColumn("id", item => Number(item.id))
         .updateColumn("mid", item => item.mid === "" ? null : Number(item.mid))
-        // .updateColumn("role", item => item.role.toUpperCase())
-        .addColumn("username", item => {
-            let usn = `${item.name.substring(0, 2).toUpperCase()}-${item.id}.`;
-            usn += item.mid === null ? "T" : item.mid;
-            return usn;
+        .updateColumn("role", item => item.role.toUpperCase())
+
+        .addColumn("euid", item => {
+            let newid = `${item.name.substring(0, 2)}${item.role.substring(0, 2)}-${item.id}.`;
+            newid += item.mid === null ? "T" : item.mid;
+            return newid;
         })
-        .rename("username", "uid")
-        .log()
+
+        // .filter(item => item.role === "BACKEND")
+        // .select("id", "euid", "mid")
+        // .drop("mid")
+        // .take(2, 1)
 
         .sort(
             SortLogicGenerator.createInstance()
-                .asc("role", item => item.toUpperCase())
-                .desc("name", item => item.toLowerCase())
-            // .desc("name", item => ["Rose", "Becky"].includes(item) ? undefined : item)
+                .asc("role")
+                .desc("name")
         )
+        ;
 
-        // .select("uid", "name", "role")
-        // .drop("id", "role")
-        // .take(2)
-        .log();
+    debug("Original", oa);
 
-    console.log(newOA.columns);
-
-    console.log(newOA.logicPlan);
-    newOA = newOA.execute();
-    // console.log(newOA.logicPlan);
-
-    // debug(newOA);
+    debug("After operations added", newOA);
 
     const endTimer = performance.now();
     console.log(`${endTimer - startTimer} ms`);
 }
 
-function debug(oa) {
-    console.log("This is for debugging");
-    console.log(oa);
+function debug(msg, oa) {
+    console.log(msg);
+    console.log("columns-> ", oa.columns);
+    // console.log("logic plan-> ", oa.logicPlan);
+    // console.table(oa.data);
+    oa.log();
+    console.log("------------------------- LINE GAP -------------------------");
 }

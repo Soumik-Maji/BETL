@@ -57,8 +57,8 @@ export function addColumn(arr, { columnName, transformationFunction }) {
     }
 }
 
-export function select(arr, { columnNames, columns }) {
-    const columnsToDelete = columns.filter(col => !columnNames.includes(col));
+export function select(arr, { columnNames, currentColumns }) {
+    const columnsToDelete = currentColumns.filter(col => !columnNames.includes(col));
 
     for (let i = 0; i < arr.length; i++) {
         columnsToDelete.forEach(key => delete arr[i][key]);

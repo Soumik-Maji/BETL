@@ -32,6 +32,9 @@ export class ObjectArray {
         if (!Array.isArray(jsonData))
             throw new Error("Provided data is not an array.");
 
+        if (jsonData.length === 0)
+            throw new Error("Cannot create ObjectArray instance with empty data.");
+
         // check if every element in jsonData array is an object, not null & not array
         const isObject = jsonData.every(item =>
             (item !== null) && (typeof item === "object") && (!Array.isArray(item))
@@ -62,6 +65,14 @@ export class ObjectArray {
         return obj;
     }
 
+    #internalCreateInstance(addedLogicPlan, newColumns) {
+        const obj = new ObjectArray(constructorKey);
+        obj.#data = this.#data;
+        obj.#logicPlan = [...this.#logicPlan, addedLogicPlan];
+        obj.#columns = newColumns;
+        return obj;
+    }
+
     // ---------------------- GETTERS ----------------------
     /**
     * gets a deep copy of the current state of source data
@@ -72,17 +83,9 @@ export class ObjectArray {
     }
 
     /**
-     * gets number of rows of the current state of source data
-     * @returns {number}
-     */
-    get length() {
-        return this.#data.length;
-    }
-
-    /**
-     * gets a copy of column names
-     * @returns {string[]}
-     */
+    * gets a copy of column names
+    * @returns {string[]}
+    */
     get columns() {
         return [...this.#columns];
     }
@@ -121,9 +124,9 @@ export class ObjectArray {
      * @returns
      */
     #compute() {
-        if (this.length === 0) {
+        if (this.#data.length === 0) {
             console.warn("Nothing to do on empty data.");
-            return { workingData: [], computedCols: this.#columns };
+            return [];
         }
 
         const workingData = this.data;  // create a clone
@@ -133,8 +136,8 @@ export class ObjectArray {
             operation.method(workingData, operation.param);
         });
 
-        // create a new instance of result & return
-        return { workingData, computedCols: this.#columns };
+        // returning mutated array of objects
+        return workingData;
     }
 
     /**
@@ -145,7 +148,9 @@ export class ObjectArray {
      * @returns {number}
      */
     count() {
-        return this.#compute().workingData.length;
+        if (this.#logicPlan.length === 0)
+            return this.#data.length;
+        return this.#compute().length;
     }
 
     /**
@@ -154,8 +159,12 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     execute() {
-        const resultObject = ObjectArray.createInstance(this.#compute().workingData);
-        this.#logicPlan = [];
+        const resultData = this.#compute();
+        const resultObject = new ObjectArray(constructorKey);
+        resultObject.#data = resultData;
+        resultObject.#logicPlan = [];
+        resultObject.#columns = this.columns;
+
         return resultObject;
     }
 
@@ -195,17 +204,13 @@ export class ObjectArray {
         validateColumnPresence(this.#columns, oldKey);
         validateNewColumn(this.#columns, newKey);
 
-        this.#logicPlan.push({
-            "method": rename,
-            "param": { oldKey, newKey }
-        });
-
-        // replacing the column name
-        const colNameIdx = this.#columns.indexOf(oldKey);
-        if (colNameIdx !== -1)
-            this.#columns[colNameIdx] = newKey;
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": rename,
+                "param": { oldKey, newKey }
+            },
+            this.columns.map(col => col === oldKey ? newKey : col)  // replacing the column name
+        );
     }
 
     /**
@@ -216,12 +221,13 @@ export class ObjectArray {
     filter(customFilter) {
         validateDataType(customFilter, DataTypes.function);
 
-        this.#logicPlan.push({
-            "method": filter,
-            "param": { customFilter }
-        });
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": filter,
+                "param": { customFilter }
+            },
+            this.columns
+        );
     }
 
     /**
@@ -234,12 +240,13 @@ export class ObjectArray {
     updateColumn(columnName, transformationFunction) {
         validateColumnPresence(this.#columns, columnName);
 
-        this.#logicPlan.push({
-            "method": updateColumn,
-            "param": { columnName, transformationFunction }
-        });
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": updateColumn,
+                "param": { columnName, transformationFunction }
+            },
+            this.columns
+        );
     }
 
     /**
@@ -251,14 +258,16 @@ export class ObjectArray {
     addColumn(columnName, transformationFunction) {
         validateNewColumn(this.#columns, columnName);
 
-        this.#logicPlan.push({
-            "method": addColumn,
-            "param": { columnName, transformationFunction }
-        });
+        const newcols = this.columns;
+        newcols.push(columnName) // adding the column name
 
-        this.#columns.push(columnName); // adding the column name
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": addColumn,
+                "param": { columnName, transformationFunction }
+            },
+            newcols
+        );
     }
 
     /**
@@ -274,14 +283,13 @@ export class ObjectArray {
         // validating the column names
         columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
 
-        this.#logicPlan.push({
-            "method": select,
-            "param": { columnNames, columns: this.columns }
-        });
-
-        this.#columns = [...columnNames];    // copying to store the column names as passed to this function
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": select,
+                "param": { columnNames, currentColumns: this.columns }
+            },
+            columnNames
+        );
     }
 
     /**
@@ -294,15 +302,14 @@ export class ObjectArray {
         customValidator(columnNames.length <= 0, "No column names to drop.");
         columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
 
-        this.#logicPlan.push({
-            "method": drop,
-            "param": { columnNames }
-        });
-
-        // removing the columns names
-        this.#columns = this.#columns.filter(col => !columnNames.includes(col));
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": drop,
+                "param": { columnNames }
+            },
+            // removing the columns names
+            this.columns.filter(col => !columnNames.includes(col))
+        );
     }
 
     /**
@@ -317,12 +324,13 @@ export class ObjectArray {
         customValidator(limit < 0, "limit cannot be negative.");
         customValidator(offset < 0 || offset >= this.length, "offset cannot be negative or more than data count.");
 
-        this.#logicPlan.push({
-            "method": take,
-            "param": { limit, offset }
-        });
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": take,
+                "param": { limit, offset }
+            },
+            this.columns
+        );
     }
 
     /**
@@ -338,12 +346,13 @@ export class ObjectArray {
         comparisonLogics = comparisonLogics.build();
         comparisonLogics.forEach(logic => validateColumnPresence(this.#columns, logic.column));
 
-        this.#logicPlan.push({
-            "method": sort,
-            "param": { comparisonLogics }
-        });
-
-        return this;
+        return this.#internalCreateInstance(
+            {
+                "method": sort,
+                "param": { comparisonLogics }
+            },
+            this.columns
+        );
     }
 
 
