@@ -1,15 +1,7 @@
-// import { GroupingGenerator } from "../generators/GroupingGenerator.js";
-// import { MappingGenerator } from "../generators/MappingGenerator.js";
-// import { ParameterValidator } from "./ParameterValidator.js";
-// import { SortLogicGenerator } from "../generators/SortLogicGenerator.js";
-// import { HTMLOutput } from "../outputs/HTMLOutput.js";
-// import { RenameMapGenerator } from "../generators/RenameMapGenerator.js";
-// import { DeduplicateGenerator } from "../generators/DeduplicateGenerator.js";
-
-import { addColumn, drop, filter, log, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
+import { addColumn, drop, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
+import { innerJoin } from "./util/manipulator-functions/join.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
-
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -28,7 +20,7 @@ export class ObjectArray {
         this.#columns = [];
     }
 
-    // INSTANCE CREATOR
+    // ---------------------- INSTANCE CREATOR ----------------------
     /**
      * Checks validity & unformity of the passed array of objects.
      * Creates instance of ObjectArray from it.
@@ -70,9 +62,9 @@ export class ObjectArray {
         return obj;
     }
 
-    // GETTERS
+    // ---------------------- GETTERS ----------------------
     /**
-    * gets a deep copy of the data
+    * gets a deep copy of the current state of source data
     * @returns {Object[]}
     */
     get data() {
@@ -80,10 +72,10 @@ export class ObjectArray {
     }
 
     /**
-     * gets number of rows of the data
+     * gets number of rows of the current state of source data
      * @returns {number}
      */
-    get count() {
+    get length() {
         return this.#data.length;
     }
 
@@ -100,22 +92,38 @@ export class ObjectArray {
      * @returns {Array}
      */
     get logicPlan() {
-        return this.#logicPlan.map(operation => {
+        const retVal = this.#logicPlan.map(operation => {
+            const paramCopy = {};
+
+            for (let key in operation.param) {
+                if (typeof operation.param[key] === 'function') {
+                    paramCopy[key] = operation.param[key].toString();
+                } else {
+                    paramCopy[key] = operation.param[key];
+                }
+            }
+
             return {
                 "method": operation.method.name,
-                "param": operation.param
+                "param": paramCopy
             };
         });
-        // console.log(this.#logicPlan);
+        return JSON.stringify(retVal, null, 2);
     }
 
-    // METHODS
+    // ---------------------- EXECUTION METHODS ----------------------
+    // below methods are for executing the pipeline
 
-    // NOTE: THIS EXECUTE METHOD IS FOR DEBUG PURPOSE. NEED A LOGIC PLAN OPTIMISER & OPTIONS FOR DIFFERENT MODES OF EXECUTE METHOD
-    execute() {
-        if (this.count === 0) {
+    // NOTE: need a pipeline optimizer step as well to call before #compute()
+
+    /**
+     * internal method which actually does the computation
+     * @returns
+     */
+    #compute() {
+        if (this.length === 0) {
             console.warn("Nothing to do on empty data.");
-            return this;    // need to clear out logicPlan for consistency
+            return { workingData: [], computedCols: this.#columns };
         }
 
         const workingData = this.data;  // create a clone
@@ -126,25 +134,56 @@ export class ObjectArray {
         });
 
         // create a new instance of result & return
-        return ObjectArray.createInstance(workingData);
+        return { workingData, computedCols: this.#columns };
     }
 
     /**
-     * logs the current ObjectArray data.
+     * non-destructive peek into the count of the data.
+     * computes pipeline till here whenever called, does not clear the logic plan.
+     *
+     * USE WITH CAUTION to avoid unnecessary computations.
+     * @returns {number}
+     */
+    count() {
+        return this.#compute().workingData.length;
+    }
+
+    /**
+     * executes the current pipeline & clears logic plan.
+     * use this to compute the pipeline till here & get a branch new clone of result.
+     * @returns {ObjectArray}
+     */
+    execute() {
+        const resultObject = ObjectArray.createInstance(this.#compute().workingData);
+        this.#logicPlan = [];
+        return resultObject;
+    }
+
+    /**
+     * logs the ObjectArray data after applying the current logic plan.
      * positive limit show first N, negative limit shows last N, (default) 0 shows all.
+     *
+     * uses execute() under the hood.
      * @param {Number} limit till which the data is logged
      * @returns {ObjectArray}
      */
     log(limit = 0) {
         validateDataType(limit, DataTypes.number);
 
-        this.#logicPlan.push({
-            "method": log,
-            "param": { limit, columns: this.columns }
-        });
+        const resultObject = this.execute();
 
-        return this;
+        if (limit > 0)
+            console.table(resultObject.#data.slice(0, limit), resultObject.#columns);
+        else if (limit < 0)
+            console.table(resultObject.#data.slice(limit), resultObject.#columns);
+        else
+            console.table(resultObject.#data, resultObject.#columns);
+
+        return resultObject;
     }
+
+    // ---------------------- LOGIC PLAN UPDATE METHODS ----------------------
+    // below methods are for adding manipulation logics to the logicplan
 
     /**
      * renames the column name.

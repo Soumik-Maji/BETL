@@ -1,15 +1,6 @@
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, customValidator } from "../ParameterValidator.js";
 
-export function log(arr, { limit, columns }) {
-    if (limit > 0)
-        console.table(arr.slice(0, limit), columns);
-    else if (limit < 0)
-        console.table(arr.slice(limit), columns);
-    else if (limit === 0)
-        console.table(arr, columns);
-}
-
 export function rename(arr, { oldKey, newKey }) {
     for (let i = 0; i < arr.length; i++) {
         const oldValue = arr[i][oldKey];
