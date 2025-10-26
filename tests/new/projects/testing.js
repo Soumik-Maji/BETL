@@ -72,7 +72,7 @@ export async function main() {
         .sort(
             SortLogicGenerator.createInstance()
                 .asc("role")
-                .desc("name")
+                .desc("euid", item => item.substring(item.length - 1))
         )
         ;
 

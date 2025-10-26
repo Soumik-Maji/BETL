@@ -129,11 +129,11 @@ export class ObjectArray {
             return [];
         }
 
-        const workingData = this.data;  // create a clone
+        let workingData = this.data;  // create a clone
 
         // loop through all operations applying them 1 by 1
         this.#logicPlan.forEach(operation => {
-            operation.method(workingData, operation.param);
+            workingData = operation.method(workingData, operation.param);
         });
 
         // returning mutated array of objects

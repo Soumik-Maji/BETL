@@ -55,6 +55,8 @@ export function sort(arr, { comparisonLogics }) {
 
     // removing the cache
     arr.forEach(obj => delete obj[__sortCache__]);
+
+    return arr;
 }
 
 // --------------- Configuration Object creator for sorting ---------------

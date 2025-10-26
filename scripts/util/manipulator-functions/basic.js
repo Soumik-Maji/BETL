@@ -7,6 +7,7 @@ export function rename(arr, { oldKey, newKey }) {
         delete arr[i][oldKey];
         arr[i][newKey] = oldValue;
     }
+    return arr;
 }
 
 export function filter(arr, { customFilter }) {
@@ -29,6 +30,8 @@ export function filter(arr, { customFilter }) {
         }
     }
     arr.length = writeIndex;
+
+    return arr;
 }
 
 export function updateColumn(arr, { columnName, transformationFunction }) {
@@ -42,6 +45,7 @@ export function updateColumn(arr, { columnName, transformationFunction }) {
     for (let i = 0; i < arr.length; i++) {
         arr[i][columnName] = transformationFunction(arr[i]);
     }
+    return arr;
 }
 
 export function addColumn(arr, { columnName, transformationFunction }) {
@@ -55,6 +59,7 @@ export function addColumn(arr, { columnName, transformationFunction }) {
     for (let i = 0; i < arr.length; i++) {
         arr[i][columnName] = transformationFunction(arr[i]);
     }
+    return arr;
 }
 
 export function select(arr, { columnNames, currentColumns }) {
@@ -63,12 +68,14 @@ export function select(arr, { columnNames, currentColumns }) {
     for (let i = 0; i < arr.length; i++) {
         columnsToDelete.forEach(key => delete arr[i][key]);
     }
+    return arr;
 }
 
 export function drop(arr, { columnNames }) {
     for (let i = 0; i < arr.length; i++) {
         columnNames.forEach(key => delete arr[i][key]);
     }
+    return arr;
 }
 
 export function take(arr, { limit, offset }) {
@@ -78,4 +85,6 @@ export function take(arr, { limit, offset }) {
         writeIndex++;
     }
     arr.length = writeIndex;
+
+    return arr;
 }
