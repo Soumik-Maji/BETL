@@ -8,9 +8,11 @@ export function sort(arr, { comparisonLogics }) {
     });
 
     arr.sort((a, b) => {
-        const aVals = a[__sortCache__], bVals = b[__sortCache__];
+        const aVals = a[__sortCache__],
+            bVals = b[__sortCache__],
+            len = comparisonLogics.length;
 
-        for (let i = 0; i < comparisonLogics.length; i++) {
+        for (let i = 0; i < len; i++) {
             const { dir } = comparisonLogics[i];
             const aVal = aVals[i], bVal = bVals[i];
 

@@ -2,16 +2,19 @@ import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, customValidator } from "../ParameterValidator.js";
 
 export function rename(arr, { oldKey, newKey }) {
-    for (let i = 0; i < arr.length; i++) {
-        const oldValue = arr[i][oldKey];
-        delete arr[i][oldKey];
-        arr[i][newKey] = oldValue;
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+        const row = arr[i];
+        const oldValue = row[oldKey];
+        delete row[oldKey];
+        row[newKey] = oldValue;
     }
     return arr;
 }
 
 export function filter(arr, { customFilter }) {
-    if (arr.length === 0) {
+    const len = arr.length;
+    if (len === 0) {
         console.warn(`Empty array sent for filtering.\nfilter function -> ${customFilter}`);
         return;
     }
@@ -23,9 +26,10 @@ export function filter(arr, { customFilter }) {
     customValidator(typeof boolVal !== DataTypes.boolean, "Filter function does not return boolean");
 
     let writeIndex = 0;
-    for (let i = 0; i < arr.length; i++) {
-        if (customFilter(arr[i])) {
-            arr[writeIndex] = arr[i];
+    for (let i = 0; i < len; i++) {
+        const row = arr[i];
+        if (customFilter(row)) {
+            arr[writeIndex] = row;
             writeIndex++;
         }
     }
@@ -35,29 +39,33 @@ export function filter(arr, { customFilter }) {
 }
 
 export function updateColumn(arr, { columnName, transformationFunction }) {
-    if (arr.length === 0) {
+    const len = arr.length;
+    if (len === 0) {
         console.warn(`Empty array sent for column - ${columnName} update.\ntransformation function -> ${customFilter}`);
         return;
     }
     // Same thinking as for above filter function
     transformationFunction(JsonModifier.objectProxy(structuredClone(arr[0])));
 
-    for (let i = 0; i < arr.length; i++) {
-        arr[i][columnName] = transformationFunction(arr[i]);
+    for (let i = 0; i < len; i++) {
+        const row = arr[i];
+        row[columnName] = transformationFunction(row);
     }
     return arr;
 }
 
 export function addColumn(arr, { columnName, transformationFunction }) {
-    if (arr.length === 0) {
+    const len = arr.length;
+    if (len === 0) {
         console.warn(`Empty array sent for column - ${columnName} addition.\ntransformation function -> ${customFilter}`);
         return;
     }
     // Same thinking as for above filter function
     transformationFunction(JsonModifier.objectProxy(structuredClone(arr[0])));
 
-    for (let i = 0; i < arr.length; i++) {
-        arr[i][columnName] = transformationFunction(arr[i]);
+    for (let i = 0; i < len; i++) {
+        const row = arr[i];
+        row[columnName] = transformationFunction(row);
     }
     return arr;
 }
@@ -65,15 +73,19 @@ export function addColumn(arr, { columnName, transformationFunction }) {
 export function select(arr, { columnNames, currentColumns }) {
     const columnsToDelete = currentColumns.filter(col => !columnNames.includes(col));
 
-    for (let i = 0; i < arr.length; i++) {
-        columnsToDelete.forEach(key => delete arr[i][key]);
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+        const row = arr[i];
+        columnsToDelete.forEach(key => delete row[key]);
     }
     return arr;
 }
 
 export function drop(arr, { columnNames }) {
-    for (let i = 0; i < arr.length; i++) {
-        columnNames.forEach(key => delete arr[i][key]);
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+        const row = arr[i];
+        columnNames.forEach(key => delete row[key]);
     }
     return arr;
 }

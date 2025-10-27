@@ -176,10 +176,13 @@ export class ObjectArray {
      * @param {Number} limit till which the data is logged
      * @returns {ObjectArray}
      */
-    log(limit = 0) {
+    log(limit = 0, tableName = undefined) {
         validateDataType(limit, DataTypes.number);
 
         const resultObject = this.execute();
+
+        if (tableName !== undefined)
+            console.log(tableName);
 
         if (limit > 0)
             console.table(resultObject.#data.slice(0, limit), resultObject.#columns);
@@ -355,30 +358,36 @@ export class ObjectArray {
         );
     }
 
+    // -- joining section --
+    /**
+     * performs an inner join between "this" & "other" ObjectArray instances.
+     * prefixes ONLY duplicate column names from both tables with their source ("LEFT." & "RIGHT.")
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    innerJoin(other, joinCondition) {
+        let left = this;
+        let right = other;
 
-}
+        customValidator(!(right instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
 
+        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(left.#columns, right.#columns);
 
-//     /**
-//        DON'T ADD THIS METHOD (WILL BE IMPLEMENTING SINGLE PASS LATER TO OVERCOME THIS)
-//      * bulk renames column names using RenameMapGenerator
-//      * @param {RenameMapGenerator} renameMap
-//      * @returns ObjectArray instance
-//      */
-//     renameMany(renameMap) {
-//         const parsedRenameMap = this.#validator.renameMapParameterValidator(renameMap);
-
-//         return ObjectArray.#internalCreateInstance(
-//             this.data.map(item => {
-//                 const newItem = {};
-//                 Object.keys(item).forEach(key => {
-//                     const renameKey = parsedRenameMap[key] || key;
-//                     newItem[renameKey] = item[key];
-//                 });
-//                 return newItem;
-//             })
-//         );
-//     }
+        return left.#internalCreateInstance(
+            {
+                "method": innerJoin,
+                "param": {
+                    right,   // execute triggers in join. thus lazy.
+                    joinCondition,
+                    duplicateColumnFound, leftMapping, rightMapping
+                }
+            },
+            allColumns
+        );
+    }
 
 //     /**
 //      * de-duplicates the data as per provided column names in spread operator syntax

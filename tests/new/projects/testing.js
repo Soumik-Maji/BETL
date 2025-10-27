@@ -64,16 +64,17 @@ export async function main() {
             return newid;
         })
 
-        // .filter(item => item.role === "BACKEND")
-        // .select("id", "euid", "mid")
-        // .drop("mid")
-        // .take(2, 1)
+        .filter(item => item.role === "BACKEND")
 
         .sort(
             SortLogicGenerator.createInstance()
                 .asc("role")
                 .desc("euid", item => item.substring(item.length - 1))
         )
+
+        .select("id", "euid", "mid")
+        .drop("mid")
+        .take(2, 1)
         ;
 
     debug("Original", oa);
