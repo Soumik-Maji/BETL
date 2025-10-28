@@ -18,19 +18,30 @@ export async function main() {
 
     orders = orders
         .updateColumn("orderid", item => Number(item.orderid))
-        .updateColumn("quantity", item => Number(item.quantity));
+        .updateColumn("quantity", item => Number(item.quantity))
+        // .filter(item => item.quantity === 0)
+        ;
 
     product = product
         .rename("product id", "productid")
-        .updateColumn("price", item => Number(item.price));
+        .updateColumn("price", item => Number(item.price))
+        // .filter(item => item.price === 0)
+        ;
 
-    const result = orders
+    orders
         .innerJoin(product, (a, b) => a.productid === b.productid)
-        .log();
+        .log(0, "Inner join");
 
-    // console.log(orders.columns);
-    // console.log(product.columns);
-    // console.log(result.columns);
+    orders
+        .leftJoin(product, (a, b) => a.productid === b.productid)
+        .log(0, "Left join");
+
+    orders
+        .rightJoin(product, (a, b) => a.productid === b.productid)
+        .log(0, "Right join");
+
+    // console.log(orders);
+    // console.log(product);
     // console.log(result);
 
     const endTimer = performance.now();

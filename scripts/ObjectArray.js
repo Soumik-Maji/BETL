@@ -1,5 +1,5 @@
 import { addColumn, drop, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
-import { innerJoin } from "./util/manipulator-functions/join.js";
+import { getJoinColumns, innerJoin, leftJoin, rightJoin } from "./util/manipulator-functions/join.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 
@@ -368,19 +368,16 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     innerJoin(other, joinCondition) {
-        let left = this;
-        let right = other;
-
-        customValidator(!(right instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
-        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(left.#columns, right.#columns);
+        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
-        return left.#internalCreateInstance(
+        return this.#internalCreateInstance(
             {
                 "method": innerJoin,
                 "param": {
-                    right,   // execute triggers in join. thus lazy.
+                    right: other,   // execute triggers in join. thus lazy.
                     joinCondition,
                     duplicateColumnFound, leftMapping, rightMapping
                 }
@@ -389,71 +386,59 @@ export class ObjectArray {
         );
     }
 
-//     /**
-//      * de-duplicates the data as per provided column names in spread operator syntax
-//      * @param  {DeduplicateGenerator} deduplicationData
-//      * @returns ObjectArray instance
-//      */
-//     deduplicate(deduplicationData) {
-//         const { columnNames, resolveFunction } = this.#validator.deduplicateParameterValidator(deduplicationData);
+    /**
+     * performs a left join between "this" & "other" ObjectArray instances
+     * prefixes ONLY duplicate column names from both tables with their source ("LEFT." & "RIGHT.")
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    leftJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
 
-//         let keyForCheck = null;
-//         const uniques = new Map();
-//         this.data.forEach(item => {
-//             const key = JSON.stringify(columnNames.map(col => item[col]));
-//             keyForCheck = key;      // storing to fetch later for proxy check
-//             if (!uniques.has(key))
-//                 uniques.set(key, []);
-//             uniques.get(key).push(item);
-//         });
+        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
-//         // validating the resolve function for illegal operations
-//         resolveFunction(JsonModifier.arrayOfObjectsProxy(uniques.get(keyForCheck)));
+        return this.#internalCreateInstance(
+            {
+                "method": leftJoin,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition,
+                    duplicateColumnFound, leftMapping, rightMapping
+                }
+            },
+            allColumns
+        );
+    }
 
-//         const newData = [];
-//         for (const value of uniques.values())
-//             newData.push(resolveFunction(value));
+    /**
+     * performs a right join between "this" & "other" ObjectArray instances
+     * prefixes ONLY duplicate column names from both tables with their source ("LEFT." & "RIGHT.")
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    rightJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
 
-//         return ObjectArray.createInstance(newData);
-//     }
+        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
-//     /**
-//      * group by function similar to normal SQL
-//      * @param {GroupingGenerator} groupingData
-//      * @returns ObjectArray instance
-//      */
-//     groupBy(groupingData) {
-//         const { groupingColumns, logics } = this.#validator.groupByParameterValidator(groupingData);
-
-//         const uniqueColumns = [...new Set(logics.map(item => item.column))];
-
-//         const groups = new Map();
-//         this.data.forEach(item => {
-//             const key = JSON.stringify(Object.fromEntries(groupingColumns.map(col => [col, item[col]])));
-//             let groupValue = groups.get(key);
-//             if (!groupValue) {
-//                 groupValue = [];
-//                 groups.set(key, groupValue);
-//             }
-
-//             const tmpObject = {};
-//             uniqueColumns.forEach(col => tmpObject[col] = item[col]);
-//             groupValue.push(tmpObject);
-//         });
-
-//         const newData = [];
-//         for (const [key, groupValue] of groups) {
-//             const tmpObject = { ...JSON.parse(key) };
-
-//             for (const { column, aggFunc, alias } of logics) {
-//                 const tmpArray = groupValue.map(item => item[column]);
-//                 const aggResult = aggFunc(tmpArray);
-//                 tmpObject[alias] = aggResult;
-//             }
-//             newData.push(tmpObject);
-//         }
-//         return ObjectArray.createInstance(newData);
-//     }
+        return this.#internalCreateInstance(
+            {
+                "method": rightJoin,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition,
+                    duplicateColumnFound, leftMapping, rightMapping
+                }
+            },
+            allColumns
+        );
+    }
 
 //     /**
 //      * maps the target's columns to respective source's columns
