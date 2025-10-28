@@ -1,5 +1,5 @@
 import { addColumn, drop, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
-import { getJoinColumns, innerJoin, leftJoin, rightJoin } from "./util/manipulator-functions/join.js";
+import { crossJoin, full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, rightAnti, rightJoin, unionAll } from "./util/manipulator-functions/join.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 
@@ -440,64 +440,154 @@ export class ObjectArray {
         );
     }
 
-//     /**
-//      * maps the target's columns to respective source's columns
-//      * @param {MappingGenerator} mappingRelations
-//      * @returns ObjectArray instance
-//      */
-//     map(mappingRelations) {
-//         // validating & parsing the mapping relation instance
-//         const { source, relations } = this.#validator.mapParameterValidator(mappingRelations);
+    /**
+     * performs a left anti join between "this" & "other" ObjectArray instances
+     * returns rows from left table which have no match in right table
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    leftAntiJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
 
-//         // gathering the target's data
-//         const targetData = this.data;
-//         // gathering the target's object structure
-//         const targetDataStructure = {};
-//         Object.keys(targetData[0]).forEach(key => targetDataStructure[key] = null);
+        return this.#internalCreateInstance(
+            {
+                "method": leftAnti,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition
+                }
+            },
+            this.columns
+        );
+    }
 
-//         source.data.forEach(row => {    // loop over all source rows
-//             const newRow = { ...targetDataStructure };      // copy structure into temporary object
+    /**
+     * performs a right anti join between "this" & "other" ObjectArray instances
+     * returns rows from right table which have no match in left table
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    rightAntiJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
 
-//             for (const relation of relations)     // loop over columns to copy into temporary object
-//                 newRow[relation.tgt] = row[relation.src];
+        return this.#internalCreateInstance(
+            {
+                "method": rightAnti,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition
+                }
+            },
+            other.columns
+        );
+    }
 
-//             targetData.push(newRow);     // push into target
-//         });
-//         return ObjectArray.createInstance(targetData);
-//     }
+    /**
+     * does a vertical merge on the 2 ObjectArray instances. does not remove the duplicate rows.
+     * @param {ObjectArray} other
+     * @returns {ObjectArray}
+     */
+    unionAll(other) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
 
-//     /**
-//      * performs an inner join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
-//      * @returns ObjectArray instance
-//      */
-//     innerJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
+        try {
+            this.#columns.forEach(col => validateColumnPresence(other.#columns, col));
+        }
+        catch {
+            throw new Error("The column names do not match for the provided tables in unionAll.");
+        }
 
-//         const leftTable = this.data, rightTable = otherTable.data;
+        return this.#internalCreateInstance(
+            {
+                "method": unionAll,
+                "param": { right: other }   // execute triggers in join. thus lazy.
+            },
+            this.columns
+        );
+    }
 
-//         const boolVal = joinCondition(JsonModifier.objectProxy(leftTable[0]), JsonModifier.objectProxy(rightTable[0]));
-//         this.#validator.customValidator(
-//             typeof boolVal !== ParameterValidator.dataTypes.boolean,
-//             "Join condition function does not return boolean"
-//         );
+    /**
+     * performs a full anti join between "this" & "other" ObjectArray instances
+     * prefixes ONLY duplicate column names from both tables with their source ("LEFT." & "RIGHT.")
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    fullAntiJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
 
-//         const emptyDataStructure = {};
-//         Object.keys(leftTable[0]).forEach(key => emptyDataStructure[key] = null);
-//         Object.keys(rightTable[0]).forEach(key => emptyDataStructure[key] = null);
+        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
-//         const retval = [];
-//         leftTable.forEach(ltrow =>
-//             rightTable.filter(rtrow => joinCondition(ltrow, rtrow))
-//                 .forEach(matchedRow => retval.push({ ...ltrow, ...matchedRow }))
-//         );
+        return this.#internalCreateInstance(
+            {
+                "method": fullAnti,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition,
+                    duplicateColumnFound, leftMapping, rightMapping
+                }
+            },
+            allColumns
+        );
+    }
 
-//         return retval.length === 0 ?
-//             ObjectArray.createInstance([emptyDataStructure]) :
-//             ObjectArray.createInstance(retval);
-//     }
+    /**
+     * performs a full join between "this" & "other" ObjectArray instances
+     * prefixes ONLY duplicate column names from both tables with their source ("LEFT." & "RIGHT.")
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    fullJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
+
+        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
+
+        return this.#internalCreateInstance(
+            {
+                "method": full,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition,
+                    duplicateColumnFound, leftMapping, rightMapping
+                }
+            },
+            allColumns
+        );
+    }
+
+    /**
+     * performs a cross join between "this" & "other" ObjectArray instances
+     * prefixes ONLY duplicate column names from both tables with their source ("LEFT." & "RIGHT.")
+     * @param {ObjectArray} other
+     * @returns {ObjectArray}
+     */
+    crossJoin(other) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
+
+        return this.#internalCreateInstance(
+            {
+                "method": crossJoin,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    duplicateColumnFound, leftMapping, rightMapping,
+                    joinCondition: () => true
+                }
+            },
+            allColumns
+        );
+    }
 
 //     /**
 //      * performs a left join between "this" & "otherTable" ObjectArray instances
