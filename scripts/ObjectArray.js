@@ -1,5 +1,5 @@
 import { addColumn, drop, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
-import { crossJoin, full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, rightAnti, rightJoin, unionAll } from "./util/manipulator-functions/join.js";
+import { crossJoin, full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 
@@ -589,204 +589,168 @@ export class ObjectArray {
         );
     }
 
+    /**
+     * performs a left semi join between "this" & "other" ObjectArray instances
+     * returns rows from right table which have a match in left table
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    leftSemiJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
+
+        return this.#internalCreateInstance(
+            {
+                "method": leftSemi,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition
+                }
+            },
+            this.columns
+        );
+    }
+
+    /**
+     * performs a right semi join between "this" & "other" ObjectArray instances
+     * returns rows from right table which have no match in left table
+     * @param {ObjectArray} other
+     * @param {Function} joinCondition function follows an order of accepting tables. left is always left table & right is always right table.
+     * @exampleJoinFunction (a, b) => a.productid === b.product_id; a is left table & b is right table
+     * @returns {ObjectArray}
+     */
+    rightSemiJoin(other, joinCondition) {
+        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        validateDataType(joinCondition, DataTypes.function);
+
+        return this.#internalCreateInstance(
+            {
+                "method": rightSemi,
+                "param": {
+                    right: other,   // execute triggers in join. thus lazy.
+                    joinCondition
+                }
+            },
+            other.columns
+        );
+    }
+
+}
+
+
 //     /**
-//      * performs a left join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
+//        DON'T ADD THIS METHOD (WILL BE IMPLEMENTING SINGLE PASS LATER TO OVERCOME THIS)
+//      * bulk renames column names using RenameMapGenerator
+//      * @param {RenameMapGenerator} renameMap
 //      * @returns ObjectArray instance
 //      */
-//     leftJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
+//     renameMany(renameMap) {
+//         const parsedRenameMap = this.#validator.renameMapParameterValidator(renameMap);
 
-//         const leftTable = this.data, rightTable = otherTable.data;
-
-//         const boolVal = joinCondition(JsonModifier.objectProxy(leftTable[0]), JsonModifier.objectProxy(rightTable[0]));
-//         this.#validator.customValidator(
-//             typeof boolVal !== ParameterValidator.dataTypes.boolean,
-//             "Join condition function does not return boolean"
+//         return ObjectArray.#internalCreateInstance(
+//             this.data.map(item => {
+//                 const newItem = {};
+//                 Object.keys(item).forEach(key => {
+//                     const renameKey = parsedRenameMap[key] || key;
+//                     newItem[renameKey] = item[key];
+//                 });
+//                 return newItem;
+//             })
 //         );
+//     }
 
-//         const emptyDataStructure = {};
-//         Object.keys(leftTable[0]).forEach(key => emptyDataStructure[key] = null);
-//         Object.keys(rightTable[0]).forEach(key => emptyDataStructure[key] = null);
+//     /**
+//      * de-duplicates the data as per provided column names in spread operator syntax
+//      * @param  {DeduplicateGenerator} deduplicationData
+//      * @returns ObjectArray instance
+//      */
+//     deduplicate(deduplicationData) {
+//         const { columnNames, resolveFunction } = this.#validator.deduplicateParameterValidator(deduplicationData);
 
-//         const retval = [];
-//         leftTable.forEach(ltrow => {
-//             const matchedRows = rightTable.filter(rtrow => joinCondition(ltrow, rtrow));
-//             if (matchedRows.length > 0)
-//                 matchedRows.forEach(matchedRow => retval.push({ ...ltrow, ...matchedRow }))
-//             else {
-//                 retval.push({ ...emptyDataStructure, ...ltrow });
+//         let keyForCheck = null;
+//         const uniques = new Map();
+//         this.data.forEach(item => {
+//             const key = JSON.stringify(columnNames.map(col => item[col]));
+//             keyForCheck = key;      // storing to fetch later for proxy check
+//             if (!uniques.has(key))
+//                 uniques.set(key, []);
+//             uniques.get(key).push(item);
+//         });
+
+//         // validating the resolve function for illegal operations
+//         resolveFunction(JsonModifier.arrayOfObjectsProxy(uniques.get(keyForCheck)));
+
+//         const newData = [];
+//         for (const value of uniques.values())
+//             newData.push(resolveFunction(value));
+
+//         return ObjectArray.createInstance(newData);
+//     }
+
+//     /**
+//      * group by function similar to normal SQL
+//      * @param {GroupingGenerator} groupingData
+//      * @returns ObjectArray instance
+//      */
+//     groupBy(groupingData) {
+//         const { groupingColumns, logics } = this.#validator.groupByParameterValidator(groupingData);
+
+//         const uniqueColumns = [...new Set(logics.map(item => item.column))];
+
+//         const groups = new Map();
+//         this.data.forEach(item => {
+//             const key = JSON.stringify(Object.fromEntries(groupingColumns.map(col => [col, item[col]])));
+//             let groupValue = groups.get(key);
+//             if (!groupValue) {
+//                 groupValue = [];
+//                 groups.set(key, groupValue);
 //             }
+
+//             const tmpObject = {};
+//             uniqueColumns.forEach(col => tmpObject[col] = item[col]);
+//             groupValue.push(tmpObject);
 //         });
 
-//         return retval.length === 0 ?
-//             ObjectArray.createInstance([emptyDataStructure]) :
-//             ObjectArray.createInstance(retval);
+//         const newData = [];
+//         for (const [key, groupValue] of groups) {
+//             const tmpObject = { ...JSON.parse(key) };
+
+//             for (const { column, aggFunc, alias } of logics) {
+//                 const tmpArray = groupValue.map(item => item[column]);
+//                 const aggResult = aggFunc(tmpArray);
+//                 tmpObject[alias] = aggResult;
+//             }
+//             newData.push(tmpObject);
+//         }
+//         return ObjectArray.createInstance(newData);
 //     }
 
 //     /**
-//      * performs a right join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
+//      * maps the target's columns to respective source's columns
+//      * @param {MappingGenerator} mappingRelations
 //      * @returns ObjectArray instance
 //      */
-//     rightJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
+//     map(mappingRelations) {
+//         // validating & parsing the mapping relation instance
+//         const { source, relations } = this.#validator.mapParameterValidator(mappingRelations);
 
-//         // creating another function which is the reverse of joinCondition(), by swapping the passed parameters.
-//         const reverseJoinCondition = (a, b) => joinCondition(b, a);
-//         const uniqueOrderedColumns = new Set([...this.columns, ...otherTable.columns]);
+//         // gathering the target's data
+//         const targetData = this.data;
+//         // gathering the target's object structure
+//         const targetDataStructure = {};
+//         Object.keys(targetData[0]).forEach(key => targetDataStructure[key] = null);
 
-//         return otherTable.leftJoin(this, reverseJoinCondition)
-//             .select(...uniqueOrderedColumns);
-//     }
+//         source.data.forEach(row => {    // loop over all source rows
+//             const newRow = { ...targetDataStructure };      // copy structure into temporary object
 
-//     /**
-//      * performs a left anti join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
-//      * @returns ObjectArray instance
-//      */
-//     leftAntiJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
+//             for (const relation of relations)     // loop over columns to copy into temporary object
+//                 newRow[relation.tgt] = row[relation.src];
 
-//         const leftTable = this.data, rightTable = otherTable.data;
-
-//         const boolVal = joinCondition(JsonModifier.objectProxy(leftTable[0]), JsonModifier.objectProxy(rightTable[0]));
-//         this.#validator.customValidator(
-//             typeof boolVal !== ParameterValidator.dataTypes.boolean,
-//             "Join condition function does not return boolean"
-//         );
-
-//         const emptyDataStructure = {};
-//         Object.keys(leftTable[0]).forEach(key => emptyDataStructure[key] = null);
-//         Object.keys(rightTable[0]).forEach(key => emptyDataStructure[key] = null);
-
-//         const retval = [];
-//         leftTable.forEach(ltrow => {
-//             const matchedRows = rightTable.filter(rtrow => joinCondition(ltrow, rtrow));
-//             if (matchedRows.length === 0)
-//                 retval.push({ ...emptyDataStructure, ...ltrow });
+//             targetData.push(newRow);     // push into target
 //         });
-
-//         return retval.length === 0 ?
-//             ObjectArray.createInstance([emptyDataStructure]) :
-//             ObjectArray.createInstance(retval);
-//     }
-
-//     /**
-//      * performs a right anti join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
-//      * @returns ObjectArray instance
-//      */
-//     rightAntiJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
-
-//         // creating another function which is the reverse of joinCondition(), by swapping the passed parameters.
-//         const reverseJoinCondition = (a, b) => joinCondition(b, a);
-//         const uniqueOrderedColumns = new Set([...this.columns, ...otherTable.columns]);
-
-//         return otherTable.leftAntiJoin(this, reverseJoinCondition)
-//             .select(...uniqueOrderedColumns);
-//     }
-
-//     /**
-//      * simply merges the array of objects of both instances
-//      * @param {ObjectArray} otherTable
-//      * @returns ObjectArray instance
-//      */
-//     unionAll(otherTable) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-
-//         return ObjectArray.createInstance([...this.data, ...otherTable.data]);
-//     }
-
-//     /**
-//      * performs a full anti join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
-//      * @returns ObjectArray instance
-//      */
-//     fullAntiJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
-
-//         return this.leftAntiJoin(otherTable, joinCondition)
-//             .unionAll(this.rightAntiJoin(otherTable, joinCondition));
-//     }
-
-//     /**
-//      * performs a full join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
-//      * @returns ObjectArray instance
-//      */
-//     fullJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
-
-//         return this.fullAntiJoin(otherTable, joinCondition)
-//             .unionAll(this.innerJoin(otherTable, joinCondition));
-//     }
-
-//     /**
-//      * performs a cross join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @returns ObjectArray instance
-//      */
-//     crossJoin(otherTable) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-
-//         return this.innerJoin(otherTable, (a, b) => true);
-//     }
-
-//     /**
-//      * performs a left semi join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
-//      * @returns ObjectArray instance
-//      */
-//     leftSemiJoin(otherTable, joinCondition) {
-//         this.#validator.customValidator(!(otherTable instanceof ObjectArray), "Need an ObjectArray instance to work with.");
-//         this.#validator.validateDataType(joinCondition, ParameterValidator.dataTypes.function);
-
-//         const leftTable = this.data, rightTable = otherTable.data;
-
-//         const boolVal = joinCondition(JsonModifier.objectProxy(leftTable[0]), JsonModifier.objectProxy(rightTable[0]));
-//         this.#validator.customValidator(
-//             typeof boolVal !== ParameterValidator.dataTypes.boolean,
-//             "Join condition function does not return boolean"
-//         );
-
-//         const retval = [];
-//         leftTable.forEach(ltrow => {
-//             const hasMatch = rightTable.some(rtrow => joinCondition(ltrow, rtrow));
-//             if (hasMatch)
-//                 retval.push(ltrow);
-//         });
-
-//         return retval.length === 0 ?
-//             ObjectArray.createInstance([emptyDataStructure]) :
-//             ObjectArray.createInstance(retval);
-//     }
-
-//     /**
-//      * performs a right semi join between "this" & "otherTable" ObjectArray instances
-//      * @param {ObjectArray} otherTable
-//      * @param {Function} joinCondition condition follows an order of accepting tables. left is always left table & right is always right table.
-//      * @returns ObjectArray instance
-//      */
-//     rightSemiJoin(otherTable, joinCondition) {
-//         // creating another function which is the reverse of joinCondition(), by swapping the passed parameters.
-//         const reverseJoinCondition = (a, b) => joinCondition(b, a);
-
-//         return otherTable.leftSemiJoin(this, reverseJoinCondition);
+//         return ObjectArray.createInstance(targetData);
 //     }
 
 //     window(windowSpecs) {

@@ -12,7 +12,7 @@ export async function main() {
 
     const startTimer = performance.now();
 
-    // let employee = ObjectArray.createInstance(employeeData);
+    let employee = ObjectArray.createInstance(employeeData);
     let orders = ObjectArray.createInstance(ordersData);
     let product = ObjectArray.createInstance(productData);
 
@@ -28,29 +28,31 @@ export async function main() {
         // .filter(item => item.price === 0)
         ;
 
-    // orders
-    //     .innerJoin(product, (a, b) => a.productid === b.productid)
-    //     .log(0, "Inner join");
+    // NORMAL JOINS
+    orders.innerJoin(product, (a, b) => a.productid === b.productid)
+        .log(0, "Inner join");
 
-    // orders
-    //     .leftJoin(product, (a, b) => a.productid === b.productid)
-    //     .log(0, "Left join");
+    orders.leftJoin(product, (a, b) => a.productid === b.productid)
+        .log(0, "Left join");
 
-    // orders
-    //     .rightJoin(product, (a, b) => a.productid === b.productid)
-    //     .log(0, "Right join");
+    orders.rightJoin(product, (a, b) => a.productid === b.productid)
+        .log(0, "Right join");
 
-    // orders.unionAll(product)
-    //     .log();
-
-    orders
-        .leftAntiJoin(product, (a, b) => a.productid === b.productid)
+    // ANTI JOINS
+    orders.leftAntiJoin(product, (a, b) => a.productid === b.productid)
         .log(0, "Left Anti join");
 
-    orders
-        .rightAntiJoin(product, (a, b) => a.productid === b.productid)
+    orders.rightAntiJoin(product, (a, b) => a.productid === b.productid)
         .log(0, "Right Anti join");
 
+    // SEMI JOINS
+    orders.leftSemiJoin(product, (a, b) => a.productid === b.productid)
+        .log(0, "Left Semi join");
+
+    orders.rightSemiJoin(product, (a, b) => a.productid === b.productid)
+        .log(0, "Right Semi join");
+
+    // FULL JOINS: A COMPOSITE JOIN OF SIMPLER JOINS
     orders
         .fullAntiJoin(product, (a, b) => a.productid === b.productid)
         .log(0, "Full Anti join");
@@ -59,34 +61,30 @@ export async function main() {
         .fullJoin(product, (a, b) => a.productid === b.productid)
         .log(0, "Full join");
 
-    // anti joins returns the rows which have no match in other table
-    // not horizontally merged tables with other table as null values
-    // opposite for semi joins, returns rows which have match in other table
+    // VERTICAL MERGING
+    orders.unionAll(orders)
+        // .unionAll(product)   // throws error due to column names not matching
+        .log(0, "Union All");
 
+    // SPECIAL CASES
+    orders.crossJoin(product)
+        .log(0, "Cross join");
 
-    // orders
-    //     .crossJoin(product)
-    //     .log(0, "Cross join");
+    // self join exmaple
+    employee = employee
+        .updateColumn("empid", item => Number(item.empid))
+        .updateColumn("managerid", item => item.managerid === "" ? null : Number(item.managerid));
+    const emp2 = employee.execute();
 
-    // console.log(orders);
-    // console.log(product);
-    // console.log(result);
-
-    // SELF JOIN EXMAPLE
-    // const employee = ObjectArray.createInstance(employeeData)
-    //     .updateColumn("empid", item => Number(item.empid))
-    //     .updateColumn("managerid", item => item.managerid === "" ? null : Number(item.managerid));
-    // const emp2 = employee.execute();
-
-    // employee.log(0, "Employee data");
-    // employee.leftJoin(emp2, (a, b) => a.managerid === b.empid)
-    //     .rename("LEFT.empid", "empid")
-    //     .rename("LEFT.name", "name")
-    //     .rename("LEFT.role", "role")
-    //     .rename("LEFT.managerid", "managerid")
-    //     .rename("RIGHT.name", "manager_name")
-    //     .drop("RIGHT.empid", "RIGHT.role", "RIGHT.managerid")
-    //     .log();
+    employee.log(0, "Employee data");
+    employee.leftJoin(emp2, (a, b) => a.managerid === b.empid)
+        .rename("LEFT.empid", "empid")
+        .rename("LEFT.name", "name")
+        .rename("LEFT.role", "role")
+        .rename("LEFT.managerid", "managerid")
+        .rename("RIGHT.name", "manager_name")
+        .drop("RIGHT.empid", "RIGHT.role", "RIGHT.managerid")
+        .log(0, "self join on employee data");
 
     const endTimer = performance.now();
     console.log(`${endTimer - startTimer} ms`);

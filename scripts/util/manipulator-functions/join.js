@@ -258,3 +258,69 @@ export function full(left, params) {
 export function crossJoin(left, params) {
     return innerJoin(left, params);
 }
+
+export function leftSemi(left, { right, joinCondition }) {
+    right = right.execute().data;
+
+    const retval = [], leftLength = left.length, rightLength = right.length;
+
+    if (leftLength === 0)
+        return [];
+    if (rightLength === 0)
+        return left;
+
+    const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
+    customValidator(
+        typeof boolVal !== DataTypes.boolean,
+        "Join condition function does not return boolean"
+    );
+
+    for (let li = 0; li < leftLength; li++) {
+        const leftRow = left[li];
+        let matched = false;
+        for (let ri = 0; ri < rightLength; ri++) {
+            const rightRow = right[ri];
+            if (joinCondition(leftRow, rightRow)) {
+                matched = true;
+                break;
+            }
+        }
+        if (matched)
+            retval.push(leftRow);
+    }
+
+    return retval;
+}
+
+export function rightSemi(left, { right, joinCondition }) {
+    right = right.execute().data;
+
+    const retval = [], leftLength = left.length, rightLength = right.length;
+
+    if (rightLength === 0)
+        return [];
+    if (leftLength === 0)
+        return right;
+
+    const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
+    customValidator(
+        typeof boolVal !== DataTypes.boolean,
+        "Join condition function does not return boolean"
+    );
+
+    for (let ri = 0; ri < rightLength; ri++) {
+        const rightRow = right[ri];
+        let matched = false;
+        for (let li = 0; li < leftLength; li++) {
+            const leftRow = left[li];
+            if (joinCondition(leftRow, rightRow)) {
+                matched = true;
+                break;
+            }
+        }
+        if (matched)
+            retval.push(rightRow);
+    }
+
+    return retval;
+}
