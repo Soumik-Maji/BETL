@@ -50,7 +50,7 @@ export function innerJoin(left, { right, joinCondition, duplicateColumnFound, le
     const retval = [], leftLength = left.length, rightLength = right.length;
 
     if (leftLength === 0 || rightLength === 0)
-        return retval;
+        return [];
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
     customValidator(
@@ -114,8 +114,7 @@ export function leftJoin(left, { right, joinCondition, duplicateColumnFound, lef
 export function rightJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
     right = right.execute().data;
 
-    const emptyLeftRow = {},
-        leftColumns = Object.keys(leftMapping), leftColumnsLength = leftColumns.length;
+    const emptyLeftRow = {}, leftColumns = Object.keys(leftMapping), leftColumnsLength = leftColumns.length;
     for (let i = 0; i < leftColumnsLength; i++)
         emptyLeftRow[leftColumns[i]] = null;
 
@@ -220,43 +219,58 @@ export function rightAnti(left, { right, joinCondition }) {
 
 export function unionAll(left, { right }) {
     right = right.execute().data;
-    return [...left, ...right];
+
+    const rightLength = right.length;
+    for (let i = 0; i < rightLength; i++)
+        left.push(right[i]);
+    return left;
 }
 
+// LATER OPTIMIZATION: use single pass on full anti join & keep it standalone, as right.execute() can be expensive
 export function fullAnti(left, params) {
-    const { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping } = params;
+    let { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping } = params;
+    right = right.execute();    // running execute on right to cache result & cut out repeatitive pipeline execution
 
     // empty row addition to left anti join
     const emptyRightRow = {}, rightColumns = Object.keys(rightMapping), rightColumnsLength = rightColumns.length;
     for (let i = 0; i < rightColumnsLength; i++)
         emptyRightRow[rightColumns[i]] = null;
 
-    const leftAntiJoinedData = leftAnti(left, { right, joinCondition }),
-        leftAntiJoinedLength = leftAntiJoinedData.length;
+    const leftAntiJoined = leftAnti(left, { right, joinCondition }),
+        leftAntiJoinedLength = leftAntiJoined.length;
     for (let i = 0; i < leftAntiJoinedLength; i++)
-        leftAntiJoinedData[i] = mergeRows(leftAntiJoinedData[i], leftMapping, emptyRightRow, rightMapping, duplicateColumnFound);
+        leftAntiJoined[i] = mergeRows(leftAntiJoined[i], leftMapping, emptyRightRow, rightMapping, duplicateColumnFound);
 
     // empty row addition to right anti join
     const emptyLeftRow = {}, leftColumns = Object.keys(leftMapping), leftColumnsLength = leftColumns.length;
     for (let i = 0; i < leftColumnsLength; i++)
         emptyLeftRow[leftColumns[i]] = null;
 
-    const rightAntiJoinedData = rightAnti(left, { right, joinCondition }),
-        rightAntiJoinedLength = rightAntiJoinedData.length;
-    for (let i = 0; i < rightAntiJoinedLength; i++)
-        rightAntiJoinedData[i] = mergeRows(emptyLeftRow, leftMapping, rightAntiJoinedData[i], rightMapping, duplicateColumnFound);
+    const rightAntiJoined = rightAnti(left, { right, joinCondition }),
+        rightAntiJoinedLength = rightAntiJoined.length;
+    for (let i = 0; i < rightAntiJoinedLength; i++) {
+        rightAntiJoined[i] = mergeRows(emptyLeftRow, leftMapping, rightAntiJoined[i], rightMapping, duplicateColumnFound);
 
-    return [...leftAntiJoinedData, ...rightAntiJoinedData];
+        leftAntiJoined.push(rightAntiJoined[i]);    // pushing right into left one, so that new array allocation is not needed
+    }
+
+    return leftAntiJoined;
 }
 
+// LATER OPTIMIZATION: use single pass on full join & keep it standalone, as right.execute() can be expensive
 export function full(left, params) {
+    let { right, ...rest } = params;
+    right = right.execute();    // running execute on right to cache result & cut out repeatitive pipeline execution
+    params = { right, ...rest };
+
     const fullAntiJoinedData = fullAnti(left, params);
     const innerJoinedData = innerJoin(left, params);
-    return [...fullAntiJoinedData, ...innerJoinedData];
-}
 
-export function crossJoin(left, params) {
-    return innerJoin(left, params);
+    const fullAntiJoinedLength = fullAntiJoinedData.length;
+    for (let i = 0; i < fullAntiJoinedLength; i++)
+        innerJoinedData.push(fullAntiJoinedData[i]);
+
+    return innerJoinedData;
 }
 
 export function leftSemi(left, { right, joinCondition }) {
@@ -264,10 +278,8 @@ export function leftSemi(left, { right, joinCondition }) {
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
-    if (leftLength === 0)
+    if (leftLength === 0 || rightLength === 0)
         return [];
-    if (rightLength === 0)
-        return left;
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
     customValidator(
@@ -297,10 +309,8 @@ export function rightSemi(left, { right, joinCondition }) {
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
-    if (rightLength === 0)
+    if (leftLength === 0 || rightLength === 0)
         return [];
-    if (leftLength === 0)
-        return right;
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
     customValidator(

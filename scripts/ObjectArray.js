@@ -1,5 +1,5 @@
 import { addColumn, drop, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
-import { crossJoin, full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
+import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 
@@ -578,7 +578,7 @@ export class ObjectArray {
 
         return this.#internalCreateInstance(
             {
-                "method": crossJoin,
+                "method": innerJoin,
                 "param": {
                     right: other,   // execute triggers in join. thus lazy.
                     duplicateColumnFound, leftMapping, rightMapping,

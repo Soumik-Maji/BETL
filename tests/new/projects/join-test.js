@@ -84,6 +84,7 @@ export async function main() {
         .rename("LEFT.managerid", "managerid")
         .rename("RIGHT.name", "manager_name")
         .drop("RIGHT.empid", "RIGHT.role", "RIGHT.managerid")
+        .updateColumn("empid", item => item.empid.toString().padStart(3, "0"))
         .log(0, "self join on employee data");
 
     const endTimer = performance.now();
