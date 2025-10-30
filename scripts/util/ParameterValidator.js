@@ -9,30 +9,36 @@ export const DataTypes = Object.freeze({
  * throws error if the data type not matched with above provided types
  * @param {*} n
  * @param {DataTypes} type
+ * @param {string} customMsg
  */
-export function validateDataType(n, type) {
+export function validateDataType(n, type, customMsg = "") {
+    customMsg = customMsg === "" ? "" : `\n${customMsg}`;
+
     if (!(type in DataTypes))
-        throw new Error(`Invalid data type passed. Only below ones can be verified.\n${JSON.stringify(DataTypes, null, 2)}`);
+        throw new Error(`Invalid data type passed. Only below ones can be verified.\n${JSON.stringify(DataTypes, null, 2)}${customMsg}`);
 
     if (typeof n !== type)
-        throw new Error(`Data type of "${n}" is not ${type}.`);
+        throw new Error(`Data type of "${n}" is not ${type}.${customMsg}`);
 }
 
 /**
  * throws Error if column name not present in any Object. checked via columns member
  * @param {string[]} columnsPresent
  * @param {string} columnName
+ * @param {string} customMsg
  */
-export function validateColumnPresence(columnsPresent, columnName) {
+export function validateColumnPresence(columnsPresent, columnName, customMsg = "") {
+    customMsg = customMsg === "" ? "" : `\n${customMsg}`;
+
     validateDataType(columnName, DataTypes.string);
 
     columnName = columnName.trim();
     if (columnName === "")
-        throw new Error("Column Name must be a non-empty String");
+        throw new Error(`Column Name must be a non-empty String${customMsg}`);
 
     // no need to check for every object as they are validated before
     if (!(columnsPresent.includes(columnName)))
-        throw new Error(`"${columnName}" - No such column in data`);
+        throw new Error(`"${columnName}" - No such column in data${customMsg}`);
 }
 
 // regex to check for column names starting with alphabet & then it can have alphabet/ underscore/ number and nothing else
@@ -41,16 +47,19 @@ const pattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
  * throws Error if column name does not match regex pattern /^[a-zA-Z][a-zA-Z0-9_]*$/
  * @param {string[]} columnsPresent
  * @param {string} columnName
+ * @param {string} customMsg
  */
-export function validateNewColumn(columnsPresent, columnName) {
+export function validateNewColumn(columnsPresent, columnName, customMsg = "") {
+    customMsg = customMsg === "" ? "" : `\n${customMsg}`;
+
     validateDataType(columnName, DataTypes.string);
 
     if (!(pattern.test(columnName)))    // empty string check is done by regex
-        throw new Error(`"${columnName}" is not a valid column name to use.`);
+        throw new Error(`"${columnName}" is not a valid column name to use.${customMsg}`);
 
     // no need to check for every object as they are validated before
     if (columnsPresent.includes(columnName))
-        throw new Error(`"${columnName}" - already exists in data`);
+        throw new Error(`"${columnName}" - already exists in data.${customMsg}`);
 }
 
 /**

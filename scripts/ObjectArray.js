@@ -426,7 +426,7 @@ export class ObjectArray {
     sort(comparisonLogics) {
         customValidator(!(comparisonLogics instanceof SortLogicGenerator), "Configuration must be an instance of SortLogicGenerator.");
         comparisonLogics = comparisonLogics.build();
-        comparisonLogics.forEach(logic => validateColumnPresence(this.#columns, logic.column));
+        comparisonLogics.forEach(logic => validateColumnPresence(this.#columns, logic.column, "Column not found in data for sorting"));
 
         return this.#internalCreateInstance(
             {
@@ -575,12 +575,9 @@ export class ObjectArray {
     unionAll(other) {
         customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
 
-        try {
-            this.#columns.forEach(col => validateColumnPresence(other.#columns, col));
-        }
-        catch {
-            throw new Error("The column names do not match for the provided tables in unionAll.");
-        }
+        this.#columns.forEach(col =>
+            validateColumnPresence(other.#columns, col, "The column names do not match for the provided table in unionAll.")
+        );
 
         return this.#internalCreateInstance(
             {

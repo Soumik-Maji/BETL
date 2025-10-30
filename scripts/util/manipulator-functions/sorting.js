@@ -64,7 +64,15 @@ export function sort(arr, { comparisonLogics }) {
 // --------------- Configuration Object creator for sorting ---------------
 
 const constructorKey = Symbol("SortLogicGenerator");   // Symbol for object creation via private constructor
-
+/**
+ * This class generates the configuration object for Sorting.
+ * Call static method createInstance() for creating a instance of this class.
+ * Then chain the asc() & desc() methods to create what sorting order is requried.
+ * asc() & desc() both accepts 2 arguments the column name & an optional temprary transformation function on which the sorting happens.
+ *
+ * Like if a column has string data & you need to sort it by it's length
+ * but don't want to store the length in a new column then use the temporary function to achieve it temporarily
+ */
 export class SortLogicGenerator {
     #logics;    // to store the sorting configuration
 
