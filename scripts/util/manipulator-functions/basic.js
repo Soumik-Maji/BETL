@@ -1,5 +1,27 @@
+/*
+    figure out how I can put all these operations to make a single pass
+    over the array as all these are O(n) operations on the main array
+    not considering the resizing array thing going on in explode, filter & take
+*/
+
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, customValidator } from "../ParameterValidator.js";
+
+export function explode(arr, { columnName }) {
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+        const row = arr[i];
+        const cell = row[columnName];
+        const cellLength = cell.length;
+
+        row[columnName] = cell[0];  // overewrite the original column
+
+        // then start pushing rows with updated column value to original array
+        for (let j = 1; j < cellLength; j++)
+            arr.push({ ...row, [columnName]: cell[j] });
+    }
+    return arr;
+}
 
 export function rename(arr, { oldKey, newKey }) {
     const len = arr.length;

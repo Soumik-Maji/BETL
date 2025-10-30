@@ -1,4 +1,4 @@
-import { addColumn, drop, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
+import { addColumn, drop, explode, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
 import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
@@ -713,6 +713,27 @@ export class ObjectArray {
                 }
             },
             other.columns
+        );
+    }
+
+    /**
+     * explodes a column of the data into multiple rows.
+     * designed to work with anything iterable & has length data member.
+     * so works on both strings & arrays.
+     * use with absolute certainity or after modifying all rows with updateColumn()
+     * otherwise face unexpected results.
+     * @param {string} columnName name of column which is to exploded
+     * @returns {ObjectArray}
+     */
+    explode(columnName) {
+        validateColumnPresence(this.#columns, columnName);
+
+        return this.#internalCreateInstance(
+            {
+                "method": explode,
+                "param": { columnName }
+            },
+            this.columns
         );
     }
 
