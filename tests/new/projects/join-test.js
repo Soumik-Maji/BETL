@@ -77,13 +77,12 @@ export async function main() {
     const emp2 = employee.execute();
 
     employee.log(0, "Employee data");
-    employee.leftJoin(emp2, (a, b) => a.managerid === b.empid)
-        .rename("LEFT.empid", "empid")
-        .rename("LEFT.name", "name")
-        .rename("LEFT.role", "role")
-        .rename("LEFT.managerid", "managerid")
+    const t = employee.leftJoin(emp2, (a, b) => a.managerid === b.empid)
+        .renameRegex("LEFT.*", "$0")
         .rename("RIGHT.name", "manager_name")
-        .drop("RIGHT.empid", "RIGHT.role", "RIGHT.managerid")
+        .dropRegex("RIGHT.*")
+        .drop("managerid")
+        // .selectRegex("RIGHT.*")
         .updateColumn("empid", item => item.empid.toString().padStart(3, "0"))
         .log(0, "self join on employee data");
 

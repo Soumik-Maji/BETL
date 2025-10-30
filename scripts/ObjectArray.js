@@ -1,5 +1,6 @@
 import { addColumn, drop, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
 import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
+import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 
@@ -212,8 +213,39 @@ export class ObjectArray {
                 "method": rename,
                 "param": { oldKey, newKey }
             },
-            this.columns.map(col => col === oldKey ? newKey : col)  // replacing the column name
+            this.#columns.map(col => col === oldKey ? newKey : col)  // replacing the column name
         );
+    }
+
+    /**
+     * renames all the column names which matches the RegEx pattern.
+     * @param {string} oldRegex RegEx for old column name. for RegEx only * is allowed
+     * @param {string} replacementRegex RegEx for new column name. for RegEx only $n is allowed, where 'n' is chunk number starting from 0
+     * @example
+     * _.renameRegex("LEFT.*", "$0") // columns with "LEFT." prefix replaced with the part just after "LEFT."
+     * _.renameRegex("*__1Qt__*", "$0_$1") // column names having "__1Qt__" is replaced with "__1Qt__" removed & just an underscore between the 2 chunks
+     * @returns {ObjectArray}
+     */
+    renameRegex(oldRegex, replacementRegex) {
+        validateDataType(oldRegex, DataTypes.string);
+        customValidator(oldRegex === "", `Passed regex cannot be empty string`);
+        validateDataType(replacementRegex, DataTypes.string);
+        customValidator(replacementRegex === "", `Passed regex cannot be empty string`);
+
+        const updatedColumnList = renameRegexMapper(this.#columns, oldRegex, replacementRegex);
+        let tempInstance = this;
+
+        updatedColumnList.forEach(({ oldKey, newKey }) => {
+            tempInstance = tempInstance.#internalCreateInstance(
+                {
+                    "method": rename,
+                    "param": { oldKey, newKey }
+                },
+                tempInstance.#columns.map(col => col === oldKey ? newKey : col)  // replacing the column name
+            );
+        });
+
+        return tempInstance;
     }
 
     /**
@@ -289,7 +321,30 @@ export class ObjectArray {
         return this.#internalCreateInstance(
             {
                 "method": select,
-                "param": { columnNames, currentColumns: this.columns }
+                "param": { columnNames, currentColumns: this.#columns }
+            },
+            columnNames
+        );
+    }
+
+    /**
+     * select specific columns as per provided RegEx
+     * @param  {string} regex RegEx for column selection. for RegEx only * is allowed
+     * @example
+     * _.selectRegex("LEFT.*") // columns with "LEFT." prefix are to be selected
+     * _.selectRegex("*__1Qt__*") // column names having "__1Qt__" are to be selected
+     * @returns {ObjectArray}
+     */
+    selectRegex(regex) {
+        validateDataType(regex, DataTypes.string);
+        customValidator(regex === "", "Passed regex cannot be empty string");
+
+        const columnNames = regexMatch(this.#columns, regex);
+
+        return this.#internalCreateInstance(
+            {
+                "method": select,
+                "param": { columnNames, currentColumns: this.#columns }
             },
             columnNames
         );
@@ -311,7 +366,31 @@ export class ObjectArray {
                 "param": { columnNames }
             },
             // removing the columns names
-            this.columns.filter(col => !columnNames.includes(col))
+            this.#columns.filter(col => !columnNames.includes(col))
+        );
+    }
+
+    /**
+     * deletes the columns provided as RegEx
+     * @param  {string} regex RegEx for column selection. for RegEx only * is allowed
+     * @example
+     * _.dropRegex("LEFT.*") // columns with "LEFT." prefix are to be dropped
+     * _.dropRegex("*__1Qt__*") // column names having "__1Qt__" are to be dropped
+     * @returns {ObjectArray}
+     */
+    dropRegex(regex) {
+        validateDataType(regex, DataTypes.string);
+        customValidator(regex === "", "Passed regex cannot be empty string");
+
+        const columnNames = regexMatch(this.#columns, regex);
+
+        return this.#internalCreateInstance(
+            {
+                "method": drop,
+                "param": { columnNames }
+            },
+            // removing the columns names
+            this.#columns.filter(col => !columnNames.includes(col))
         );
     }
 
