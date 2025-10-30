@@ -3,6 +3,7 @@ import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi
 import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
+import { map, MappingGenerator } from "./util/manipulator-functions/mapping.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -734,6 +735,29 @@ export class ObjectArray {
         );
     }
 
+    /**
+     * maps the target's columns to respective source's columns
+     * @param {MappingGenerator} mappingRelations
+     * @returns {ObjectArray}
+     */
+    map(mappingRelations) {
+        customValidator(!(mappingRelations instanceof MappingGenerator), "Configuration must be an instance of MappingGenerator.");
+        mappingRelations = mappingRelations.build();
+
+        mappingRelations.relations.forEach(({ tgt }) =>
+            validateColumnPresence(this.#columns, tgt, "Column not found in target data for mapping")
+        );
+
+        return this.#internalCreateInstance(
+            {
+                "method": map,
+                "param": { mappingRelations, currentColumns: this.#columns }
+            },
+            this.columns
+        );
+    }
+
+
 }
 
 
@@ -822,32 +846,6 @@ export class ObjectArray {
 //             newData.push(tmpObject);
 //         }
 //         return ObjectArray.createInstance(newData);
-//     }
-
-//     /**
-//      * maps the target's columns to respective source's columns
-//      * @param {MappingGenerator} mappingRelations
-//      * @returns ObjectArray instance
-//      */
-//     map(mappingRelations) {
-//         // validating & parsing the mapping relation instance
-//         const { source, relations } = this.#validator.mapParameterValidator(mappingRelations);
-
-//         // gathering the target's data
-//         const targetData = this.data;
-//         // gathering the target's object structure
-//         const targetDataStructure = {};
-//         Object.keys(targetData[0]).forEach(key => targetDataStructure[key] = null);
-
-//         source.data.forEach(row => {    // loop over all source rows
-//             const newRow = { ...targetDataStructure };      // copy structure into temporary object
-
-//             for (const relation of relations)     // loop over columns to copy into temporary object
-//                 newRow[relation.tgt] = row[relation.src];
-
-//             targetData.push(newRow);     // push into target
-//         });
-//         return ObjectArray.createInstance(targetData);
 //     }
 
 //     window(windowSpecs) {
