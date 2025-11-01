@@ -15,7 +15,8 @@ export class JsonModifier {
         setProxy = true,
         modifyProxy = true
     } = {}) {
-        return arrayData.map(item => JsonModifier.objectProxy(item, { getProxy, deleteProxy, setProxy, modifyProxy }));
+        return Object.freeze(arrayData)
+            .map(item => JsonModifier.objectProxy(item, { getProxy, deleteProxy, setProxy, modifyProxy }));
     }
 
     /**

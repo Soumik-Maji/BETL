@@ -38,7 +38,7 @@ export function filter(arr, { customFilter }) {
     const len = arr.length;
     if (len === 0) {
         console.warn(`Empty array sent for filtering.\nfilter function -> ${customFilter}`);
-        return;
+        return [];
     }
 
     // I hope checking filter function on 1 element is enough
@@ -64,7 +64,7 @@ export function updateColumn(arr, { columnName, transformationFunction }) {
     const len = arr.length;
     if (len === 0) {
         console.warn(`Empty array sent for column - ${columnName} update.\ntransformation function -> ${customFilter}`);
-        return;
+        return [];
     }
     // Same thinking as for above filter function
     transformationFunction(JsonModifier.objectProxy(structuredClone(arr[0])));
@@ -80,7 +80,7 @@ export function addColumn(arr, { columnName, transformationFunction }) {
     const len = arr.length;
     if (len === 0) {
         console.warn(`Empty array sent for column - ${columnName} addition.\ntransformation function -> ${customFilter}`);
-        return;
+        return [];
     }
     // Same thinking as for above filter function
     transformationFunction(JsonModifier.objectProxy(structuredClone(arr[0])));
