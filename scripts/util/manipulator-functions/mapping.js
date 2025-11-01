@@ -21,7 +21,7 @@ export function map(arr, { mappingRelations, currentColumns }) {
     return arr;
 }
 
-// --------------- Configuration Object creator for sorting ---------------
+// --------------- Configuration Object creator for mapping ---------------
 
 const constructorKey = Symbol("MappingGenerator");   // Symbol for object creation via private constructor
 /**
@@ -46,7 +46,7 @@ export class MappingGenerator {
     /**
      * create mapper & set the source object of mapper
      * @param {ObjectArray} src
-     * @returns MappingGenerator instance
+     * @returns {MappingGenerator}
      */
     static setSource(src) {
         const tmpObj = new MappingGenerator(constructorKey);

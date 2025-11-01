@@ -331,6 +331,8 @@ export class ObjectArray {
         if (columnNames.length === 0)
             return this;
 
+        columnNames = [...(new Set(columnNames))];  // deduplicates the column names
+
         // validating the column names
         columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
 
@@ -374,6 +376,9 @@ export class ObjectArray {
     drop(...columnNames) {
         // validating the parameters
         customValidator(columnNames.length <= 0, "No column names to drop.");
+
+        columnNames = [...(new Set(columnNames))];  // deduplicates the column names
+
         columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
 
         return this.#internalCreateInstance(
