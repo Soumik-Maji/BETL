@@ -1,11 +1,11 @@
-import { GroupingGenerator } from "../generators/GroupingGenerator.js";
-import { MappingGenerator } from "../generators/MappingGenerator.js";
+import { GroupingGenerator } from "../REMOVE-generators/GroupingGenerator.js";
+import { MappingGenerator } from "../REMOVE-generators/MappingGenerator.js";
 import { ObjectArray } from "./ObjectArray.js";
-import { SortLogicGenerator } from "../generators/SortLogicGenerator.js";
+import { SortLogicGenerator } from "../REMOVE-generators/SortLogicGenerator.js";
 import { HTMLOutput } from "../outputs/HTMLOutput.js";
-import { RenameMapGenerator } from "../generators/RenameMapGenerator.js";
-import { DeduplicateGenerator } from "../generators/DeduplicateGenerator.js";
-import { WindowingGenerator } from "../generators/WindowingGenerator.js";
+import { RenameMapGenerator } from "../REMOVE-generators/RenameMapGenerator.js";
+import { DeduplicateGenerator } from "../REMOVE-generators/DeduplicateGenerator.js";
+import { WindowingGenerator } from "../REMOVE-generators/WindowingGenerator.js";
 
 export class ParameterValidator {
 
