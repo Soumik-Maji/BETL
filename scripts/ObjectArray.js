@@ -5,6 +5,7 @@ import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.j
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 import { map, MappingGenerator } from "./util/manipulator-functions/mapping.js";
 import { deepFreeze } from "./util/deep-freeze-helper.js";
+import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -777,66 +778,40 @@ export class ObjectArray {
         );
     }
 
+    /**
+     * de-duplicates the data as per provided column names.
+     * OPTIONALLY can take a resolve function to determine which one of the duplicates to keep.
+     * @param  {DeduplicateGenerator} deduplicationConfig
+     * @returns {ObjectArray}
+     */
+    deduplicate(deduplicationConfig) {
+        customValidator(!(deduplicationConfig instanceof DeduplicateGenerator), "Configuration must be an instance of DeduplicateGenerator.");
+        deduplicationConfig = deduplicationConfig.build();
+
+        deduplicationConfig.columns.forEach(col => validateColumnPresence(this.#columns, col));
+
+        return this.#internalCreateInstance(
+            {
+                "method": deduplicate,
+                "param": { deduplicationConfig }
+            },
+            this.columns
+        );
+    }
+
+    // TODO: OPTIMIZE THE DEDUPLICATE FUNCTION FOR SAVING MEMORY & TIME
 
     /*
         LATER ADDITION:
         - Another addition to ObjectArray instance method is checkExecutionTriggers()
             checkExecutionTriggers() -> goes recursively through the logicPlan of instance & checks how many execute calls are made
             idea is to have a predfined map of which methods call execute like joins & map-generator (so maybe indirectly maps) do but others don't
-        - also make logicPlan to be able to take some argument to determine how much information to show to user
+        - also make logicPlan getter to be able to take some argument to determine how much information to show to user
     */
 
 }
 
 
-//     /**
-//        DON'T ADD THIS METHOD (WILL BE IMPLEMENTING SINGLE PASS LATER TO OVERCOME THIS)
-//      * bulk renames column names using RenameMapGenerator
-//      * @param {RenameMapGenerator} renameMap
-//      * @returns ObjectArray instance
-//      */
-//     renameMany(renameMap) {
-//         const parsedRenameMap = this.#validator.renameMapParameterValidator(renameMap);
-
-//         return ObjectArray.#internalCreateInstance(
-//             this.data.map(item => {
-//                 const newItem = {};
-//                 Object.keys(item).forEach(key => {
-//                     const renameKey = parsedRenameMap[key] || key;
-//                     newItem[renameKey] = item[key];
-//                 });
-//                 return newItem;
-//             })
-//         );
-//     }
-
-//     /**
-//      * de-duplicates the data as per provided column names in spread operator syntax
-//      * @param  {DeduplicateGenerator} deduplicationData
-//      * @returns ObjectArray instance
-//      */
-//     deduplicate(deduplicationData) {
-//         const { columnNames, resolveFunction } = this.#validator.deduplicateParameterValidator(deduplicationData);
-
-//         let keyForCheck = null;
-//         const uniques = new Map();
-//         this.data.forEach(item => {
-//             const key = JSON.stringify(columnNames.map(col => item[col]));
-//             keyForCheck = key;      // storing to fetch later for proxy check
-//             if (!uniques.has(key))
-//                 uniques.set(key, []);
-//             uniques.get(key).push(item);
-//         });
-
-//         // validating the resolve function for illegal operations
-//         resolveFunction(JsonModifier.arrayOfObjectsProxy(uniques.get(keyForCheck)));
-
-//         const newData = [];
-//         for (const value of uniques.values())
-//             newData.push(resolveFunction(value));
-
-//         return ObjectArray.createInstance(newData);
-//     }
 
 //     /**
 //      * group by function similar to normal SQL
