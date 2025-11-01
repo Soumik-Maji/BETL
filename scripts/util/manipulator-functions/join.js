@@ -45,7 +45,7 @@ function mergeRows(leftRow, leftMapping, rightRow, rightMapping, duplicateColumn
 
 export function innerJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
     // execute the other table's pipeline to get latest data till this call
-    right = right.execute().data;
+    right = right.execute().readOnlyData;
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -72,7 +72,7 @@ export function innerJoin(left, { right, joinCondition, duplicateColumnFound, le
 export function leftJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
     right = right.execute();
     const rightColumns = right.columns;
-    right = right.data;
+    right = right.readOnlyData;
 
     const emptyRightRow = {}, rightColumnsLength = rightColumns.length;
     for (let i = 0; i < rightColumnsLength; i++)
@@ -112,7 +112,7 @@ export function leftJoin(left, { right, joinCondition, duplicateColumnFound, lef
 }
 
 export function rightJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
-    right = right.execute().data;
+    right = right.execute().readOnlyData;
 
     const emptyLeftRow = {}, leftColumns = Object.keys(leftMapping), leftColumnsLength = leftColumns.length;
     for (let i = 0; i < leftColumnsLength; i++)
@@ -152,7 +152,7 @@ export function rightJoin(left, { right, joinCondition, duplicateColumnFound, le
 }
 
 export function leftAnti(left, { right, joinCondition }) {
-    right = right.execute().data;
+    right = right.execute().readOnlyData;
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -185,7 +185,7 @@ export function leftAnti(left, { right, joinCondition }) {
 }
 
 export function rightAnti(left, { right, joinCondition }) {
-    right = right.execute().data;
+    right = right.execute().readOnlyData;
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -218,7 +218,7 @@ export function rightAnti(left, { right, joinCondition }) {
 }
 
 export function unionAll(left, { right }) {
-    right = right.execute().data;
+    right = right.execute().readOnlyData;
 
     const rightLength = right.length;
     for (let i = 0; i < rightLength; i++)
@@ -274,7 +274,7 @@ export function full(left, params) {
 }
 
 export function leftSemi(left, { right, joinCondition }) {
-    right = right.execute().data;
+    right = right.execute().readOnlyData;
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -305,7 +305,7 @@ export function leftSemi(left, { right, joinCondition }) {
 }
 
 export function rightSemi(left, { right, joinCondition }) {
-    right = right.execute().data;
+    right = right.execute().readOnlyData;
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 

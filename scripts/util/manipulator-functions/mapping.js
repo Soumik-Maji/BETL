@@ -53,7 +53,7 @@ export class MappingGenerator {
         customValidator(!(src instanceof ObjectArray), "Source must be an ObjectArray instance.");
         const resolved = src.execute();     // resolve the pipeline before proceeding to map it to target
         tmpObj.#srcColumns = resolved.columns;
-        tmpObj.#source = resolved.data;     // setting up source to be data directly
+        tmpObj.#source = resolved.readOnlyData;     // setting up source to be data directly
         return tmpObj;
     }
 

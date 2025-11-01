@@ -4,14 +4,16 @@ import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
 import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 import { map, MappingGenerator } from "./util/manipulator-functions/mapping.js";
+import { deepFreeze } from "./util/deep-freeze-helper.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
 export class ObjectArray {
 
     #data;      // actual data of the table (array of objects)
-    #logicPlan; // to store the operations which are to be applied (array)
-    #columns;   // store the most recent column names after an operation is registered (un-ordered array)
+    #logicPlan; // to store the operations which are to be applied (array of nested objects)
+    #columns;   // store the most recent column names after an operation is registered (array)
+    #isFrozen;  // manual check if #data is frozen or not(boolean)
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
@@ -20,6 +22,7 @@ export class ObjectArray {
         this.#data = [];
         this.#logicPlan = [];
         this.#columns = [];
+        this.#isFrozen = false;
     }
 
     // ---------------------- INSTANCE CREATOR ----------------------
@@ -77,14 +80,6 @@ export class ObjectArray {
 
     // ---------------------- GETTERS ----------------------
     /**
-    * gets a deep copy of the current state of source data
-    * @returns {Object[]}
-    */
-    get data() {
-        return structuredClone(this.#data);     // creating issues when doing with proxies
-    }
-
-    /**
     * gets a copy of column names
     * @returns {string[]}
     */
@@ -114,6 +109,26 @@ export class ObjectArray {
             };
         });
         return JSON.stringify(retVal, null, 2);
+    }
+
+    /**
+    * gets a deep copy of the current state of source data
+    * @returns {Object[]}
+    */
+    get data() {
+        return structuredClone(this.#data);
+    }
+
+    /**
+    * gets the current state of source data as deep frozen
+    * @returns {Object[]}
+    */
+    get readOnlyData() {
+        if (this.#isFrozen)
+            return this.#data;
+
+        this.#isFrozen = true;
+        return deepFreeze(this.#data);
     }
 
     // ---------------------- EXECUTION METHODS ----------------------
@@ -757,6 +772,14 @@ export class ObjectArray {
         );
     }
 
+
+    /*
+        LATER ADDITION:
+        - Another addition to ObjectArray instance method is checkExecutionTriggers()
+            checkExecutionTriggers() -> goes recursively through the logicPlan of instance & checks how many execute calls are made
+            idea is to have a predfined map of which methods call execute like joins & map-generator (so maybe indirectly maps) do but others don't
+        - also make logicPlan to be able to take some argument to determine how much information to show to user
+    */
 
 }
 
