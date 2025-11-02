@@ -800,6 +800,9 @@ export class ObjectArray {
     }
 
     // TODO: OPTIMIZE THE DEDUPLICATE FUNCTION FOR SAVING MEMORY & TIME
+    // DESIGN FLAW: the JsonModifier is not consistent in how it handles arrays & objects
+    //      proxies are applied on objects themselves -> later in pipeline changes might be trapped
+    //      arrays are frozen -> not a big issue for now as the arrays themselves are temporary data store
 
     /*
         LATER ADDITION:

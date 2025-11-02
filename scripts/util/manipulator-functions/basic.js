@@ -44,7 +44,7 @@ export function filter(arr, { customFilter }) {
     // I hope checking filter function on 1 element is enough
     // APPLY CUSTOM FILTER FUNCTION ON PROXIED EXAMPLE OBJECT
     // THIS WAY ALL GET, DELETE & PROPER FILTER FUNCTION IS CHECKED
-    let boolVal = customFilter(JsonModifier.objectProxy(structuredClone(arr[0])));
+    let boolVal = customFilter(JsonModifier.objectProxy(arr[0]));
     customValidator(typeof boolVal !== DataTypes.boolean, "Filter function does not return boolean");
 
     let writeIndex = 0;
@@ -67,7 +67,7 @@ export function updateColumn(arr, { columnName, transformationFunction }) {
         return [];
     }
     // Same thinking as for above filter function
-    transformationFunction(JsonModifier.objectProxy(structuredClone(arr[0])));
+    transformationFunction(JsonModifier.objectProxy(arr[0]));
 
     for (let i = 0; i < len; i++) {
         const row = arr[i];
@@ -83,7 +83,7 @@ export function addColumn(arr, { columnName, transformationFunction }) {
         return [];
     }
     // Same thinking as for above filter function
-    transformationFunction(JsonModifier.objectProxy(structuredClone(arr[0])));
+    transformationFunction(JsonModifier.objectProxy(arr[0]));
 
     for (let i = 0; i < len; i++) {
         const row = arr[i];

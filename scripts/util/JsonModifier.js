@@ -1,3 +1,11 @@
+/*
+    JsonModifier is inconsistent with how it handles array vs objects.
+    At least made the calls to this consistent, by not cloning the data sent to it.
+    Current implementation may change how the actual data is accessed & modified.
+    BUT BUT BUT... till now didn't see the issue, don't know why or how.
+    Consult bhai to understand it better.
+*/
+
 export class JsonModifier {
 
     constructor() {
