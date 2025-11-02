@@ -4,22 +4,25 @@ import { DataTypes, validateDataType } from "../ParameterValidator.js";
 export function deduplicate(arr, { deduplicationConfig }) {
     const { columns, resolveFunction } = deduplicationConfig;
 
-    let keyForCheck = null;
-    const uniques = new Map(), len = arr.length;
-    if (len === 0) {
-        console.warn("Empty array sent for deduplication.");
+    const len = arr.length;
+    if (len === 0)
         return [];
-    }
 
+    const uniques = new Map();
     for (let i = 0; i < len; i++) {
         const item = arr[i];
+        // building key
         const key = JSON.stringify(columns.map(col => item[col]));
-        keyForCheck = key;      // storing to fetch later for proxy check
-        if (!uniques.has(key))
-            uniques.set(key, []);
-        uniques.get(key).push(item);
+
+        let group = uniques.get(key);
+        if (!group) {
+            group = [];
+            uniques.set(key, group);
+        }
+        group.push(item);
     }
 
+    const keyForCheck = uniques.keys().next().value;    // get the first key
     // validating the resolve function for illegal operations
     resolveFunction(JsonModifier.arrayOfObjectsProxy(uniques.get(keyForCheck)));
 

@@ -3,24 +3,35 @@ import { ObjectArray } from "../../../scripts/ObjectArray.js";
 import { DeduplicateGenerator } from "../../../scripts/util/manipulator-functions/deduplicate.js";
 
 export async function main() {
-    const runsData = await readJSON("./tests/new/resource/test-data/fake-runs.json");
+    const detailsData = await readJSON("./tests/new/resource/test-data/fake-details.json");
 
     const start = performance.now();
 
-    let runs = ObjectArray.createInstance(runsData);
+    let details = ObjectArray.createInstance(detailsData);
 
-    runs
-        .renameRegex("* *", "$0$1")
-        .updateColumn("StartTime", item => new Date("2000-01-01T" + item.StartTime).getTime())
-        .updateColumn("EndTime", item => {
-            const endTime = new Date("2000-01-01T" + item.EndTime).getTime();
-            return endTime < item.StartTime ? endTime + 86400000 : endTime;
-        })
-        .addColumn("Duration", item => item.EndTime - item.StartTime)
+    details
+        .rename("Serial Number", "slno")
+        .rename("Job Name", "name")
+        .rename("Frequency", "fq")
+        .rename("Status", "status")
+        .rename("Start Time", "start")
+        .rename("End Time", "end")
+        .updateColumn("slno", item => item.status === "failed" ? null : item.slno)
+        .log()
         .deduplicate(
-            DeduplicateGenerator.setDeduplicatingColumns("Status")
+            DeduplicateGenerator.setDeduplicatingColumns("status", "fq")
                 // .max("StartTime")
-                .last()
+                // .last()
+                .setResolveFunction(item => {
+                    let maxSlnoObj = item[0];
+                    for (const elm of item) {
+                        if (elm.slno === undefined || elm.slno === null)
+                            continue;
+                        else
+                            maxSlnoObj = maxSlnoObj.name !== undefined && maxSlnoObj.name > elm.name ? maxSlnoObj : elm;
+                    }
+                    return maxSlnoObj;
+                })
 
             // EDGE CASE TESTING FOR RESOLVE FUNCTION
             // .setResolveFunction(arr => arr.slice(0, 3))
@@ -39,7 +50,7 @@ export async function main() {
             //     return item;
             // })
             // .setResolveFunction(arr => ({ userId: 999, name: 'Fake' }))
-            // .setResolveFunction(arr => runsData[0])  // Reference from different array
+            // .setResolveFunction(arr => detailsData[0])  // Reference from different array
             // .setResolveFunction(arr => {
             //     throw new Error("Custom error");
             // })
@@ -51,16 +62,11 @@ export async function main() {
             //     return arr[0];
             // })
         )
-        .updateColumn("StartTime", item => new Date(item.StartTime).toISOString().slice(11, 19))
-        .updateColumn("EndTime", item => new Date(item.EndTime).toISOString().slice(11, 19))
-        .updateColumn("Duration", item => new Date(item.Duration).toISOString().slice(11, 19))
+        // .updateColumn("StartTime", item => new Date(item.StartTime).toISOString().slice(11, 19))
+        // .updateColumn("EndTime", item => new Date(item.EndTime).toISOString().slice(11, 19))
+        // .updateColumn("Duration", item => new Date(item.Duration).toISOString().slice(11, 19))
+        // .updateColumn("slno", item => Number(item.slno))
         .log();
-
-    // let dedupGen = DeduplicateGenerator.setDeduplicatingColumns("c1", "c2", "c3")
-    //     .setResolveFunction((arr) => { arr[3] ?? arr[0] });
-
-    // dedupGen = dedupGen.build();
-    // console.log(dedupGen);
 
     const end = performance.now();
     console.log(`${end - start} ms`);
