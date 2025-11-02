@@ -36,10 +36,8 @@ export function rename(arr, { oldKey, newKey }) {
 
 export function filter(arr, { customFilter }) {
     const len = arr.length;
-    if (len === 0) {
-        console.warn(`Empty array sent for filtering.\nfilter function -> ${customFilter}`);
+    if (len === 0)
         return [];
-    }
 
     // I hope checking filter function on 1 element is enough
     // APPLY CUSTOM FILTER FUNCTION ON PROXIED EXAMPLE OBJECT
@@ -62,10 +60,9 @@ export function filter(arr, { customFilter }) {
 
 export function updateColumn(arr, { columnName, transformationFunction }) {
     const len = arr.length;
-    if (len === 0) {
-        console.warn(`Empty array sent for column - ${columnName} update.\ntransformation function -> ${customFilter}`);
+    if (len === 0)
         return [];
-    }
+
     // Same thinking as for above filter function
     transformationFunction(JsonModifier.objectProxy(arr[0]));
 
@@ -78,10 +75,9 @@ export function updateColumn(arr, { columnName, transformationFunction }) {
 
 export function addColumn(arr, { columnName, transformationFunction }) {
     const len = arr.length;
-    if (len === 0) {
-        console.warn(`Empty array sent for column - ${columnName} addition.\ntransformation function -> ${customFilter}`);
+    if (len === 0)
         return [];
-    }
+
     // Same thinking as for above filter function
     transformationFunction(JsonModifier.objectProxy(arr[0]));
 

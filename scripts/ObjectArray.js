@@ -142,10 +142,8 @@ export class ObjectArray {
      * @returns
      */
     #compute() {
-        if (this.#data.length === 0) {
-            console.warn("Nothing to do on empty data.");
+        if (this.#data.length === 0)
             return [];
-        }
 
         let workingData = this.data;  // create a clone
 

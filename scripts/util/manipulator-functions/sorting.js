@@ -23,7 +23,6 @@ export function sort(arr, { comparisonLogics }) {
 
             // Type check (optional but safer)
             if (typeof aVal !== typeof bVal) {
-                // console.warn(`Type mismatch in column '${column}': ${typeof aVal} vs ${typeof bVal}`);
                 // Fallback: convert both to strings for comparison
                 const comparison = String(aVal).localeCompare(String(bVal));
                 if (comparison !== 0)
