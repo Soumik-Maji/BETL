@@ -1,11 +1,12 @@
 import { addColumn, drop, explode, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
 import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
-import { sort, SortLogicGenerator } from "./util/manipulator-functions/sorting.js";
+import { SortLogicGenerator, sort } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
-import { map, MappingGenerator } from "./util/manipulator-functions/mapping.js";
+import { MappingGenerator, map } from "./util/manipulator-functions/mapping.js";
 import { deepFreeze } from "./util/deep-freeze-helper.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
+import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -801,44 +802,36 @@ export class ObjectArray {
 
     /**
      * group by function similar to normal SQL
-     * @param {GroupingGenerator} groupingData
+     * @param {GroupByGenerator} groupingConfig
      * @returns {ObjectArray}
      */
-    // groupBy(groupingData) {
-    //     const { groupingColumns, logics } = this.#validator.groupByParameterValidator(groupingData);
+    groupBy(groupingConfig) {
+        customValidator(!(groupingConfig instanceof GroupByGenerator), "Configuration must be an instance of GroupByGenerator.");
+        groupingConfig = groupingConfig.build();
+        const { groupingColumns, logics } = groupingConfig;
+        const newColumns = [];
 
-    //     const uniqueColumns = [...new Set(logics.map(item => item.column))];
+        // validating
+        groupingColumns.forEach(col => {
+            validateColumnPresence(this.#columns, col, "Grouping column not found in grouping data");
+            newColumns.push(col);
+        });
 
-    //     const groups = new Map();
-    //     this.data.forEach(item => {
-    //         const key = JSON.stringify(Object.fromEntries(groupingColumns.map(col => [col, item[col]])));
-    //         let groupValue = groups.get(key);
-    //         if (!groupValue) {
-    //             groupValue = [];
-    //             groups.set(key, groupValue);
-    //         }
+        logics.forEach(({ column, alias, ignore }) => {
+            if (!ignore)
+                validateColumnPresence(this.#columns, column, "Aggregating column not found in grouping data");
+            validateNewColumn(this.#columns, alias, "Invalid alias for aggregating column")
+            newColumns.push(alias);
+        });
 
-    //         const tmpObject = {};
-    //         uniqueColumns.forEach(col => tmpObject[col] = item[col]);
-    //         groupValue.push(tmpObject);
-    //     });
-
-    //     const newData = [];
-    //     for (const [key, groupValue] of groups) {
-    //         const tmpObject = { ...JSON.parse(key) };
-
-    //         for (const { column, aggFunc, alias } of logics) {
-    //             const tmpArray = groupValue.map(item => item[column]);
-    //             const aggResult = aggFunc(tmpArray);
-    //             tmpObject[alias] = aggResult;
-    //         }
-    //         newData.push(tmpObject);
-    //     }
-    //     return ObjectArray.createInstance(newData);
-    // }
-
-
-
+        return this.#internalCreateInstance(
+            {
+                "method": groupBy,
+                "param": { groupingConfig }
+            },
+            newColumns
+        );
+    }
 
     // DESIGN FLAW: the JsonModifier is not consistent in how it handles arrays & objects
     //      proxies are applied on objects themselves -> later in pipeline changes might be trapped

@@ -13,5 +13,8 @@
 // import { main } from "./tests/new/projects/dedup-test.js";
 // main();
 
-import { main } from "./tests/new/projects/generator-test.js";
+import { main } from "./tests/new/projects/groupby-test.js";
 main();
+
+// import { main } from "./tests/new/projects/generator-test.js";
+// main();

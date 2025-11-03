@@ -1,5 +1,50 @@
 import { DataTypes, customValidator, validateDataType } from "../ParameterValidator.js";
 
+export function groupBy(arr, { groupingConfig }) {
+    const { groupingColumns, logics } = groupingConfig;
+
+    const len = arr.length;
+    if (len === 0)
+        return [];
+
+    // get unqiue of all the aggregating columns except empty strings
+    const aggregatingColumns = [...new Set(logics.map(l => l.column).filter(c => c !== ""))];
+
+    const groups = new Map();
+    for (let i = 0; i < len; i++) {
+        const item = arr[i];
+
+        // create the key for map using intermediate object
+        const keyObj = {};
+        groupingColumns.forEach(col => keyObj[col] = item[col]);
+        const key = JSON.stringify(keyObj);
+
+        let groupValue = groups.get(key);
+        if (!groupValue) {
+            groupValue = [];
+            groups.set(key, groupValue);
+        }
+
+        // put the required columns into map's value using intermediary object
+        const tmpObj = {};
+        aggregatingColumns.forEach(col => tmpObj[col] = item[col]);
+        groupValue.push(tmpObj);
+    }
+
+    const newData = [];
+    for (const [key, groupValue] of groups) {
+        // parse key to get back grouping columns, data & row object
+        const tmpObj = JSON.parse(key);
+
+        for (const { column, alias, aggFunc } of logics) {
+            const tmpArr = groupValue.map(item => item[column]);
+            const aggResult = aggFunc(tmpArr);  // apply aggregation function
+            tmpObj[alias] = aggResult;          // and store in the row object
+        }
+        newData.push(tmpObj);
+    }
+    return newData;
+}
 
 // --------------- Configuration Object creator for group by ---------------
 
@@ -14,8 +59,10 @@ export class GroupByGenerator {
     #logics;    // array which contains the logics for aggregation
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
-            throw new Error("Cannot initialize GroupByGenerator using 'new'. Call static method setGroupingColumns() instead.");
+        customValidator(
+            passedKey !== constructorKey,
+            "Cannot initialize GroupByGenerator using 'new'. Call static method setGroupingColumns() instead."
+        );
 
         this.#columns = [];
         this.#logics = [];
@@ -48,6 +95,7 @@ export class GroupByGenerator {
         validateDataType(column, DataTypes.string, "Aggregation column name is not string.");
         validateDataType(alias, DataTypes.string, "Alias for aggregation column is not string.");
         validateDataType(aggregationFunction, DataTypes.function, "Aggregation function is not function.");
+        customValidator(this.#logics.some(lg => lg.alias === alias), `Cannot use same alias ${alias} twice`);
 
         this.#logics.push(Object.freeze({
             column, alias,
@@ -78,7 +126,7 @@ export class GroupByGenerator {
      */
     count(columnName, alias) {
         if (columnName === undefined || columnName === null || columnName === "") {
-            alias ||= "count_all";
+            alias ??= "count_all";
             const aggFunc = arr => arr.length;
 
             this.#logics.push(Object.freeze({
@@ -91,7 +139,7 @@ export class GroupByGenerator {
 
         return this.customAggregator(
             columnName,
-            alias || `count_${columnName}`,
+            alias ?? `count_${columnName}`,
             arr => {
                 let len = arr.length, count = 0;
                 for (let i = 0; i < len; i++) {
@@ -105,6 +153,20 @@ export class GroupByGenerator {
     }
 
     /**
+     * creates count aggregator
+     * @param {string} columnName
+     * @param {string} [alias]
+     * @returns {GroupByGenerator}
+     */
+    collectList(columnName, alias) {
+        return this.customAggregator(
+            columnName,
+            alias ?? `collectList_${columnName}`,
+            arr => arr
+        );
+    }
+
+    /**
      * creates sum aggregator
      * @param {string} columnName
      * @param {string} [alias]
@@ -113,7 +175,7 @@ export class GroupByGenerator {
     sum(columnName, alias) {
         return this.customAggregator(
             columnName,
-            alias || `sum_${columnName}`,
+            alias ?? `sum_${columnName}`,
             arr => {
                 let len = arr.length, total = 0;
                 for (let i = 0; i < len; i++) {
@@ -139,7 +201,7 @@ export class GroupByGenerator {
     avg(columnName, alias) {
         return this.customAggregator(
             columnName,
-            alias || `avg_${columnName}`,
+            alias ?? `avg_${columnName}`,
             arr => {
                 let total = 0, lenNumeric = 0, len = arr.length;
                 for (let i = 0; i < len; i++) {
@@ -167,7 +229,7 @@ export class GroupByGenerator {
     max(columnName, alias) {
         return this.customAggregator(
             columnName,
-            alias || `max_${columnName}`,
+            alias ?? `max_${columnName}`,
             arr => {
                 let maxVal = null, len = arr.length, comparatorFunc = null;
                 for (let i = 0; i < len; i++) {
@@ -200,7 +262,7 @@ export class GroupByGenerator {
     min(columnName, alias) {
         return this.customAggregator(
             columnName,
-            alias || `min_${columnName}`,
+            alias ?? `min_${columnName}`,
             arr => {
                 let minVal = null, len = arr.length, comparatorFunc = null;
                 for (let i = 0; i < len; i++) {
