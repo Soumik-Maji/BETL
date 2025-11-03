@@ -786,7 +786,9 @@ export class ObjectArray {
         customValidator(!(deduplicationConfig instanceof DeduplicateGenerator), "Configuration must be an instance of DeduplicateGenerator.");
         deduplicationConfig = deduplicationConfig.build();
 
-        deduplicationConfig.columns.forEach(col => validateColumnPresence(this.#columns, col));
+        deduplicationConfig.columns.forEach(col =>
+            validateColumnPresence(this.#columns, col, "Column not found in deduplication data for deduplicating")
+        );
 
         return this.#internalCreateInstance(
             {

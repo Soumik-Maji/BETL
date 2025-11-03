@@ -7,7 +7,7 @@ const constructorKey = Symbol("GroupByGenerator");   // Symbol for object creati
 /**
  * This class generates the configuration object for GroupBy.
  * Call static method setGroupingColumns() with column names to group by for creating a instance of this class.
- * Then chain the customAggregator() method or it's pre-defined versions count, sum, avg, max, min to use the aggregators.
+ * Then chain the customAggregator() method or it's convenience wrappers count, sum, avg, max, min to use the aggregators.
  */
 export class GroupByGenerator {
     #columns;   // columns on which the grouping is done
@@ -50,9 +50,8 @@ export class GroupByGenerator {
         validateDataType(aggregationFunction, DataTypes.function, "Aggregation function is not function.");
 
         this.#logics.push(Object.freeze({
-            column,
-            aggFunc: aggregationFunction,
-            alias
+            column, alias,
+            aggFunc: aggregationFunction
         }));
         return this;
     }
@@ -68,7 +67,7 @@ export class GroupByGenerator {
         });
     }
 
-    // NOTE: below are some widely used aggregator functions.
+    // ---------------------- Convenience Wrappers ----------------------
     // May have strange quirks of JavaScript's type system.
 
     /**
@@ -78,14 +77,22 @@ export class GroupByGenerator {
      * @returns {GroupByGenerator}
      */
     count(columnName, alias) {
-        let aggFunc = arr => arr.length;
         if (columnName === undefined || columnName === null || columnName === "") {
-            columnName = "";
             alias ||= "count_all";
+            const aggFunc = arr => arr.length;
+
+            this.#logics.push(Object.freeze({
+                column: "",
+                alias, aggFunc,
+                ignore: true,
+            }));
+            return this;
         }
-        else {
-            alias ||= `count_${columnName}`;
-            aggFunc = arr => {
+
+        return this.customAggregator(
+            columnName,
+            alias || `count_${columnName}`,
+            arr => {
                 let len = arr.length, count = 0;
                 for (let i = 0; i < len; i++) {
                     const elm = arr[i];
@@ -94,8 +101,7 @@ export class GroupByGenerator {
                 }
                 return count;
             }
-        }
-        return this.customAggregator(columnName, alias, aggFunc);
+        );
     }
 
     /**
