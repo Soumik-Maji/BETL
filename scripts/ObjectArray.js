@@ -15,7 +15,7 @@ export class ObjectArray {
     #data;      // actual data of the table (array of objects)
     #logicPlan; // to store the operations which are to be applied (array of nested objects)
     #columns;   // store the most recent column names after an operation is registered (array)
-    #isFrozen;  // manual check if #data is frozen or not(boolean)
+    #isFrozen;  // manual check if #data is frozen or not (boolean)
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
@@ -72,9 +72,17 @@ export class ObjectArray {
         return obj;
     }
 
-    #internalCreateInstance(addedLogicPlan, newColumns) {
+    /**
+     * stacks up the operations with latest operation & column names
+     * @param {Function} operationName
+     * @param {Object} parameter
+     * @param {string[]} newColumns
+     * @returns {ObjectArray}
+     */
+    #internalCreateInstance(operationName, parameter, newColumns) {
         const obj = new ObjectArray(constructorKey);
         obj.#data = this.#data;
+        const addedLogicPlan = { "method": operationName, "param": parameter };
         obj.#logicPlan = [...this.#logicPlan, addedLogicPlan];
         obj.#columns = newColumns;
         return obj;
@@ -225,10 +233,8 @@ export class ObjectArray {
         validateNewColumn(this.#columns, newKey);
 
         return this.#internalCreateInstance(
-            {
-                "method": rename,
-                "param": { oldKey, newKey }
-            },
+            rename,
+            { oldKey, newKey },
             this.#columns.map(col => col === oldKey ? newKey : col)  // replacing the column name
         );
     }
@@ -253,14 +259,11 @@ export class ObjectArray {
 
         updatedColumnList.forEach(({ oldKey, newKey }) => {
             tempInstance = tempInstance.#internalCreateInstance(
-                {
-                    "method": rename,
-                    "param": { oldKey, newKey }
-                },
+                rename,
+                { oldKey, newKey },
                 tempInstance.#columns.map(col => col === oldKey ? newKey : col)  // replacing the column name
             );
         });
-
         return tempInstance;
     }
 
@@ -273,10 +276,8 @@ export class ObjectArray {
         validateDataType(customFilter, DataTypes.function);
 
         return this.#internalCreateInstance(
-            {
-                "method": filter,
-                "param": { customFilter }
-            },
+            filter,
+            { customFilter },
             this.columns
         );
     }
@@ -292,10 +293,8 @@ export class ObjectArray {
         validateColumnPresence(this.#columns, columnName);
 
         return this.#internalCreateInstance(
-            {
-                "method": updateColumn,
-                "param": { columnName, transformationFunction }
-            },
+            updateColumn,
+            { columnName, transformationFunction },
             this.columns
         );
     }
@@ -313,10 +312,8 @@ export class ObjectArray {
         newcols.push(columnName) // adding the column name
 
         return this.#internalCreateInstance(
-            {
-                "method": addColumn,
-                "param": { columnName, transformationFunction }
-            },
+            addColumn,
+            { columnName, transformationFunction },
             newcols
         );
     }
@@ -337,10 +334,8 @@ export class ObjectArray {
         columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
 
         return this.#internalCreateInstance(
-            {
-                "method": select,
-                "param": { columnNames, currentColumns: this.#columns }
-            },
+            select,
+            { columnNames, currentColumns: this.#columns },
             columnNames
         );
     }
@@ -360,10 +355,8 @@ export class ObjectArray {
         const columnNames = regexMatch(this.#columns, regex);
 
         return this.#internalCreateInstance(
-            {
-                "method": select,
-                "param": { columnNames, currentColumns: this.#columns }
-            },
+            select,
+            { columnNames, currentColumns: this.#columns },
             columnNames
         );
     }
@@ -382,12 +375,9 @@ export class ObjectArray {
         columnNames.forEach(columnName => validateColumnPresence(this.#columns, columnName));
 
         return this.#internalCreateInstance(
-            {
-                "method": drop,
-                "param": { columnNames }
-            },
-            // removing the columns names
-            this.#columns.filter(col => !columnNames.includes(col))
+            drop,
+            { columnNames },
+            this.#columns.filter(col => !columnNames.includes(col)) // removing the columns names
         );
     }
 
@@ -406,12 +396,9 @@ export class ObjectArray {
         const columnNames = regexMatch(this.#columns, regex);
 
         return this.#internalCreateInstance(
-            {
-                "method": drop,
-                "param": { columnNames }
-            },
-            // removing the columns names
-            this.#columns.filter(col => !columnNames.includes(col))
+            drop,
+            { columnNames },
+            this.#columns.filter(col => !columnNames.includes(col)) // removing the columns names
         );
     }
 
@@ -428,10 +415,8 @@ export class ObjectArray {
         customValidator(offset < 0 || offset >= this.length, "offset cannot be negative or more than data count.");
 
         return this.#internalCreateInstance(
-            {
-                "method": take,
-                "param": { limit, offset }
-            },
+            take,
+            { limit, offset },
             this.columns
         );
     }
@@ -450,10 +435,8 @@ export class ObjectArray {
         comparisonLogics.forEach(logic => validateColumnPresence(this.#columns, logic.column, "Column not found in data for sorting"));
 
         return this.#internalCreateInstance(
-            {
-                "method": sort,
-                "param": { comparisonLogics }
-            },
+            sort,
+            { comparisonLogics },
             this.columns
         );
     }
@@ -474,13 +457,11 @@ export class ObjectArray {
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
         return this.#internalCreateInstance(
+            innerJoin,
             {
-                "method": innerJoin,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition,
-                    duplicateColumnFound, leftMapping, rightMapping
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition,
+                duplicateColumnFound, leftMapping, rightMapping
             },
             allColumns
         );
@@ -501,13 +482,11 @@ export class ObjectArray {
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
         return this.#internalCreateInstance(
+            leftJoin,
             {
-                "method": leftJoin,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition,
-                    duplicateColumnFound, leftMapping, rightMapping
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition,
+                duplicateColumnFound, leftMapping, rightMapping
             },
             allColumns
         );
@@ -528,13 +507,11 @@ export class ObjectArray {
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
         return this.#internalCreateInstance(
+            rightJoin,
             {
-                "method": rightJoin,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition,
-                    duplicateColumnFound, leftMapping, rightMapping
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition,
+                duplicateColumnFound, leftMapping, rightMapping
             },
             allColumns
         );
@@ -553,12 +530,10 @@ export class ObjectArray {
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
+            leftAnti,
             {
-                "method": leftAnti,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition
             },
             this.columns
         );
@@ -577,12 +552,10 @@ export class ObjectArray {
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
+            rightAnti,
             {
-                "method": rightAnti,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition
             },
             other.columns
         );
@@ -601,10 +574,8 @@ export class ObjectArray {
         );
 
         return this.#internalCreateInstance(
-            {
-                "method": unionAll,
-                "param": { right: other }   // execute triggers in join. thus lazy.
-            },
+            unionAll,
+            { right: other },   // execute triggers in join. thus lazy.
             this.columns
         );
     }
@@ -624,13 +595,11 @@ export class ObjectArray {
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
         return this.#internalCreateInstance(
+            fullAnti,
             {
-                "method": fullAnti,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition,
-                    duplicateColumnFound, leftMapping, rightMapping
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition,
+                duplicateColumnFound, leftMapping, rightMapping
             },
             allColumns
         );
@@ -651,13 +620,11 @@ export class ObjectArray {
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
         return this.#internalCreateInstance(
+            full,
             {
-                "method": full,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition,
-                    duplicateColumnFound, leftMapping, rightMapping
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition,
+                duplicateColumnFound, leftMapping, rightMapping
             },
             allColumns
         );
@@ -674,13 +641,11 @@ export class ObjectArray {
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
         return this.#internalCreateInstance(
+            innerJoin,
             {
-                "method": innerJoin,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    duplicateColumnFound, leftMapping, rightMapping,
-                    joinCondition: () => true
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                duplicateColumnFound, leftMapping, rightMapping,
+                joinCondition: () => true
             },
             allColumns
         );
@@ -699,12 +664,10 @@ export class ObjectArray {
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
+            leftSemi,
             {
-                "method": leftSemi,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition
             },
             this.columns
         );
@@ -723,12 +686,10 @@ export class ObjectArray {
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
+            rightSemi,
             {
-                "method": rightSemi,
-                "param": {
-                    right: other,   // execute triggers in join. thus lazy.
-                    joinCondition
-                }
+                right: other,   // execute triggers in join. thus lazy.
+                joinCondition
             },
             other.columns
         );
@@ -747,10 +708,8 @@ export class ObjectArray {
         validateColumnPresence(this.#columns, columnName);
 
         return this.#internalCreateInstance(
-            {
-                "method": explode,
-                "param": { columnName }
-            },
+            explode,
+            { columnName },
             this.columns
         );
     }
@@ -769,10 +728,8 @@ export class ObjectArray {
         );
 
         return this.#internalCreateInstance(
-            {
-                "method": map,
-                "param": { mappingRelations, currentColumns: this.#columns }
-            },
+            map,
+            { mappingRelations, currentColumns: this.#columns },
             this.columns
         );
     }
@@ -792,10 +749,8 @@ export class ObjectArray {
         );
 
         return this.#internalCreateInstance(
-            {
-                "method": deduplicate,
-                "param": { deduplicationConfig }
-            },
+            deduplicate,
+            { deduplicationConfig },
             this.columns
         );
     }
@@ -825,10 +780,8 @@ export class ObjectArray {
         });
 
         return this.#internalCreateInstance(
-            {
-                "method": groupBy,
-                "param": { groupingConfig }
-            },
+            groupBy,
+            { groupingConfig },
             newColumns
         );
     }
