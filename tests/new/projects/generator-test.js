@@ -1,4 +1,5 @@
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
+import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/grouping.js";
 import { MappingGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
 import { SortLogicGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
 
@@ -38,4 +39,23 @@ export function main() {
 
     // dedupGen = dedupGen.build();
     // console.log(dedupGen);
+
+    // ---------------------- GroupByGenerator ----------------------
+    let grbyGen = GroupByGenerator.setGroupingColumns("c1", "c2")
+        .count()
+        .count("c3")
+        .sum("c3")
+        .avg("c3")
+        .max("c3")
+        .min("c3")
+        .customAggregator("c3", "rms", arr => {
+            let result = 0;
+            for (let i = 0; i < arr.length; i++)
+                result += arr[i] * arr[i];
+            return Math.sqrt(result / arr.length);
+        });
+
+    grbyGen = grbyGen.build();
+    console.log(grbyGen);
+
 }

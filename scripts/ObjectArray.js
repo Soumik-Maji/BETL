@@ -797,7 +797,47 @@ export class ObjectArray {
         );
     }
 
-    // TODO: OPTIMIZE THE DEDUPLICATE FUNCTION FOR SAVING MEMORY & TIME
+    /**
+     * group by function similar to normal SQL
+     * @param {GroupingGenerator} groupingData
+     * @returns {ObjectArray}
+     */
+    // groupBy(groupingData) {
+    //     const { groupingColumns, logics } = this.#validator.groupByParameterValidator(groupingData);
+
+    //     const uniqueColumns = [...new Set(logics.map(item => item.column))];
+
+    //     const groups = new Map();
+    //     this.data.forEach(item => {
+    //         const key = JSON.stringify(Object.fromEntries(groupingColumns.map(col => [col, item[col]])));
+    //         let groupValue = groups.get(key);
+    //         if (!groupValue) {
+    //             groupValue = [];
+    //             groups.set(key, groupValue);
+    //         }
+
+    //         const tmpObject = {};
+    //         uniqueColumns.forEach(col => tmpObject[col] = item[col]);
+    //         groupValue.push(tmpObject);
+    //     });
+
+    //     const newData = [];
+    //     for (const [key, groupValue] of groups) {
+    //         const tmpObject = { ...JSON.parse(key) };
+
+    //         for (const { column, aggFunc, alias } of logics) {
+    //             const tmpArray = groupValue.map(item => item[column]);
+    //             const aggResult = aggFunc(tmpArray);
+    //             tmpObject[alias] = aggResult;
+    //         }
+    //         newData.push(tmpObject);
+    //     }
+    //     return ObjectArray.createInstance(newData);
+    // }
+
+
+
+
     // DESIGN FLAW: the JsonModifier is not consistent in how it handles arrays & objects
     //      proxies are applied on objects themselves -> later in pipeline changes might be trapped
     //      arrays are frozen -> not a big issue for now as the arrays themselves are temporary data store
@@ -813,44 +853,6 @@ export class ObjectArray {
 }
 
 
-
-//     /**
-//      * group by function similar to normal SQL
-//      * @param {GroupingGenerator} groupingData
-//      * @returns ObjectArray instance
-//      */
-//     groupBy(groupingData) {
-//         const { groupingColumns, logics } = this.#validator.groupByParameterValidator(groupingData);
-
-//         const uniqueColumns = [...new Set(logics.map(item => item.column))];
-
-//         const groups = new Map();
-//         this.data.forEach(item => {
-//             const key = JSON.stringify(Object.fromEntries(groupingColumns.map(col => [col, item[col]])));
-//             let groupValue = groups.get(key);
-//             if (!groupValue) {
-//                 groupValue = [];
-//                 groups.set(key, groupValue);
-//             }
-
-//             const tmpObject = {};
-//             uniqueColumns.forEach(col => tmpObject[col] = item[col]);
-//             groupValue.push(tmpObject);
-//         });
-
-//         const newData = [];
-//         for (const [key, groupValue] of groups) {
-//             const tmpObject = { ...JSON.parse(key) };
-
-//             for (const { column, aggFunc, alias } of logics) {
-//                 const tmpArray = groupValue.map(item => item[column]);
-//                 const aggResult = aggFunc(tmpArray);
-//                 tmpObject[alias] = aggResult;
-//             }
-//             newData.push(tmpObject);
-//         }
-//         return ObjectArray.createInstance(newData);
-//     }
 
 //     window(windowSpecs) {
 //         const { groupingColumns, sortingData, windowingData } = this.#validator.windowingParameterValidator(windowSpecs);

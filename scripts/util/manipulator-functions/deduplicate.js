@@ -115,7 +115,7 @@ export class DeduplicateGenerator {
 
             for (let i = 0; i < len; i++) {
                 const cellValue = arr[i][columnName];
-                if (cellValue === undefined || cellValue === null)
+                if (cellValue === undefined || cellValue === null || Number.isNaN(cellValue))
                     continue;
 
                 if (comparatorFunc === null) {
@@ -145,7 +145,7 @@ export class DeduplicateGenerator {
 
             for (let i = 0; i < len; i++) {
                 const cellValue = arr[i][columnName];
-                if (cellValue === undefined || cellValue === null)
+                if (cellValue === undefined || cellValue === null || Number.isNaN(cellValue))
                     continue;
 
                 if (comparatorFunc === null) {
