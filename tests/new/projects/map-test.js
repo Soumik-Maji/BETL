@@ -26,8 +26,7 @@ export async function main() {
             .relate("StartTime", "StartTime")
             .relate("EndTime", "EndTime")
     )
-        .log();
-
+        .log(0, "result");
 
     const end = performance.now();
     console.log(`${end - start} ms`);

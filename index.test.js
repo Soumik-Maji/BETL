@@ -1,4 +1,6 @@
-// import { main } from "./tests/new/projects/testing.js";
+const start = performance.now();
+
+// import { main } from "./tests/new/projects/basic-test.js";
 // await main();
 
 // import { main } from "./tests/new/projects/join-test.js";
@@ -11,10 +13,13 @@
 // await main();
 
 // import { main } from "./tests/new/projects/dedup-test.js";
-// main();
+// await main();
 
 import { main } from "./tests/new/projects/groupby-test.js";
-main();
+await main();
 
-// import { main } from "./tests/new/projects/generator-test.js";
-// main();
+// import { main  } from "./tests/new/projects/generator-test.js";
+// await main();
+
+const end = performance.now();
+console.log(`${end - start} ms`);
