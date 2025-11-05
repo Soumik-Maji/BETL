@@ -2,7 +2,7 @@ import { addColumn, drop, explode, filter, rename, select, take, updateColumn } 
 import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
 import { SortLogicGenerator, sort } from "./util/manipulator-functions/sorting.js";
-import { DataTypes, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
+import { DataTypes, validateColumnName, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 import { MappingGenerator, map } from "./util/manipulator-functions/mapping.js";
 import { deepFreeze } from "./util/deep-freeze-helper.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
@@ -49,26 +49,47 @@ export class ObjectArray {
         if (!isObject)
             throw new Error("Provided data is not array of objects.");
 
+        // validate column names
+        const firstKeys = Object.keys(jsonData[0]);
+        for (const key of firstKeys)    // check if column names are valid
+            validateColumnName(key, `Failed to create ObjectArray instance due to invalid column name '${key}'`);
+
+        // check objects' unformity
+        const matchKeys = new Set(firstKeys);
+        const isUniform = jsonData.every(item => {
+            const keys = Object.keys(item);
+            if (keys.length !== matchKeys.size)
+                return false;
+            return keys.every(k => matchKeys.has(k));
+        });
+        if (!isUniform)
+            throw new Error("Provided data array does not have uniform objects.");
+
         // creating the instance
         const obj = new ObjectArray(constructorKey);
+        obj.#columns = firstKeys;
+        obj.#data = structuredClone(jsonData);
 
-        if (jsonData.length !== 0) {
-            // check objects' unformity
-            const matchKeys = new Set(Object.keys(jsonData[0]));
-            const isUniform = jsonData.every(item => {
-                const keys = Object.keys(item);
-                if (keys.length !== matchKeys.size)
-                    return false;
-                return keys.every(k => matchKeys.has(k));
-            });
-            if (!isUniform)
-                throw new Error("Provided data array does not have uniform objects.");
+        return obj;
+    }
 
-            // initializing object if data is not empty
-            obj.#data = structuredClone(jsonData);
-            obj.#columns = Object.keys(obj.#data[0]);
-        }
+    /**
+     * creates ObjectArray instance with no data in it. just the column names.
+     * @param {...string} columnNames
+     * @returns {ObjectArray}
+     */
+    static createEmptyInstance(...columnNames) {
+        if (columnNames.length === 0)
+            throw new Error("Cannot create empty ObjectArray instance with no column names.");
 
+        if ((new Set(columnNames)).size !== columnNames.length)
+            throw new Error("Cannot create empty ObjectArray instance with duplicate column names.");
+
+        for (const col of columnNames)
+            validateColumnName(col, `Failed to create empty ObjectArray instance as column name '${col}' is not valid`);
+
+        const obj = new ObjectArray(constructorKey);
+        obj.#columns = columnNames;
         return obj;
     }
 
@@ -80,6 +101,9 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     #internalCreateInstance(operationName, parameter, newColumns) {
+        for (const col of newColumns)   // validate column names
+            validateColumnName(col, `Failed to add operation, as column name '${col}' is not valid`);
+
         const obj = new ObjectArray(constructorKey);
         obj.#data = this.#data;
         const addedLogicPlan = { "method": operationName, "param": parameter };
@@ -151,9 +175,6 @@ export class ObjectArray {
      * @returns
      */
     #compute() {
-        if (this.#data.length === 0)
-            return [];
-
         let workingData = this.data;  // create a clone
 
         // loop through all operations applying them 1 by 1
@@ -187,7 +208,6 @@ export class ObjectArray {
         const resultData = this.#compute();
         const resultObject = new ObjectArray(constructorKey);
         resultObject.#data = resultData;
-        resultObject.#logicPlan = [];
         resultObject.#columns = this.columns;
 
         return resultObject;
