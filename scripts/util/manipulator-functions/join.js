@@ -1,5 +1,5 @@
 import { JsonModifier } from "../JsonModifier.js";
-import { DataTypes, customValidator } from "../ParameterValidator.js";
+import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function getJoinColumns(leftCols, rightCols) {
     // leftCols & rightCols are usually small arrays
@@ -53,10 +53,7 @@ export function innerJoin(left, { right, joinCondition, duplicateColumnFound, le
         return [];
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
-    customValidator(
-        typeof boolVal !== DataTypes.boolean,
-        "Join condition function does not return boolean"
-    );
+    validateDataType(boolVal, DataTypes.boolean, "Join condition function does not return boolean");
 
     for (let li = 0; li < leftLength; li++) {
         const leftRow = left[li];
@@ -89,10 +86,7 @@ export function leftJoin(left, { right, joinCondition, duplicateColumnFound, lef
     }
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
-    customValidator(
-        typeof boolVal !== DataTypes.boolean,
-        "Join condition function does not return boolean"
-    );
+    validateDataType(boolVal, DataTypes.boolean, "Join condition function does not return boolean");
 
     for (let li = 0; li < leftLength; li++) {
         const leftRow = left[li];
@@ -129,10 +123,7 @@ export function rightJoin(left, { right, joinCondition, duplicateColumnFound, le
     }
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
-    customValidator(
-        typeof boolVal !== DataTypes.boolean,
-        "Join condition function does not return boolean"
-    );
+    validateDataType(boolVal, DataTypes.boolean, "Join condition function does not return boolean");
 
     for (let ri = 0; ri < rightLength; ri++) {
         const rightRow = right[ri];
@@ -162,10 +153,7 @@ export function leftAnti(left, { right, joinCondition }) {
         return left;
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
-    customValidator(
-        typeof boolVal !== DataTypes.boolean,
-        "Join condition function does not return boolean"
-    );
+    validateDataType(boolVal, DataTypes.boolean, "Join condition function does not return boolean");
 
     for (let li = 0; li < leftLength; li++) {
         const leftRow = left[li];
@@ -195,10 +183,7 @@ export function rightAnti(left, { right, joinCondition }) {
         return right;
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
-    customValidator(
-        typeof boolVal !== DataTypes.boolean,
-        "Join condition function does not return boolean"
-    );
+    validateDataType(boolVal, DataTypes.boolean, "Join condition function does not return boolean");
 
     for (let ri = 0; ri < rightLength; ri++) {
         const rightRow = right[ri];
@@ -282,10 +267,7 @@ export function leftSemi(left, { right, joinCondition }) {
         return [];
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
-    customValidator(
-        typeof boolVal !== DataTypes.boolean,
-        "Join condition function does not return boolean"
-    );
+    validateDataType(boolVal, DataTypes.boolean, "Join condition function does not return boolean");
 
     for (let li = 0; li < leftLength; li++) {
         const leftRow = left[li];
@@ -313,10 +295,7 @@ export function rightSemi(left, { right, joinCondition }) {
         return [];
 
     const boolVal = joinCondition(JsonModifier.objectProxy(left[0]), JsonModifier.objectProxy(right[0]));
-    customValidator(
-        typeof boolVal !== DataTypes.boolean,
-        "Join condition function does not return boolean"
-    );
+    validateDataType(boolVal, DataTypes.boolean, "Join condition function does not return boolean");
 
     for (let ri = 0; ri < rightLength; ri++) {
         const rightRow = right[ri];

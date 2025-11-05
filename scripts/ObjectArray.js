@@ -2,7 +2,7 @@ import { addColumn, drop, explode, filter, rename, select, take, updateColumn } 
 import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
 import { SortLogicGenerator, sort } from "./util/manipulator-functions/sorting.js";
-import { DataTypes, customValidator, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
+import { DataTypes, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 import { MappingGenerator, map } from "./util/manipulator-functions/mapping.js";
 import { deepFreeze } from "./util/deep-freeze-helper.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
@@ -250,9 +250,11 @@ export class ObjectArray {
      */
     renameRegex(oldRegex, replacementRegex) {
         validateDataType(oldRegex, DataTypes.string);
-        customValidator(oldRegex === "", `Passed regex cannot be empty string`);
+        if (oldRegex.trim() === "")
+            throw new Error(`Passed regex cannot be empty string`);
         validateDataType(replacementRegex, DataTypes.string);
-        customValidator(replacementRegex === "", `Passed regex cannot be empty string`);
+        if (replacementRegex.trim() === "")
+            throw new Error(`Passed regex cannot be empty string`);
 
         const updatedColumnList = renameRegexMapper(this.#columns, oldRegex, replacementRegex);
         let tempInstance = this;
@@ -350,7 +352,8 @@ export class ObjectArray {
      */
     selectRegex(regex) {
         validateDataType(regex, DataTypes.string);
-        customValidator(regex === "", "Passed regex cannot be empty string");
+        if (regex.trim() === "")
+            throw new Error("Passed regex cannot be empty string");
 
         const columnNames = regexMatch(this.#columns, regex);
 
@@ -368,7 +371,8 @@ export class ObjectArray {
      */
     drop(...columnNames) {
         // validating the parameters
-        customValidator(columnNames.length <= 0, "No column names to drop.");
+        if (columnNames.length <= 0)
+            throw new Error("No column names to drop.");
 
         columnNames = [...(new Set(columnNames))];  // deduplicates the column names
 
@@ -391,7 +395,8 @@ export class ObjectArray {
      */
     dropRegex(regex) {
         validateDataType(regex, DataTypes.string);
-        customValidator(regex === "", "Passed regex cannot be empty string");
+        if (regex.trim() === "")
+            throw new Error("Passed regex cannot be empty string");
 
         const columnNames = regexMatch(this.#columns, regex);
 
@@ -411,8 +416,10 @@ export class ObjectArray {
     take(limit, offset = 0) {
         validateDataType(limit, DataTypes.number);
         validateDataType(offset, DataTypes.number);
-        customValidator(limit < 0, "limit cannot be negative.");
-        customValidator(offset < 0 || offset >= this.length, "offset cannot be negative or more than data count.");
+        if (limit < 0)
+            throw new Error("limit cannot be negative.");
+        if (offset < 0 || offset >= this.length)
+            throw new Error("offset cannot be negative or more than data count.");
 
         return this.#internalCreateInstance(
             take,
@@ -430,7 +437,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     sort(comparisonLogics) {
-        customValidator(!(comparisonLogics instanceof SortLogicGenerator), "Configuration must be an instance of SortLogicGenerator.");
+        if (!(comparisonLogics instanceof SortLogicGenerator))
+            throw new Error("Configuration must be an instance of SortLogicGenerator.");
         comparisonLogics = comparisonLogics.build();
         comparisonLogics.forEach(logic => validateColumnPresence(this.#columns, logic.column, "Column not found in data for sorting"));
 
@@ -451,7 +459,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     innerJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
@@ -476,7 +485,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     leftJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
@@ -501,7 +511,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     rightJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
@@ -526,7 +537,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     leftAntiJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
@@ -548,7 +560,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     rightAntiJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
@@ -567,7 +580,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     unionAll(other) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
 
         this.#columns.forEach(col =>
             validateColumnPresence(other.#columns, col, "The column names do not match for the provided table in unionAll.")
@@ -589,7 +603,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     fullAntiJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
@@ -614,7 +629,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     fullJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
@@ -637,7 +653,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     crossJoin(other) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         const { duplicateColumnFound, leftMapping, rightMapping, allColumns } = getJoinColumns(this.#columns, other.#columns);
 
         return this.#internalCreateInstance(
@@ -660,7 +677,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     leftSemiJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
@@ -682,7 +700,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     rightSemiJoin(other, joinCondition) {
-        customValidator(!(other instanceof ObjectArray), "Need an ObjectArray instance to perform join.");
+        if (!(other instanceof ObjectArray))
+            throw new Error("Need an ObjectArray instance to perform join.");
         validateDataType(joinCondition, DataTypes.function);
 
         return this.#internalCreateInstance(
@@ -720,7 +739,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     map(mappingRelations) {
-        customValidator(!(mappingRelations instanceof MappingGenerator), "Configuration must be an instance of MappingGenerator.");
+        if (!(mappingRelations instanceof MappingGenerator))
+            throw new Error("Configuration must be an instance of MappingGenerator.");
         mappingRelations = mappingRelations.build();
 
         mappingRelations.relations.forEach(({ tgt }) =>
@@ -741,7 +761,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     deduplicate(deduplicationConfig) {
-        customValidator(!(deduplicationConfig instanceof DeduplicateGenerator), "Configuration must be an instance of DeduplicateGenerator.");
+        if (!(deduplicationConfig instanceof DeduplicateGenerator))
+            throw new Error("Configuration must be an instance of DeduplicateGenerator.");
         deduplicationConfig = deduplicationConfig.build();
 
         deduplicationConfig.columns.forEach(col =>
@@ -761,7 +782,8 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     groupBy(groupingConfig) {
-        customValidator(!(groupingConfig instanceof GroupByGenerator), "Configuration must be an instance of GroupByGenerator.");
+        if (!(groupingConfig instanceof GroupByGenerator))
+            throw new Error("Configuration must be an instance of GroupByGenerator.");
         groupingConfig = groupingConfig.build();
         const { groupingColumns, logics } = groupingConfig;
         const newColumns = [];

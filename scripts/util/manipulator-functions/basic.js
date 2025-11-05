@@ -5,7 +5,7 @@
 */
 
 import { JsonModifier } from "../JsonModifier.js";
-import { DataTypes, customValidator } from "../ParameterValidator.js";
+import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function explode(arr, { columnName }) {
     const len = arr.length;
@@ -43,7 +43,7 @@ export function filter(arr, { customFilter }) {
     // APPLY CUSTOM FILTER FUNCTION ON PROXIED EXAMPLE OBJECT
     // THIS WAY ALL GET, DELETE & PROPER FILTER FUNCTION IS CHECKED
     let boolVal = customFilter(JsonModifier.objectProxy(arr[0]));
-    customValidator(typeof boolVal !== DataTypes.boolean, "Filter function does not return boolean");
+    validateDataType(boolVal, DataTypes.boolean, "Filter function does not return boolean");
 
     let writeIndex = 0;
     for (let i = 0; i < len; i++) {

@@ -11,8 +11,8 @@ export const DataTypes = Object.freeze({
  * @param {DataTypes} type
  * @param {string} customMsg
  */
-export function validateDataType(n, type, customMsg = "") {
-    customMsg = customMsg === "" ? "" : `\n${customMsg}`;
+export function validateDataType(n, type, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
 
     if (!(type in DataTypes))
         throw new Error(`Invalid data type passed. Only below ones can be verified.\n${JSON.stringify(DataTypes, null, 2)}${customMsg}`);
@@ -27,8 +27,8 @@ export function validateDataType(n, type, customMsg = "") {
  * @param {string} columnName
  * @param {string} customMsg
  */
-export function validateColumnPresence(columnsPresent, columnName, customMsg = "") {
-    customMsg = customMsg === "" ? "" : `\n${customMsg}`;
+export function validateColumnPresence(columnsPresent, columnName, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
 
     validateDataType(columnName, DataTypes.string);
 
@@ -41,16 +41,14 @@ export function validateColumnPresence(columnsPresent, columnName, customMsg = "
         throw new Error(`"${columnName}" - No such column in data${customMsg}`);
 }
 
-// regex to check for column names starting with alphabet & then it can have alphabet/ underscore/ number and nothing else
-const pattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 /**
  * throws Error if column name does not match regex pattern /^[a-zA-Z][a-zA-Z0-9_]*$/
  * @param {string[]} columnsPresent
  * @param {string} columnName
  * @param {string} customMsg
  */
-export function validateNewColumn(columnsPresent, columnName, customMsg = "") {
-    customMsg = customMsg === "" ? "" : `\n${customMsg}`;
+export function validateNewColumn(columnsPresent, columnName, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
 
     validateDataType(columnName, DataTypes.string);
 
@@ -62,12 +60,18 @@ export function validateNewColumn(columnsPresent, columnName, customMsg = "") {
         throw new Error(`"${columnName}" - already exists in data.${customMsg}`);
 }
 
+// regex to check for column names starting with alphabet & then it can have alphabet/ underscore/ number and nothing else
+const pattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 /**
- * for creating small validators which is required for that particular case
- * @param {boolean} condition
- * @param {string} errorMessage
+ * validates if column name is starting with alphabet & then it can have alphabet/ underscore/ number and nothing else
+ * @param {string} columnName
+ * @param {string} customMsg
  */
-export function customValidator(condition, errorMessage) {
-    if (condition)
-        throw new Error(errorMessage);
+export function validateColumnName(columnName, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
+
+    validateDataType(columnName, DataTypes.string);
+
+    if (!(pattern.test(columnName)))    // empty string check is done by regex
+        throw new Error(`"${columnName}" is not a valid column name to use.${customMsg}`);
 }

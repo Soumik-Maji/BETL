@@ -1,5 +1,5 @@
 import { ObjectArray } from "../../ObjectArray.js";
-import { DataTypes, customValidator, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
+import { DataTypes, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
 
 export function map(arr, { mappingRelations, currentColumns }) {
     const { source, relations } = mappingRelations;
@@ -49,8 +49,10 @@ export class MappingGenerator {
      * @returns {MappingGenerator}
      */
     static setSource(src) {
+        if (!(src instanceof ObjectArray))
+            throw new Error("Source must be an ObjectArray instance.");
+
         const tmpObj = new MappingGenerator(constructorKey);
-        customValidator(!(src instanceof ObjectArray), "Source must be an ObjectArray instance.");
         const resolved = src.execute();     // resolve the pipeline before proceeding to map it to target
         tmpObj.#srcColumns = resolved.columns;
         tmpObj.#source = resolved.readOnlyData;     // setting up source to be data directly

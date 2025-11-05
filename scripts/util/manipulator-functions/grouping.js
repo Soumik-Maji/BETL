@@ -1,4 +1,4 @@
-import { DataTypes, customValidator, validateDataType } from "../ParameterValidator.js";
+import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function groupBy(arr, { groupingConfig }) {
     const { groupingColumns, logics } = groupingConfig;
@@ -59,10 +59,8 @@ export class GroupByGenerator {
     #logics;    // array which contains the logics for aggregation
 
     constructor(passedKey) {
-        customValidator(
-            passedKey !== constructorKey,
-            "Cannot initialize GroupByGenerator using 'new'. Call static method setGroupingColumns() instead."
-        );
+        if (passedKey !== constructorKey)
+            throw new Error("Cannot initialize GroupByGenerator using 'new'. Call static method setGroupingColumns() instead.");
 
         this.#columns = [];
         this.#logics = [];
@@ -75,7 +73,9 @@ export class GroupByGenerator {
      */
     static setGroupingColumns(...columnNames) {
         // validating the parameters
-        customValidator(columnNames.length <= 0, "No column names to group by.");
+        if (columnNames.length <= 0)
+            throw new Error("No column names to group by.");
+
         columnNames.forEach(col => validateDataType(col, DataTypes.string, "Grouping column name is not string."));
 
         const tmpObj = new GroupByGenerator(constructorKey);
@@ -95,7 +95,9 @@ export class GroupByGenerator {
         validateDataType(column, DataTypes.string, "Aggregation column name is not string.");
         validateDataType(alias, DataTypes.string, "Alias for aggregation column is not string.");
         validateDataType(aggregationFunction, DataTypes.function, "Aggregation function is not function.");
-        customValidator(this.#logics.some(lg => lg.alias === alias), `Cannot use same alias ${alias} twice`);
+
+        if (this.#logics.some(lg => lg.alias === alias))
+            throw new Error(`Cannot use same alias ${alias} twice`);
 
         this.#logics.push(Object.freeze({
             column, alias,
