@@ -40,7 +40,7 @@ export class ObjectArray {
             throw new Error("Provided data is not an array.");
 
         if (jsonData.length === 0)
-            throw new Error("Cannot create ObjectArray instance with empty data.");
+            throw new Error("Cannot create ObjectArray instance with empty data. use createEmptyInstance() instead.");
 
         // check if every element in jsonData array is an object, not null & not array
         const isObject = jsonData.every(item =>
@@ -101,9 +101,10 @@ export class ObjectArray {
      * @returns {ObjectArray}
      */
     #internalCreateInstance(operationName, parameter, newColumns) {
-        for (const col of newColumns)   // validate column names
-            validateColumnName(col, `Failed to add operation, as column name '${col}' is not valid`);
-
+        /*
+            THIS METHOD IS USED BY THE MANIPULATION METHOD FOR STACKING UP LOGIC PLAN.
+            COLUMN NAME VALIDATION IS DONE IN THEM, NO NEED HERE. [MOST PROBABLY]
+        */
         const obj = new ObjectArray(constructorKey);
         obj.#data = this.#data;
         const addedLogicPlan = { "method": operationName, "param": parameter };
@@ -828,9 +829,34 @@ export class ObjectArray {
         );
     }
 
-    // DESIGN FLAW: the JsonModifier is not consistent in how it handles arrays & objects
-    //      proxies are applied on objects themselves -> later in pipeline changes might be trapped
-    //      arrays are frozen -> not a big issue for now as the arrays themselves are temporary data store
+    //     window(windowSpecs) {
+    //         const { groupingColumns, sortingData, windowingData } = this.#validator.windowingParameterValidator(windowSpecs);
+
+    //         let tmpDataStore = (sortingData === null) ? this : this.sort(sortingData);
+    //         windowingData.forEach(({ alias }) => {
+    //             tmpDataStore = tmpDataStore.addColumn(alias, _ => undefined);
+    //         });
+
+    //         const groups = new Map();
+    //         tmpDataStore.data.forEach(item => {
+    //             const key = JSON.stringify(groupingColumns.map(col => item[col]));
+    //             if (!groups.has(key))
+    //                 groups.set(key, []);
+    //             groups.get(key).push(item);
+    //         });
+
+    //         tmpDataStore = Array.from(groups.values());     // re-using this to save some space
+    //         windowingData.forEach(({ windowFunction }) => {
+    //             windowFunction(JsonModifier.arrayOfObjectsProxy(tmpDataStore[0], { modifyProxy: false }))
+    //             tmpDataStore.forEach(group => windowFunction(group));
+    //         });
+
+    //         const newData = [];
+    //         groups.values().forEach(val => newData.push(...val));
+
+    //         return ObjectArray.createInstance(newData);
+    //     }
+    // }
 
     /*
         LATER ADDITION:
@@ -841,34 +867,3 @@ export class ObjectArray {
     */
 
 }
-
-
-
-//     window(windowSpecs) {
-//         const { groupingColumns, sortingData, windowingData } = this.#validator.windowingParameterValidator(windowSpecs);
-
-//         let tmpDataStore = (sortingData === null) ? this : this.sort(sortingData);
-//         windowingData.forEach(({ alias }) => {
-//             tmpDataStore = tmpDataStore.addColumn(alias, _ => undefined);
-//         });
-
-//         const groups = new Map();
-//         tmpDataStore.data.forEach(item => {
-//             const key = JSON.stringify(groupingColumns.map(col => item[col]));
-//             if (!groups.has(key))
-//                 groups.set(key, []);
-//             groups.get(key).push(item);
-//         });
-
-//         tmpDataStore = Array.from(groups.values());     // re-using this to save some space
-//         windowingData.forEach(({ windowFunction }) => {
-//             windowFunction(JsonModifier.arrayOfObjectsProxy(tmpDataStore[0], { modifyProxy: false }))
-//             tmpDataStore.forEach(group => windowFunction(group));
-//         });
-
-//         const newData = [];
-//         groups.values().forEach(val => newData.push(...val));
-
-//         return ObjectArray.createInstance(newData);
-//     }
-// }

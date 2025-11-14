@@ -41,8 +41,11 @@ export function validateColumnPresence(columnsPresent, columnName, customMsg = u
         throw new Error(`"${columnName}" - No such column in data${customMsg}`);
 }
 
+const newColumnAdditionPattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 /**
  * throws Error if column name does not match regex pattern /^[a-zA-Z][a-zA-Z0-9_]*$/
+ *
+ * column name must start with a letter, then it can have either letters, underscores & numbers only, nothing else.
  * @param {string[]} columnsPresent
  * @param {string} columnName
  * @param {string} customMsg
@@ -52,7 +55,7 @@ export function validateNewColumn(columnsPresent, columnName, customMsg = undefi
 
     validateDataType(columnName, DataTypes.string);
 
-    if (!(pattern.test(columnName)))    // empty string check is done by regex
+    if (!(newColumnAdditionPattern.test(columnName)))    // empty string check is done by regex
         throw new Error(`"${columnName}" is not a valid column name to use.${customMsg}`);
 
     // no need to check for every object as they are validated before
@@ -60,11 +63,10 @@ export function validateNewColumn(columnsPresent, columnName, customMsg = undefi
         throw new Error(`"${columnName}" - already exists in data.${customMsg}`);
 }
 
-// regex to check for column names starting with alphabet & then it can have alphabet/ underscore/ number and nothing else
-const pattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 /**
- * validates if column name is starting with alphabet & then it can have alphabet/ underscore/ number and nothing else
+ * validates if column name is string
  * @param {string} columnName
+ * @param {RegExp} pattern
  * @param {string} customMsg
  */
 export function validateColumnName(columnName, customMsg = undefined) {
@@ -72,6 +74,6 @@ export function validateColumnName(columnName, customMsg = undefined) {
 
     validateDataType(columnName, DataTypes.string);
 
-    if (!(pattern.test(columnName)))    // empty string check is done by regex
-        throw new Error(`"${columnName}" is not a valid column name to use.${customMsg}`);
+    // if (!(pattern.test(columnName)))    // empty string check is done by regex
+    //     throw new Error(`"${columnName}" is not a valid column name to use.${customMsg}`);
 }

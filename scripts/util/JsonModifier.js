@@ -1,11 +1,19 @@
 /*
-    JsonModifier is inconsistent with how it handles array vs objects.
-    At least made the calls to this consistent, by not cloning the data sent to it.
-    Current implementation may change how the actual data is accessed & modified.
-    BUT BUT BUT... till now didn't see the issue, don't know why or how.
-    Consult bhai to understand it better.
+    NOTE FOR PORXY -
+    the idea of proxies is like this :
+    an object obj is passed to a function to get proxied
+    the function returns the same object with porxies applied on it
+    when we do something related to the proxy on the original, it will be unaffected as it is not getting trapped by the proxies
+    but when we do something related to the proxy on the return value of the proxy applying function then it will be trapped
+    so, the idea is the object it self is not getting proxied, but the reference returned by it will have the proxy wrapper on it
+    ONE THING TO REMEMBER is the object is not cloned or shallow copied
 */
 
+/**
+ * - Wraps the object with get, set, delete traps.
+ * - Creates a shallow copy for the objects inside array (because of map function) to wrap it with proxies & then freeze it.
+ * - Currently works for my usecases, but still very fragile by design.
+ */
 export class JsonModifier {
 
     constructor() {
@@ -23,8 +31,11 @@ export class JsonModifier {
         setProxy = true,
         modifyProxy = true
     } = {}) {
-        return Object.freeze(arrayData)
-            .map(item => JsonModifier.objectProxy(item, { getProxy, deleteProxy, setProxy, modifyProxy }));
+        return Object.freeze(
+            arrayData.map(item =>
+                JsonModifier.objectProxy(item, { getProxy, deleteProxy, setProxy, modifyProxy })
+            )
+        );
     }
 
     /**
