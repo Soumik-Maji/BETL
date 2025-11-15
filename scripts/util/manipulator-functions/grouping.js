@@ -52,7 +52,7 @@ const constructorKey = Symbol("GroupByGenerator");   // Symbol for object creati
 /**
  * This class generates the configuration object for GroupBy.
  * Call static method setGroupingColumns() with column names to group by for creating a instance of this class.
- * Then chain the customAggregator() method or it's convenience wrappers count, sum, avg, max, min to use the aggregators.
+ * Then OPTIONALLY chain the customAggregator() method or it's convenience wrappers count, sum, avg, max, min to use the aggregators.
  */
 export class GroupByGenerator {
     #columns;   // columns on which the grouping is done

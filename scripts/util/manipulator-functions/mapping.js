@@ -86,6 +86,9 @@ export class MappingGenerator {
      * @returns immutable mapping configuration
      */
     build() {
+        if (this.#relations.length === 0)
+            throw new Error("There is no column mapping present.");
+
         return Object.freeze({
             source: this.#source,
             relations: Object.freeze(this.#relations)

@@ -47,7 +47,7 @@ const constructorKey = Symbol("DeduplicateGenerator");   // Symbol for object cr
 /**
  * This class generates the configuration object for Deduplicating.
  * Call static method setDeduplicatingColumns() with columns to deduplicate (spread operator syntax) for creating a instance of this class.
- * Then chain setResolveFunction() or it's convenience wrappers max, min, last (default is first) method to specify which row to keep.
+ * Then OPTIONALLY chain setResolveFunction() or it's convenience wrappers max, min, last (default is first) method to specify which row to keep.
  */
 export class DeduplicateGenerator {
 
