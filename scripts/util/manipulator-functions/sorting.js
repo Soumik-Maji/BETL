@@ -65,28 +65,32 @@ export function sort(arr, { comparisonLogics }) {
 const constructorKey = Symbol("SortLogicGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Sorting.
- * Call static method createInstance() for creating a instance of this class.
  * Then chain the asc() & desc() methods to create what sorting order is requried.
  * asc() & desc() both accepts 2 arguments the column name & an optional temprary transformation function on which the sorting happens.
  *
  * Like if a column has string data & you need to sort it by it's length
  * but don't want to store the length in a new column then use the temporary function to achieve it temporarily
+ *
+ * asc & desc have dynamically generated static verions as well. Example call -
+ * SortLogicGenerator.asc(...).desc(...).desc(...)
  */
 export class SortLogicGenerator {
     #logics;    // to store the sorting configuration
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
-            throw new Error("Cannot initialize SortLogicGenerator using 'new'. Call static method createInstance() instead.");
+            throw new Error("Cannot initialize SortLogicGenerator using 'new'. Call static methods asc() & desc() instead.");
 
         this.#logics = [];
     }
 
-    /**
-     * @returns {SortLogicGenerator} new instance of SortLogicGenerator class
-     */
-    static createInstance() {
-        return new SortLogicGenerator(constructorKey);
+    static {
+        ["asc", "desc"].forEach(method => {
+            SortLogicGenerator[method] = function (column, transformationFunction) {
+                const obj = new SortLogicGenerator(constructorKey);
+                return obj[method](column, transformationFunction);
+            }
+        });
     }
 
     /**

@@ -7,9 +7,7 @@ export async function main() {
     const jsonData = await readJSON(path);
 
     const oa = ObjectArray.createInstance(jsonData);
-    // debug(oa);
-
-    const startTimer = performance.now();
+    oa.log(0, "Original");
 
     let newOA = oa
         .rename("empid", "id")
@@ -28,7 +26,7 @@ export async function main() {
         .filter(item => item.role === "BACKEND")
 
         .sort(
-            SortLogicGenerator.createInstance()
+            SortLogicGenerator
                 .asc("role")
                 .desc("euid", item => item.substring(item.length - 1))
         )
@@ -38,19 +36,6 @@ export async function main() {
         .take(2, 1)
         ;
 
-    debug("Original", oa);
+    newOA.log(0, "After changes");
 
-    debug("After operations added", newOA);
-
-    const endTimer = performance.now();
-    console.log(`${endTimer - startTimer} ms`);
-}
-
-function debug(msg, oa) {
-    console.log(msg);
-    console.log("columns-> ", oa.columns);
-    // console.log("logic plan-> ", oa.logicPlan);
-    // console.table(oa.data);
-    oa.log();
-    console.log("------------------------- LINE GAP -------------------------");
 }

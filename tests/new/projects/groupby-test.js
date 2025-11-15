@@ -27,7 +27,7 @@ export async function main() {
 
     dataL = dataL
         .updateColumn("salary", item => Number(item.salary))
-        .sort(SortLogicGenerator.createInstance().asc("team").asc("dept"))
+        .sort(SortLogicGenerator.asc("team").asc("dept"))
         // .rename("dept", "department")
         .log(0, "Before grouping")
         .groupBy(
