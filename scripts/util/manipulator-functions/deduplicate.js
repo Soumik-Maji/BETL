@@ -12,7 +12,7 @@ export function deduplicate(arr, { deduplicationConfig }) {
     for (let i = 0; i < len; i++) {
         const item = arr[i];
         // building key
-        const key = JSON.stringify(columns.map(col => item[col]));
+        const key = columns.map(col => item[col]).join("\u0001");
 
         let group = uniques.get(key);
         if (!group) {

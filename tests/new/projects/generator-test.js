@@ -2,6 +2,7 @@ import { ObjectArray } from "../../../scripts/ObjectArray.js";
 import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/grouping.js";
 import { MappingGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
 import { SortLogicGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
+import { WindowFrame, WindowingGenerator } from "../../../scripts/util/manipulator-functions/window.js";
 
 export function main() {
 
@@ -41,21 +42,57 @@ export function main() {
     // console.log(dedupGen);
 
     // ---------------------- GroupByGenerator ----------------------
-    let grbyGen = GroupByGenerator.setGroupingColumns("c1", "c2")
-        .count()
+    // let grbyGen = GroupByGenerator.setGroupingColumns("c1", "c2")
+    //     .count()
+    //     .count("c3")
+    //     .sum("c3")
+    //     .avg("c3")
+    //     .max("c3")
+    //     .min("c3")
+    //     .customAggregator("c3", "rms", arr => {
+    //         let result = 0;
+    //         for (let i = 0; i < arr.length; i++)
+    //             result += arr[i] * arr[i];
+    //         return Math.sqrt(result / arr.length);
+    //     });
+
+    // grbyGen = grbyGen.build();
+    // console.log(grbyGen);
+
+    // ---------------------- WindowingGenerator ----------------------
+    let wGen = WindowingGenerator
+        .partitionBy("c1", "c2")
+        .orderBy(SortLogicGenerator.asc("c3").desc("c4", item => item.length))
+
+        .rowNumber()
+        .rank()
+        .denseRank()
+        .ntile(3)
+
+        .lead("c3", 2)
+        .lag("c3")
+
+        .firstValue("c3")
+        .lastValue("c3")
+        .nthValue("c3", 2)
+
+        .count("")
         .count("c3")
         .sum("c3")
         .avg("c3")
         .max("c3")
         .min("c3")
-        .customAggregator("c3", "rms", arr => {
-            let result = 0;
-            for (let i = 0; i < arr.length; i++)
-                result += arr[i] * arr[i];
+
+        .customFrameFunction("c3", "rms", arr => {
+            const result = arr.reduce((acc, elm) => acc + elm * elm, 0);
             return Math.sqrt(result / arr.length);
-        });
+        }, WindowFrame.rows(-1, 1)
+        )
 
-    grbyGen = grbyGen.build();
-    console.log(grbyGen);
+        .customNonFrameFunction("c_row", arr => -1)
 
+        .build();
+
+    console.log(wGen);
+    // console.log(JSON.stringify(wGen, null, 2));
 }
