@@ -21,7 +21,10 @@ const start = performance.now();
 // import { main } from "./tests/new/projects/rename-test.js";
 // await main();
 
-import { main } from "./tests/new/projects/generator-test.js";
+// import { main } from "./tests/new/projects/generator-test.js";
+// await main();
+
+import { main } from "./tests/new/projects/jsonmodifier-test.js";
 await main();
 
 // import { main } from "./tests/new/projects/window-test.js";
