@@ -1,6 +1,6 @@
 import { readJSON } from "./json-reader.js";
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { SortLogicGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
+import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
 
 export async function main() {
     const path = "./tests/new/resource/join-test-data/employees.json";
@@ -26,7 +26,7 @@ export async function main() {
         .filter(item => item.role === "BACKEND")
 
         .sort(
-            SortLogicGenerator
+            SortGenerator
                 .asc("role")
                 .desc("euid", item => item.substring(item.length - 1))
         )

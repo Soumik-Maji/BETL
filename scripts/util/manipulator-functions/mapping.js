@@ -23,20 +23,20 @@ export function map(arr, { mappingRelations, currentColumns }) {
 
 // --------------- Configuration Object creator for mapping ---------------
 
-const constructorKey = Symbol("MappingGenerator");   // Symbol for object creation via private constructor
+const constructorKey = Symbol("MapGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Mapping.
  * Call static method setSource() with source ObjectArray instance for creating a instance of this class.
  * Then chain the relate() method to map which source column needs to be mapped to which target column.
  */
-export class MappingGenerator {
+export class MapGenerator {
     #source;        // another ObjectArray instance from which source column data is taken
     #relations;     // to store source & target column names in array of objects format
     #srcColumns;    // this is for storing the source's columns for fast look up validation
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
-            throw new Error("Cannot initialize MappingGenerator using 'new'. Call static method setSource() instead.");
+            throw new Error("Cannot initialize MapGenerator using 'new'. Call static method setSource() instead.");
 
         this.#source = null;
         this.#relations = [];
@@ -46,13 +46,13 @@ export class MappingGenerator {
     /**
      * create mapper & set the source object of mapper
      * @param {ObjectArray} src
-     * @returns {MappingGenerator}
+     * @returns {MapGenerator}
      */
     static setSource(src) {
         if (!(src instanceof ObjectArray))
             throw new Error("Source must be an ObjectArray instance.");
 
-        const tmpObj = new MappingGenerator(constructorKey);
+        const tmpObj = new MapGenerator(constructorKey);
         const resolved = src.execute();     // resolve the pipeline before proceeding to map it to target
         tmpObj.#srcColumns = resolved.columns;
         tmpObj.#source = resolved.readOnlyData;     // setting up source to be data directly
@@ -63,7 +63,7 @@ export class MappingGenerator {
      * creates the relation between the target & source columns
      * @param {string} tgtCol target column name
      * @param {string} srcCol source column name
-     * @returns {MappingGenerator}
+     * @returns {MapGenerator}
      */
     relate(tgtCol, srcCol) {
         validateDataType(tgtCol, DataTypes.string);

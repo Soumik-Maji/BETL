@@ -1,6 +1,6 @@
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { SortLogicGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
-import { WindowFrame, WindowingGenerator } from "../../../scripts/util/manipulator-functions/window.js";
+import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
+import { WindowFrame, WindowGenerator } from "../../../scripts/util/manipulator-functions/window.js";
 import { readJSON } from "../projects/json-reader.js";
 
 export async function main() {
@@ -21,9 +21,9 @@ export async function main() {
         .updateColumn("salary", item => item.salary === "" ? null : Number(item.salary))
         .updateColumn("salary", item => item.team === "A" && item.dept === "HR" ? null : item.salary)
         // .log(0, "Original")
-        .window(WindowingGenerator
+        .window(WindowGenerator
             .partitionBy("team")
-            .orderBy(SortLogicGenerator.asc("salary"))
+            .orderBy(SortGenerator.asc("salary"))
 
             .rowNumber()
             .rank()

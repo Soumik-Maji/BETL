@@ -62,7 +62,7 @@ export function sort(arr, { comparisonLogics }) {
 
 // --------------- Configuration Object creator for sorting ---------------
 
-const constructorKey = Symbol("SortLogicGenerator");   // Symbol for object creation via private constructor
+const constructorKey = Symbol("SortGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Sorting.
  * Then chain the asc() & desc() methods to create what sorting order is requried.
@@ -72,22 +72,22 @@ const constructorKey = Symbol("SortLogicGenerator");   // Symbol for object crea
  * but don't want to store the length in a new column then use the temporary function to achieve it temporarily
  *
  * asc & desc have dynamically generated static verions as well. Example call -
- * SortLogicGenerator.asc(...).desc(...).desc(...)
+ * SortGenerator.asc(...).desc(...).desc(...)
  */
-export class SortLogicGenerator {
+export class SortGenerator {
     #logics;    // to store the sorting configuration
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
-            throw new Error("Cannot initialize SortLogicGenerator using 'new'. Call static methods asc() & desc() instead.");
+            throw new Error("Cannot initialize SortGenerator using 'new'. Call static methods asc() & desc() instead.");
 
         this.#logics = [];
     }
 
     static {
         ["asc", "desc"].forEach(method => {
-            SortLogicGenerator[method] = function (column, transformationFunction) {
-                const obj = new SortLogicGenerator(constructorKey);
+            SortGenerator[method] = function (column, transformationFunction) {
+                const obj = new SortGenerator(constructorKey);
                 return obj[method](column, transformationFunction);
             }
         });
@@ -98,7 +98,7 @@ export class SortLogicGenerator {
      * @param {string} column
      * @param {number} dir
      * @param {Function} transformationFunction
-     * @returns {SortLogicGenerator}
+     * @returns {SortGenerator}
      */
     #customSortLogic(column, dir, transformationFunction) {
         validateDataType(column, DataTypes.string);
@@ -115,7 +115,7 @@ export class SortLogicGenerator {
      * to sort in ascending order, can send temporary transformation function to be applied before sorting
      * @param {string} column
      * @param {Function} transformationFunction
-     * @returns {SortLogicGenerator}
+     * @returns {SortGenerator}
      */
     asc(column, transformationFunction = item => item) {
         return this.#customSortLogic(column, 1, transformationFunction);
@@ -125,7 +125,7 @@ export class SortLogicGenerator {
       * to sort in descending order, can send temporary transformation function to be applied before sorting
       * @param {string} column
       * @param {Function} transformationFunction
-      * @returns {SortLogicGenerator}
+      * @returns {SortGenerator}
       */
     desc(column, transformationFunction = item => item) {
         return this.#customSortLogic(column, -1, transformationFunction);

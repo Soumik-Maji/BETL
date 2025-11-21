@@ -1,13 +1,13 @@
 import { addColumn, drop, explode, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
 import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
-import { SortLogicGenerator, sort } from "./util/manipulator-functions/sorting.js";
+import { SortGenerator, sort } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, validateColumnName, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
-import { MappingGenerator, map } from "./util/manipulator-functions/mapping.js";
+import { MapGenerator, map } from "./util/manipulator-functions/mapping.js";
 import { deepFreeze } from "./util/deep-freeze-helper.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
 import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping.js";
-import { WindowingGenerator, windowing } from "./util/manipulator-functions/window.js";
+import { WindowGenerator, windowing } from "./util/manipulator-functions/window.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -451,16 +451,16 @@ export class ObjectArray {
     }
 
     /**
-     * accepts SortLogicGenerator instance.
+     * accepts SortGenerator instance.
      * need to call correct sorting order method.
      * need to mention the column name correctly.
      * [OPTIONALLY] can send a temporary transformation function to sort without storing them for long term.
-     * @param {SortLogicGenerator} comparisonLogics
+     * @param {SortGenerator} comparisonLogics
      * @returns {ObjectArray}
      */
     sort(comparisonLogics) {
-        if (!(comparisonLogics instanceof SortLogicGenerator))
-            throw new Error("Configuration must be an instance of SortLogicGenerator.");
+        if (!(comparisonLogics instanceof SortGenerator))
+            throw new Error("Configuration must be an instance of SortGenerator.");
         comparisonLogics = comparisonLogics.build();
         comparisonLogics.forEach(logic => validateColumnPresence(this.#columns, logic.column, "Column not found in data for sorting"));
 
@@ -757,12 +757,12 @@ export class ObjectArray {
 
     /**
      * maps the target's columns to respective source's columns
-     * @param {MappingGenerator} mappingRelations
+     * @param {MapGenerator} mappingRelations
      * @returns {ObjectArray}
      */
     map(mappingRelations) {
-        if (!(mappingRelations instanceof MappingGenerator))
-            throw new Error("Configuration must be an instance of MappingGenerator.");
+        if (!(mappingRelations instanceof MapGenerator))
+            throw new Error("Configuration must be an instance of MapGenerator.");
         mappingRelations = mappingRelations.build();
 
         mappingRelations.relations.forEach(({ tgt }) =>
@@ -830,18 +830,30 @@ export class ObjectArray {
         );
     }
 
+    /**
+     * NOTE / TODO:
+     * - range between is not implemented
+     * - actual function is implemented but not very optimal due to several copies & stuff inside hotloop
+     * - also there could be some hidden bugs, check for it as well
+     *
+     * window function similar to normal SQL, with some added quirks.
+     * - row & range frames are independent for each function
+     * - several functions can be stacked in a functional manner
+     * @param {WindowGenerator} windowConfig
+     * @returns {ObjectArray}
+     */
     window(windowConfig) {
-        if (!(windowConfig instanceof WindowingGenerator))
-            throw new Error("Configuration must be an instance of WindowingGenerator.");
+        if (!(windowConfig instanceof WindowGenerator))
+            throw new Error("Configuration must be an instance of WindowGenerator.");
 
         const newColumns = this.columns;
         windowConfig = windowConfig.build();
         const { groupingColumns, sortingData, windowingData } = windowConfig;
 
         // validating
-        groupingColumns.forEach(col => validateColumnPresence(this.#columns, col, "Wrong column provided for pratition by in WindowingGenerator"));
+        groupingColumns.forEach(col => validateColumnPresence(this.#columns, col, "Wrong column provided for pratition by in WindowGenerator"));
 
-        sortingData.forEach(logic => validateColumnPresence(this.#columns, logic.column, "Column not found in data for sorting in WindowingGenerator"));
+        sortingData.forEach(logic => validateColumnPresence(this.#columns, logic.column, "Column not found in data for sorting in WindowGenerator"));
 
         windowingData.forEach(wid => {
             validateNewColumn(this.#columns, wid.alias);

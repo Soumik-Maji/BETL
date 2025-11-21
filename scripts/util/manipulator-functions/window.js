@@ -1,6 +1,6 @@
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
-import { SortLogicGenerator, sort } from "./sorting.js";
+import { SortGenerator, sort } from "./sorting.js";
 
 function checkColumnsMatching(expectedCols, actualCols) {
     if (expectedCols.length !== actualCols.length)
@@ -128,7 +128,7 @@ export const WindowFrame = {
     end: Number.POSITIVE_INFINITY
 };
 
-const constructorKey = Symbol("WindowingGenerator");   // Symbol for object creation via private constructor
+const constructorKey = Symbol("WindowGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Windowing.
  * partitionBy, orderBy, customNonFrameFunction, customFrameFunction, count, sum, avg, max, min
@@ -139,7 +139,7 @@ const constructorKey = Symbol("WindowingGenerator");   // Symbol for object crea
  * partitionBy, orderBy, customNonFrameFunction, customFrameFunction, rowNumber, rank, denseRank, ntile, lead, lag, firstValue,
  * lastValue, nthValue, count, sum, avg, max, min
  */
-export class WindowingGenerator {
+export class WindowGenerator {
     #groupingColumns;       // array of column names on which grouping is to be done
     #sortingConfig;         // SortLogicGenerator instance to handle sorting data
     #windowFunctionArray;   // array contains all the window functions used in calculation
@@ -151,7 +151,7 @@ export class WindowingGenerator {
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
-            throw new Error("Cannot initialize WindowingGenerator using 'new'. Call static methods instead.");
+            throw new Error("Cannot initialize WindowGenerator using 'new'. Call static methods instead.");
 
         this.#groupingColumns = [];
         this.#sortingConfig = [];
@@ -168,8 +168,8 @@ export class WindowingGenerator {
             "collectList", "count", "sum", "avg", "max", "min"
         ];
         functionsArray.forEach(method => {
-            WindowingGenerator[method] = function (...args) {
-                const obj = new WindowingGenerator(constructorKey);
+            WindowGenerator[method] = function (...args) {
+                const obj = new WindowGenerator(constructorKey);
                 return obj[method](...args);
             }
         });
@@ -196,7 +196,7 @@ export class WindowingGenerator {
         if (this.#isWindowFunctionSet)
             throw new Error("Cannot set sorting order after setting any window function.");
 
-        if (!(sortConfig instanceof SortLogicGenerator))
+        if (!(sortConfig instanceof SortGenerator))
             throw new Error("Sorting config must be set using SortLogicGenerator.");
 
         this.#isSortingSet = true;

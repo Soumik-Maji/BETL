@@ -1,7 +1,7 @@
 import { readJSON } from "./json-reader.js";
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
 import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/grouping.js";
-import { SortLogicGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
+import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
 
 export async function main() {
     const path = "./tests/new/resource/window-test-data/testing-window.json";
@@ -22,12 +22,12 @@ export async function main() {
     //     .rename("LEFT.salary", "orisal")
     //     .dropRegex("RIGHT.*")
     //     .renameRegex("LEFT.*", "$0")
-    //     .sort(SortLogicGenerator.createInstance().asc("team").asc("dept"))
+    //     .sort(SortGenerator.createInstance().asc("team").asc("dept"))
     //     .log();
 
     dataL = dataL
         .updateColumn("salary", item => Number(item.salary))
-        .sort(SortLogicGenerator.asc("team").asc("dept"))
+        .sort(SortGenerator.asc("team").asc("dept"))
         // .rename("dept", "department")
         .log(0, "Before grouping")
         .groupBy(

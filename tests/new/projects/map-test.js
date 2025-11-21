@@ -1,5 +1,5 @@
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { MappingGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
+import { MapGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
 import { readJSON } from "./json-reader.js";
 
 export async function main() {
@@ -19,7 +19,7 @@ export async function main() {
     // runs.log(0, "runs");
 
     const result = details.map(
-        MappingGenerator.setSource(runs)
+        MapGenerator.setSource(runs)
             .relate("JobName", "Instance")
             .relate("Frequency", "Status")
             .relate("Status", "Status")
