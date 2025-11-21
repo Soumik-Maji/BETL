@@ -61,35 +61,45 @@ export function main() {
 
     // ---------------------- WindowingGenerator ----------------------
     let wGen = WindowingGenerator
-        .partitionBy("c1", "c2")
-        .orderBy(SortLogicGenerator.asc("c3").desc("c4", item => item.length))
+        .partitionBy("team")
+        .orderBy(SortLogicGenerator.asc("salary"))
 
         .rowNumber()
         .rank()
         .denseRank()
-        .ntile(3)
+        .ntile(4)
 
-        .lead("c3", 2)
-        .lag("c3")
+        .lead("salary", 2)
+        .lag("salary")
 
-        .firstValue("c3")
-        .lastValue("c3")
-        .nthValue("c3", 2)
+        .customNonFrameFunction("c_row", arr => {
+            let r = 5;
+            arr.forEach(item => {
+                // item.shady_prop = -99;  // not good as not alias. solved.
+                // item.team = "dope";     // already blocked by modify proxy
+                item.c_row = r--;
+            })
+        })
 
-        .count("")
-        .count("c3")
-        .sum("c3")
-        .avg("c3")
-        .max("c3")
-        .min("c3")
+        .firstValue("salary")
+        .lastValue("salary")
+        .nthValue("salary", 20)
 
-        .customFrameFunction("c3", "rms", arr => {
-            const result = arr.reduce((acc, elm) => acc + elm * elm, 0);
-            return Math.sqrt(result / arr.length);
-        }, WindowFrame.rows(-1, 1)
+        .collectList("salary", "all_sal")
+        .count()
+        .count("salary")
+        .sum("salary")
+        .avg("salary")
+        .max("salary")
+        .min("salary", "PTNmin", WindowFrame.rows(-1, 1))
+
+        .customFrameFunction("salary", "rms",
+            arr => {
+                const result = arr.reduce((acc, elm) => acc + elm * elm, 0);
+                return Math.sqrt(result / arr.length);
+            },
+            WindowFrame.rows(-1, 1)
         )
-
-        .customNonFrameFunction("c_row", arr => -1)
 
         .build();
 

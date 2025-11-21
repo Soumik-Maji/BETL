@@ -7,6 +7,7 @@ import { MappingGenerator, map } from "./util/manipulator-functions/mapping.js";
 import { deepFreeze } from "./util/deep-freeze-helper.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
 import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping.js";
+import { WindowingGenerator, windowing } from "./util/manipulator-functions/window.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -829,34 +830,34 @@ export class ObjectArray {
         );
     }
 
-    //     window(windowSpecs) {
-    //         const { groupingColumns, sortingData, windowingData } = this.#validator.windowingParameterValidator(windowSpecs);
+    window(windowConfig) {
+        if (!(windowConfig instanceof WindowingGenerator))
+            throw new Error("Configuration must be an instance of WindowingGenerator.");
 
-    //         let tmpDataStore = (sortingData === null) ? this : this.sort(sortingData);
-    //         windowingData.forEach(({ alias }) => {
-    //             tmpDataStore = tmpDataStore.addColumn(alias, _ => undefined);
-    //         });
+        const newColumns = this.columns;
+        windowConfig = windowConfig.build();
+        const { groupingColumns, sortingData, windowingData } = windowConfig;
 
-    //         const groups = new Map();
-    //         tmpDataStore.data.forEach(item => {
-    //             const key = JSON.stringify(groupingColumns.map(col => item[col]));
-    //             if (!groups.has(key))
-    //                 groups.set(key, []);
-    //             groups.get(key).push(item);
-    //         });
+        // validating
+        groupingColumns.forEach(col => validateColumnPresence(this.#columns, col, "Wrong column provided for pratition by in WindowingGenerator"));
 
-    //         tmpDataStore = Array.from(groups.values());     // re-using this to save some space
-    //         windowingData.forEach(({ windowFunction }) => {
-    //             windowFunction(JsonModifier.arrayOfObjectsProxy(tmpDataStore[0], { modifyProxy: false }))
-    //             tmpDataStore.forEach(group => windowFunction(group));
-    //         });
+        sortingData.forEach(logic => validateColumnPresence(this.#columns, logic.column, "Column not found in data for sorting in WindowingGenerator"));
 
-    //         const newData = [];
-    //         groups.values().forEach(val => newData.push(...val));
+        windowingData.forEach(wid => {
+            validateNewColumn(this.#columns, wid.alias);
+            validateDataType(wid.windowFunction, DataTypes.function)
+            if (wid.type === 1 && !wid.ignore)   // 1 is for frame functions. column checks for them & ignore for special countAll
+                validateColumnPresence(this.#columns, wid.column);
 
-    //         return ObjectArray.createInstance(newData);
-    //     }
-    // }
+            newColumns.push(wid.alias);
+        });
+
+        return this.#internalCreateInstance(
+            windowing,
+            { windowConfig, newColumns },
+            newColumns
+        );
+    }
 
     /*
         LATER ADDITION:

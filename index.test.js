@@ -24,11 +24,11 @@ const start = performance.now();
 // import { main } from "./tests/new/projects/generator-test.js";
 // await main();
 
-import { main } from "./tests/new/projects/jsonmodifier-test.js";
-await main();
-
-// import { main } from "./tests/new/projects/window-test.js";
+// import { main } from "./tests/new/projects/jsonmodifier-test.js";
 // await main();
+
+import { main } from "./tests/new/projects/window-test.js";
+await main();
 
 const end = performance.now();
 console.log(`${end - start} ms`);
