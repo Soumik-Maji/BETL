@@ -205,6 +205,9 @@ export class WindowGenerator {
     }
 
     build() {
+        if (!this.#isWindowFunctionSet)
+            throw new Error("No window function is provided.");
+
         return Object.freeze({
             groupingColumns: this.#groupingColumns,
             sortingData: this.#sortingConfig,
