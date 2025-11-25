@@ -8,6 +8,7 @@ import { deepFreeze } from "./util/deep-freeze-helper.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
 import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping.js";
 import { WindowGenerator, windowing } from "./util/manipulator-functions/window.js";
+import { PivotGenerator, pivot } from "./util/manipulator-functions/pivoting.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -882,6 +883,32 @@ export class ObjectArray {
             newColumns
         );
     }
+
+
+    pivot(pivotConfig) {
+        // REQUIREMENT: trigger execution of pipeline before performing a pivot operation to get latest value or rows
+        const dataTillHere = this.#compute();
+        const columnsTillHere = this.columns;
+
+        // config validation
+        if (!(pivotConfig instanceof PivotGenerator))
+            throw new Error("Configuration must be an instance of PivotGenerator.");
+
+        const { pivotCol, valuesCol } = pivotConfig.build();
+        validateColumnPresence(columnsTillHere, pivotCol, "Pivot column is not present in data");
+        valuesCol.forEach(col =>
+            validateColumnPresence(columnsTillHere, col, `Value column ${col} is not present in data`)
+        );
+
+        const { resultData, resultColumns } = pivot(dataTillHere, { pivotConfig, columnsTillHere });
+        const resultObject = new ObjectArray(constructorKey);
+        resultObject.#data = resultData;
+        resultObject.#columns = resultColumns;
+        return resultObject;
+    }
+
+
+
 
     /*
         LATER ADDITION:
