@@ -216,6 +216,18 @@ export class ObjectArray {
     }
 
     /**
+     * logs the ObjectArray data in stringified json format after applying the current logic plan.
+     *
+     * uses execute() under the hood.
+     * @returns {ObjectArray}
+     */
+    printJSON() {
+        const resultObject = this.execute();
+        console.log(JSON.stringify(resultObject.#data, null, 2));
+        return resultObject;
+    }
+
+    /**
      * logs the ObjectArray data after applying the current logic plan.
      * positive limit show first N, negative limit shows last N, (default) 0 shows all.
      *
