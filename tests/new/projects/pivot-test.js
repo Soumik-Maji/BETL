@@ -33,19 +33,3 @@ export async function main() {
 
     console.log(`${performance.now() - start} ms`);
 }
-
-
-/*
-OUTPUT:
-
-region            - North
-Q1_Online_revenue - 100
-Q1_Online_units   - 10
-Q1_Retail_revenue - 80
-Q1_Retail_units   - 8
-Q2_Online_revenue - 150
-Q2_Online_units   - 15
-Q2_Retail_revenue - 120
-Q2_Retail_units   - null
-
-*/
