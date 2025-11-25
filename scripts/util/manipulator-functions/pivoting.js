@@ -7,7 +7,7 @@ export function pivot(arr, { pivotConfig, columnsTillHere }) {
     const groupCols = columnsTillHere.filter(col => !valuesCol.includes(col) && col !== pivotCol);
 
     const groupMap = new Map();     // to accumulate the rows which adhere to the grouping columns
-    const uniquePivotValues = new Set();    // to collect the unqiue pivot-column row data
+    const pivotValuesSet = new Set();    // to collect the unqiue pivot-column row data
     for (const row of arr) {
         const key = groupCols.map(col => row[col]).join("\u0001");
 
@@ -20,7 +20,7 @@ export function pivot(arr, { pivotConfig, columnsTillHere }) {
         }
 
         const pivotValue = row[pivotCol];
-        uniquePivotValues.add(pivotValue);
+        pivotValuesSet.add(pivotValue);
 
         for (const vc of valuesCol) {
             const colName = `${pivotValue}_${vc}`;
@@ -35,22 +35,20 @@ export function pivot(arr, { pivotConfig, columnsTillHere }) {
     }
 
     // collect pivot & append with value columns to get new column names
-    const pivotValues = Array.from(uniquePivotValues);
+    const pivotValues = Array.from(pivotValuesSet);
     const pivotColumns = pivotValues.flatMap(pv => valuesCol.map(vc => `${pv}_${vc}`));
 
     // checking all rows for missing values to fill them with DEFAULT pivot-value data
-    for (const row of groupMap.values()) {
-        for (const pv of pivotValues) {
-            for (const vc of valuesCol) {
-                const colName = `${pv}_${vc}`;
-                if (!row.hasOwnProperty(colName))
-                    row[colName] = fillMissing;
-            }
+    const groupRows = Array.from(groupMap.values());    // materialize the values into an array
+    for (const row of groupRows) {
+        for (const colName of pivotColumns) {
+            if (!row.hasOwnProperty(colName))
+                row[colName] = fillMissing;
         }
     }
 
     return {
-        resultData: Array.from(groupMap.values()),
+        resultData: groupRows,
         resultColumns: [...groupCols, ...pivotColumns]
     };
 }

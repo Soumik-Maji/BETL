@@ -884,7 +884,14 @@ export class ObjectArray {
         );
     }
 
-
+    /**
+     * Rotates the data from long to wide format, converting unqiue values from pivot column into multiple columns.
+     * Acts similar to pivot function in other tools.
+     * The only caveat is grouping/deduplication based on non-value columns is not handled by pivot.
+     * Do it prior to this step using dedicated groupby or deduplicate function.
+     * @param {PivotGenerator} pivotConfig
+     * @returns {ObjectArray}
+     */
     pivot(pivotConfig) {
         // REQUIREMENT: trigger execution of pipeline before performing a pivot operation to get latest value or rows
         const dataTillHere = this.#compute();
