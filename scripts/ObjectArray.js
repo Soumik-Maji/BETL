@@ -3,7 +3,7 @@ import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi
 import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
 import { SortGenerator, sort } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, validateColumnName, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
-import { MapGenerator, map } from "./util/manipulator-functions/mapping.js";
+import { AppendGenerator, append } from "./util/manipulator-functions/appending.js";
 import { deepFreeze } from "./util/deep-freeze-helper.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
 import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping.js";
@@ -770,22 +770,22 @@ export class ObjectArray {
     }
 
     /**
-     * maps the target's columns to respective source's columns
-     * @param {MapGenerator} mappingRelations
+     * append specified source columns to target columns.
+     * @param {AppendGenerator} appendRelations
      * @returns {ObjectArray}
      */
-    map(mappingRelations) {
-        if (!(mappingRelations instanceof MapGenerator))
-            throw new Error("Configuration must be an instance of MapGenerator.");
-        mappingRelations = mappingRelations.build();
+    append(appendRelations) {
+        if (!(appendRelations instanceof AppendGenerator))
+            throw new Error("Configuration must be an instance of AppendGenerator.");
+        appendRelations = appendRelations.build();
 
-        mappingRelations.relations.forEach(({ tgt }) =>
+        appendRelations.relations.forEach(({ tgt }) =>
             validateColumnPresence(this.#columns, tgt, "Column not found in target data for mapping")
         );
 
         return this.#internalCreateInstance(
-            map,
-            { mappingRelations, currentColumns: this.#columns },
+            append,
+            { appendRelations, currentColumns: this.#columns },
             this.columns
         );
     }

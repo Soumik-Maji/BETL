@@ -1,5 +1,5 @@
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { MapGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
+import { AppendGenerator } from "../../../scripts/util/manipulator-functions/appending.js";
 import { readJSON } from "./json-reader.js";
 
 export async function main() {
@@ -13,22 +13,33 @@ export async function main() {
         .take(5);
     const runs = ObjectArray.createInstance(runsData)
         .renameRegex("* *", "$0$1")
+        .updateColumn("StartTime", item => time24to12(item.StartTime))
+        .updateColumn("EndTime", item => time24to12(item.EndTime))
         .take(10);
 
     // details.log(0, "details");
     // runs.log(0, "runs");
 
-    const result = details.map(
-        MapGenerator.setSource(runs)
-            .relate("JobName", "Instance")
-            .relate("Frequency", "Status")
-            .relate("Status", "Status")
-            .relate("StartTime", "StartTime")
-            .relate("EndTime", "EndTime")
-    )
+    details
+        .append(AppendGenerator.setSource(runs)
+            .set("JobName", "Instance")
+            .set("Status", "Status")
+            .set("StartTime", "StartTime")
+            .set("EndTime", "EndTime")
+        )
         .log(0, "result");
 
     const end = performance.now();
     console.log(`${end - start} ms`);
 
+}
+
+function time24to12(time) {
+    let [h, m] = time.split(":").map(i => Number(i));
+    let ampm = "AM";
+    if (h > 11)
+        ampm = "PM";
+    if (h > 12)
+        h -= 12;
+    return `${h}:${m} ${ampm}`;
 }
