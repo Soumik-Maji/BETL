@@ -1,7 +1,7 @@
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function melt(arr, { meltConfig, restColumns }) {
-    const { sourceColumns, groupColumnName, valueColumnName } = meltConfig.build();
+    const { sourceColumns, groupColumnName, valueColumnName } = meltConfig;
 
     const len = arr.length;
     const sourceColsLen = sourceColumns.length;

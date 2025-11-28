@@ -1,7 +1,7 @@
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function pivot(arr, { pivotConfig, columnsTillHere }) {
-    const { pivotCol, valuesCol, fillMissing } = pivotConfig.build();
+    const { pivotCol, valuesCol, fillMissing } = pivotConfig;
 
     // column on which grouping happens
     const groupCols = columnsTillHere.filter(col => !valuesCol.includes(col) && col !== pivotCol);

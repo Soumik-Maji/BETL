@@ -905,7 +905,8 @@ export class ObjectArray {
         if (!(pivotConfig instanceof PivotGenerator))
             throw new Error("Configuration must be an instance of PivotGenerator.");
 
-        const { pivotCol, valuesCol } = pivotConfig.build();
+        pivotConfig = pivotConfig.build();
+        const { pivotCol, valuesCol } = pivotConfig;
         validateColumnPresence(columnsTillHere, pivotCol, "Pivot column is not present in data");
         valuesCol.forEach(col =>
             validateColumnPresence(columnsTillHere, col, `Value column ${col} is not present in data`)
@@ -930,7 +931,8 @@ export class ObjectArray {
         if (!(meltConfig instanceof MeltGenerator))
             throw new Error("Configuration must be an instance of MeltGenerator.");
 
-        const { sourceColumns, groupColumnName, valueColumnName } = meltConfig.build();
+        meltConfig = meltConfig.build();
+        const { sourceColumns, groupColumnName, valueColumnName } = meltConfig;
         sourceColumns.forEach(col =>
             validateColumnPresence(this.#columns, col, "Source column for melt is not present in data")
         );
