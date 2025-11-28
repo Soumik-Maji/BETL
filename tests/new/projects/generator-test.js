@@ -2,6 +2,7 @@ import { ObjectArray } from "../../../scripts/ObjectArray.js";
 import { DeduplicateGenerator } from "../../../scripts/util/manipulator-functions/deduplicate.js";
 import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/grouping.js";
 import { MapGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
+import { MeltGenerator } from "../../../scripts/util/manipulator-functions/melting.js";
 import { PivotGenerator } from "../../../scripts/util/manipulator-functions/pivoting.js";
 import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
 import { WindowFrame, WindowGenerator } from "../../../scripts/util/manipulator-functions/window.js";
@@ -108,11 +109,19 @@ export async function main() {
     //     console.log(wGen);
     //     // console.log(JSON.stringify(wGen, null, 2));
 
-    console.log("---------------------- PivotGenerator ----------------------");
-    const pGen = PivotGenerator.pivotOn("region")
-        .values("quater", "channel")
-        // .fillMissing(0)
-        .build();
-    console.log(JSON.stringify(pGen, null, 2));
+    // console.log("---------------------- PivotGenerator ----------------------");
+    // const pGen = PivotGenerator.pivotOn("region")
+    //     .values("quater", "channel")
+    //     // .fillMissing(0)
+    //     .build();
+    // console.log(JSON.stringify(pGen, null, 2));
+
+    console.log("---------------------- UnPivot/ Melt Generator ----------------------");
+    const mGen = MeltGenerator
+        .fromColumns("c1", "c2")
+        .columnNamesTo("c")
+        .valuesTo("v");
+    const p = JSON.stringify(mGen.build(), null, 2);
+    console.log(p);
 
 }

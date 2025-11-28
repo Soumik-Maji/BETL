@@ -9,6 +9,7 @@ import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/
 import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping.js";
 import { WindowGenerator, windowing } from "./util/manipulator-functions/window.js";
 import { PivotGenerator, pivot } from "./util/manipulator-functions/pivoting.js";
+import { MeltGenerator, melt } from "./util/manipulator-functions/melting.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -885,6 +886,9 @@ export class ObjectArray {
     }
 
     /**
+     * NOTE: Pivoting requries the current state of the table data, so it executes the logic plan before proceeding with it's own operation.
+     * This is the only operation which performs eager evaluation instead of lazy like the others. Use with CAUTION.
+     *
      * Rotates the data from long to wide format, converting unqiue values from pivot column into multiple columns.
      * Acts similar to pivot function in other tools.
      * The only caveat is grouping/deduplication based on non-value columns is not handled by pivot.
@@ -914,8 +918,43 @@ export class ObjectArray {
         return resultObject;
     }
 
+    /**
+     * Unpivots or melts the mentioned table columns. Make wide tables tall.
+     * Converts the mentioned column names to a new column &
+     * the values of those columns to an adjacent column.
+     * @param {MeltGenerator} meltConfig
+     * @returns {ObjectArray}
+     */
+    melt(meltConfig) {
+        // config validation
+        if (!(meltConfig instanceof MeltGenerator))
+            throw new Error("Configuration must be an instance of MeltGenerator.");
 
+        const { sourceColumns, groupColumnName, valueColumnName } = meltConfig.build();
+        sourceColumns.forEach(col =>
+            validateColumnPresence(this.#columns, col, "Source column for melt is not present in data")
+        );
+        validateNewColumn(this.#columns, groupColumnName, "Column name provided for melt columns is already present in data");
+        validateNewColumn(this.#columns, valueColumnName, "Column name provided for melt values is already present in data");
 
+        const restColumns = this.#columns.filter(col => !sourceColumns.includes(col));
+        return this.#internalCreateInstance(
+            melt,
+            { meltConfig, restColumns },
+            [...restColumns, groupColumnName, valueColumnName]
+        );
+    }
+
+    /*
+        implement an upsert function similar to spark's merge
+        make it handle several things at once like -
+        conditional insert
+        conditional updateAll
+        conditional selective update
+        conditional delete
+        conditional selective delete
+        etc.
+    */
 
     /*
         LATER ADDITION:
