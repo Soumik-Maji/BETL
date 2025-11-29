@@ -1,0 +1,15 @@
+Done
+
+- Clean rewrite of ObjectArray (execute, clone, data members, operation descriptors).
+- Full separation of ETL core from file-reader and UI layers.
+- Schema tracking via columns[] with validation integrated into all ops.
+- All major row/column transforms implemented (mapping, rename, withColumn, etc.).
+- Sort, filter, deduplicate (with custom resolve functions + null-rules).
+- Fully implemented GroupBy with custom aggregators (scalar + higher-order).
+- Fully implemented Window functions (core windowing generator + validation).
+- Complete Join suite (inner/left/right/full, semi, anti, cross, self-join).
+- Implemented Explode, Pivot, Melt/Unpivot.
+- Implemented collectList (reverse explode) and compatible custom aggregators.
+- Fixed major internal issues (group key duplication, JsonModifier edge cases, whitespace/CSV issues).
+- Removed old TODO/idea documents and switched to inline comment goals.
+- Cleaned up, refactored, and stabilized most logic paths.

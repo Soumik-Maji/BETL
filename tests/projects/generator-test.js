@@ -1,11 +1,11 @@
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { DeduplicateGenerator } from "../../../scripts/util/manipulator-functions/deduplicate.js";
-import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/grouping.js";
-import { MapGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
-import { MeltGenerator } from "../../../scripts/util/manipulator-functions/melting.js";
-import { PivotGenerator } from "../../../scripts/util/manipulator-functions/pivoting.js";
-import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
-import { WindowFrame, WindowGenerator } from "../../../scripts/util/manipulator-functions/window.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
+import { DeduplicateGenerator } from "../../scripts/util/manipulator-functions/deduplicate.js";
+import { GroupByGenerator } from "../../scripts/util/manipulator-functions/grouping.js";
+import { AppendGenerator } from "../../scripts/util/manipulator-functions/appending.js";
+import { MeltGenerator } from "../../scripts/util/manipulator-functions/melting.js";
+import { PivotGenerator } from "../../scripts/util/manipulator-functions/pivoting.js";
+import { SortGenerator } from "../../scripts/util/manipulator-functions/sorting.js";
+import { WindowFrame, WindowGenerator } from "../../scripts/util/manipulator-functions/window.js";
 
 export async function main() {
 
@@ -18,24 +18,24 @@ export async function main() {
 
     //     console.log(slg);
 
-    //     console.log("---------------------- MapGenerator ----------------------");
-    //     const data = [
-    //         { "name": "Roxy", "age": 25 },
-    //         { "name": "Tom", "age": 12 },
-    //         { "name": "Sam", "age": 17 },
-    //         { "name": "Joel", "age": 23 }
-    //     ];
+    // console.log("---------------------- MapGenerator ----------------------");
+    // const data = [
+    //     { "name": "Roxy", "age": 25 },
+    //     { "name": "Tom", "age": 12 },
+    //     { "name": "Sam", "age": 17 },
+    //     { "name": "Joel", "age": 23 }
+    // ];
 
-    //     const oa = ObjectArray.createInstance(data)
-    //         .addColumn("eligible", item => item.age > 18);
+    // const oa = ObjectArray.createInstance(data)
+    //     .addColumn("eligible", item => item.age > 18);
 
-    //     const mg = MapGenerator.setSource(oa)
-    //         .relate("username", "name")
-    //         .relate("reg_date", "age")
-    //         .relate("eligible", "eligible")
-    //         .build();
-    //     console.log(JSON.stringify(mg, null, 2));
-    //     console.log(mg);
+    // const mg = AppendGenerator.setSource(oa)
+    //     .set("username", "name")
+    //     .set("reg_date", "age")
+    //     .set("eligible", "eligible")
+    //     .build();
+    // console.log(JSON.stringify(mg, null, 2));
+    // console.log(mg);
 
     //     console.log("---------------------- DeduplicateGenerator ----------------------");
     //     let dedupGen = DeduplicateGenerator.setDeduplicatingColumns("c1", "c2", "c3")
@@ -116,12 +116,15 @@ export async function main() {
     //     .build();
     // console.log(JSON.stringify(pGen, null, 2));
 
-    console.log("---------------------- UnPivot/ Melt Generator ----------------------");
-    const mGen = MeltGenerator
-        .fromColumns("c1", "c2")
-        .columnNamesTo("c")
-        .valuesTo("v");
-    const p = JSON.stringify(mGen.build(), null, 2);
-    console.log(p);
+    // console.log("---------------------- UnPivot/ Melt Generator ----------------------");
+    // const mGen = MeltGenerator
+    //     .fromColumns("c1", "c2")
+    //     .columnNamesTo("c")
+    //     .valuesTo("v");
+    // const p = JSON.stringify(mGen.build(), null, 2);
+    // console.log(p);
+
+    console.log("---------------------- Merge (upsert) Generator ----------------------");
+
 
 }

@@ -1,39 +1,39 @@
 const start = performance.now();
 
-// import { main } from "./tests/new/projects/basic-test.js";
+// import { main } from "./tests/projects/basic-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/join-test.js";
+// import { main } from "./tests/projects/join-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/explode-test.js";
+// import { main } from "./tests/projects/explode-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/map-test.js";
+// import { main } from "./tests/projects/map-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/dedup-test.js";
+// import { main } from "./tests/projects/dedup-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/groupby-test.js";
+// import { main } from "./tests/projects/groupby-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/rename-test.js";
+// import { main } from "./tests/projects/rename-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/jsonmodifier-test.js";
+// import { main } from "./tests/projects/jsonmodifier-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/window-test.js";
+// import { main } from "./tests/projects/window-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/pivot-test.js";
+// import { main } from "./tests/projects/pivot-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/generator-test.js";
+// import { main } from "./tests/projects/generator-test.js";
 // await main();
 
-// import { main } from "./tests/new/projects/melt-test.js";
+// import { main } from "./tests/projects/melt-test.js";
 // await main();
 
 const end = performance.now();

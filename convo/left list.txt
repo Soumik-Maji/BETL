@@ -1,0 +1,22 @@
+Left
+
+Core / Architecture
+- Static pipeline manager (global registry: dependency management, async scheduling, controlled pipeline execution).
+- Optional enhancements: execution fusion, pass minimization, inplace execution mode.
+
+File Reader / Writer Libraries (separate modules)
+- Full CSV reader with delimiter + text qualifier correctness for all inputs.
+- XLSX reader (post-formatter handling, quoted-cell rules).
+- JSON reader (simple but consistent).
+- CSV/JSON writers; optional XLSX/parquet writers.
+
+Additional ETL Enhancements (optional)
+- Reverse explode (only if ever needed).
+- Convenience wrappers for higher-order aggregators (mapAgg, collectSet, structAgg).
+- Schema metadata system (optional).
+- Reset/clear utilities for ObjectArray pipelines.
+
+UI (separate module, low priority)
+- HTML table visualizer.
+- Data preview utilities.
+- Download helpers (CSV/JSON).
