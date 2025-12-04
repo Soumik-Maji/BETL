@@ -6,6 +6,7 @@ import { MeltGenerator } from "../../scripts/util/manipulator-functions/melting.
 import { PivotGenerator } from "../../scripts/util/manipulator-functions/pivoting.js";
 import { SortGenerator } from "../../scripts/util/manipulator-functions/sorting.js";
 import { WindowFrame, WindowGenerator } from "../../scripts/util/manipulator-functions/window.js";
+import { MergeGenerator } from "../../scripts/util/manipulator-functions/merge.js";
 
 export async function main() {
 
@@ -125,6 +126,34 @@ export async function main() {
     // console.log(p);
 
     console.log("---------------------- Merge (upsert) Generator ----------------------");
+    const target = ObjectArray.createInstance([
+        { "name": "Roxy", "age": 25 },
+        { "name": "Tom", "age": 12 },
+        { "name": "Sam", "age": 17 },
+        { "name": "Joel", "age": 23 }
+    ]);
+    const change = ObjectArray.createInstance([
+        { "name": "Roxy", "age": 26 },
+        { "name": "Joel", "age": 24 },
+        { "name": "Allie", "age": 26 }
+    ]);
 
+    const usg = MergeGenerator.source(change, (t, s) => t.name === s.name)
+        .presentInBoth()
+        .when((t, s) => t.endtime > s.endtime)
+        .update("endtime", () => Date.now())
+        .resetWhenCondition()
+        // .update("age", "ag")    // this is throw error as source has no column "ag"
+        .update("age", "age")
 
+        .presentInSource()
+        .insert()
+
+        .presentInTarget()
+        .when(row => row.active && row.duration > 1000)
+        .update()
+        .resetWhenCondition()
+        .delete();
+
+    console.log(usg.build());
 }

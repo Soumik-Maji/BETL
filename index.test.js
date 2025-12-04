@@ -30,8 +30,8 @@ const start = performance.now();
 // import { main } from "./tests/projects/pivot-test.js";
 // await main();
 
-// import { main } from "./tests/projects/generator-test.js";
-// await main();
+import { main } from "./tests/projects/generator-test.js";
+await main();
 
 // import { main } from "./tests/projects/melt-test.js";
 // await main();
