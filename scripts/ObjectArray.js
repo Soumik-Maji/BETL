@@ -10,6 +10,7 @@ import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping
 import { WindowGenerator, windowing } from "./util/manipulator-functions/window.js";
 import { PivotGenerator, pivot } from "./util/manipulator-functions/pivoting.js";
 import { MeltGenerator, melt } from "./util/manipulator-functions/melting.js";
+import { MergeGenerator, merge } from "./util/manipulator-functions/merge.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 
@@ -944,6 +945,39 @@ export class ObjectArray {
             melt,
             { meltConfig, restColumns },
             [...restColumns, groupColumnName, valueColumnName]
+        );
+    }
+
+    /**
+     *
+     * @param {MergeGenerator} mergeConfig
+     * @returns {ObjectArray}
+     */
+    merge(mergeConfig) {
+        const { source, sourceColumns, matchOnCondition, commandBuffer } = mergeConfig.build();
+        const targetColumns = this.columns;
+
+        commandBuffer.forEach(commands => {
+            commands.forEach(({ type, checkTargetColumn, targetColumn }) => {
+                if (type === "delete")
+                    return;
+
+                if (checkTargetColumn)
+                    validateColumnPresence(this.#columns, targetColumn, "Target column for merge is not present in target data.");
+                else {
+                    if (sourceColumns.length !== targetColumns.length)
+                        throw new Error("Source and target column count mismatch for full insert/update");
+                    sourceColumns.forEach(col =>
+                        validateColumnPresence(targetColumns, col, "Source columns don't match target for full insert/update")
+                    );
+                }
+            })
+        });
+
+        return this.#internalCreateInstance(
+            merge,
+            { source, matchOnCondition, commandBuffer },
+            targetColumns
         );
     }
 
