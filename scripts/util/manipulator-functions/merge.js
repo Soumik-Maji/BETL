@@ -2,15 +2,25 @@ import { ObjectArray } from "../../ObjectArray.js";
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
 
-export function merge(target, { source, matchOnCondition, commandBuffer }) {
+export function merge(target, { source, matchOnCondition, commandBuffer, emptyTragetRow }) {
     const tgtLen = target.length, srcLen = source.length, result = [];
 
-    const tgtCheckRow = JsonModifier.objectProxy(target[0]), srcCheckRow = JsonModifier.objectProxy(source[0]);
+    const tgtCheckRow = tgtLen > 0 ? JsonModifier.objectProxy(target[0]) : null;
+    const srcCheckRow = srcLen > 0 ? JsonModifier.objectProxy(source[0]) : null;
+
     // VALIDATE: match on condition function return type
     if (tgtLen > 0 && srcLen > 0) {
         const moc = matchOnCondition(tgtCheckRow, srcCheckRow);
         validateDataType(moc, DataTypes.boolean, "Match On condition in merge has to return a boolean");
     }
+
+    /*
+        REFACTOR NOTICE (commandBuffer): This may need refactoring in if statments.
+            Especially the first one as either can be empty resulting in null tgtCheckRow, srcCheckRow.
+            Though why would user check for row presenece in both if target is empty in first place.
+            I guess to make the code IDIOT PROOF.
+            But it'll require someone on either end of the spectrum to mess it up.
+    */
 
     // VALIDATE: all when conditions inside command buffer
     commandBuffer.forEach((commands, ctxIndex) => {
@@ -44,14 +54,14 @@ export function merge(target, { source, matchOnCondition, commandBuffer }) {
                 targetMatched = true;
                 matchedSourceFlags[j] = 1;
 
-                const updatedRow = applyCommands(tgtRow, srcRow, commandBuffer[0]);
+                const updatedRow = applyCommands(tgtRow, srcRow, commandBuffer[0], emptyTragetRow);
                 if (updatedRow !== null)
                     result.push(updatedRow);
             }
         }
 
         if (!targetMatched) {
-            const updatedRow = applyCommands(tgtRow, null, commandBuffer[2])
+            const updatedRow = applyCommands(tgtRow, null, commandBuffer[2], emptyTragetRow);
             if (updatedRow !== null)
                 result.push(updatedRow);
         }
@@ -59,7 +69,7 @@ export function merge(target, { source, matchOnCondition, commandBuffer }) {
 
     for (let i = 0; i < srcLen; i++) {
         if (matchedSourceFlags[i] === 0) {
-            const updatedRow = applyCommands(null, source[i], commandBuffer[1]);
+            const updatedRow = applyCommands(null, source[i], commandBuffer[1], emptyTragetRow);
             if (updatedRow !== null)
                 result.push(updatedRow);
         }
@@ -68,9 +78,10 @@ export function merge(target, { source, matchOnCondition, commandBuffer }) {
     return result;
 }
 
-function applyCommands(tRow, sRow, commands) {
-    let resultRow = tRow ? { ...tRow } : {};
+function applyCommands(tRow, sRow, commands, emptyTragetRow) {
+    let resultRow = tRow ? { ...tRow } : { ...emptyTragetRow };
     const len = commands.length;
+    let commandApplied = false;     // boolean flag to check if any command is applied on the row
 
     for (let i = 0; i < len; i++) {
         const cmd = commands[i];
@@ -87,6 +98,9 @@ function applyCommands(tRow, sRow, commands) {
             if (!conditionMet)
                 continue;
         }
+
+        commandApplied = true;      // set flag to true in case any command is going to be applied
+
         if (cmd.type === "delete")  // return null when operation is delete
             return null;
 
@@ -111,8 +125,9 @@ function applyCommands(tRow, sRow, commands) {
         }
     }
 
-    if (Object.keys(resultRow).length === 0)
-        return null;
+    if (!commandApplied)
+        return tRow;
+
     return resultRow;
 }
 
@@ -202,6 +217,12 @@ export class MergeGenerator {
      * Cannot call without declaring the context first.
      * @param {function} condition
      * @returns {MergeGenerator}
+     * @note the function takes arguments based on the context.
+     * no error will be thrown in case of wrong NUMBER or ORDER of arguments provided.
+     * just logically output will be wrong.
+     * - accepts both target & source rows when presentInBoth. target argument first then source.
+     * - accepts only target row when presentInTarget.
+     * - accepts only source row when presentInSource.
      */
     when(condition) {
         if (this.#matchConditionIndex === null)
@@ -269,8 +290,10 @@ export class MergeGenerator {
      * - insert() - sets whole row
      * - insert(tgtCol, srcCol) - sets source column to target column
      * - insert(tgtCol, fn) - sets target column to whatever the fn resolves to.
-     * @note the function takes arguments based on the context. no error will be thrown in case of wrong number of arguments provided.
-     * - accepts both target & source rows when presentInBoth.
+     * @note the function takes arguments based on the context.
+     * no error will be thrown in case of wrong NUMBER or ORDER of arguments provided.
+     * just logically output will be wrong.
+     * - accepts both target & source rows when presentInBoth. target argument first then source.
      * - accepts only target row when presentInTarget.
      * - accepts only source row when presentInSource.
      */
@@ -289,8 +312,10 @@ export class MergeGenerator {
      * - update() - sets whole row
      * - update(tgtCol, srcCol) - sets source column to target column
      * - update(tgtCol, fn) - sets target column to whatever the fn resolves to.
-     * @note the function takes arguments based on the context. no error will be thrown in case of wrong number of arguments provided.
-     * - accepts both target & source rows when presentInBoth.
+     * @note the function takes arguments based on the context.
+     * no error will be thrown in case of wrong NUMBER or ORDER of arguments provided.
+     * just logically output will be wrong.
+     * - accepts both target & source rows when presentInBoth. target argument first then source.
      * - accepts only target row when presentInTarget.
      * - accepts only source row when presentInSource.
      */
@@ -321,7 +346,7 @@ export class MergeGenerator {
             Object.freeze(commandArray);
         });
         if (!anyCommandSet)
-            throw new Error("No commands are set. Use presentInX function & set some insert/update/delete commands.");
+            throw new Error("No commands are set. Use presentInBoth/Source/Target function & set some insert/update/delete commands.");
 
         return Object.freeze({
             source: this.#source,

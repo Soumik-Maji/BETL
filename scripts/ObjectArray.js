@@ -974,9 +974,12 @@ export class ObjectArray {
             })
         });
 
+        const emptyTragetRow = {};  // create a empty row to sned to apply to have predefined target row in case target is empty
+        targetColumns.forEach(col => emptyTragetRow[col] = null);
+
         return this.#internalCreateInstance(
             merge,
-            { source, matchOnCondition, commandBuffer },
+            { source, matchOnCondition, commandBuffer, emptyTragetRow },
             targetColumns
         );
     }

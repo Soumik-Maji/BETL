@@ -2,37 +2,262 @@ import { ObjectArray } from "../../scripts/ObjectArray.js";
 import { MergeGenerator } from "../../scripts/util/manipulator-functions/merge.js";
 
 export async function main() {
-    test1A();
+    // test1();    // PASSED
+    // test2();    // PASSED
+    // test3();    // PASSED
+    // test4();    // PASSED
+    // test5();    // PASSED
+    // test6();    // PASSED
+    // test7();    // PASSED
+    test8();    // PASSED
 }
 
-function test1A() {
-    console.log("Test 1A: Full Sync (Update All, Insert New, Delete Orphaned)");
+function test8() {
+    const orders = ObjectArray.createInstance([
+        { orderId: 1001, status: "Pending", amount: 250, lastUpdate: 1705305600000, notes: "" },
+        { orderId: 1002, status: "Shipped", amount: 450, lastUpdate: 1705219200000, notes: "Express" },
+        { orderId: 1003, status: "Pending", amount: 180, lastUpdate: 1705132800000, notes: "" },
+        { orderId: 1004, status: "Delivered", amount: 320, lastUpdate: 1705046400000, notes: "Signed" }
+    ]);
+    const orderUpdates = ObjectArray.createInstance([
+        { orderId: 1001, status: "Shipped", amount: 250, carrier: "FedEx" },
+        { orderId: 1002, status: "Delivered", amount: 450, carrier: "UPS" },
+        { orderId: 1003, status: "Cancelled", amount: 0, carrier: null },
+        { orderId: 1005, status: "Pending", amount: 275, carrier: null }
+    ]);
+    showInput(orders, orderUpdates);
 
-    const employees = [
+    console.log("Test 8A: Multiple Updates + Conditional Delete");
+    orders.merge(
+        MergeGenerator.source(orderUpdates, (t, s) => t.orderId === s.orderId)
+            .presentInBoth()
+            .update("status", "status")
+            .update("amount", "amount")
+            .update("lastUpdate", () => Date.now())
+            .update("notes", (t, s) => (t.notes === "" ? "" : t.notes + " | ") + (s.carrier ? "Shipped by: " + s.carrier : ""))
+            .when((t, s) => s.status === "Cancelled").delete()
+
+            .presentInSource()
+            .insert("orderId", "orderId")
+            .insert("status", "status")
+            .insert("amount", "amount")
+            .insert("lastUpdate", () => Date.now())
+    ).log();
+}
+
+function test7() {
+    const cache = ObjectArray.createInstance([
+        { key: "user:101", value: '{"name":"Alice","login":"2024-01-14"}', version: 1 },
+        { key: "user:102", value: '{"name":"Bob","login":"2024-01-13"}', version: 1 },
+        { key: "config:app", value: '{"theme":"dark","lang":"en"}', version: 2 }
+    ]);
+    const cacheUpdates = ObjectArray.createInstance([
+        { key: "user:101", value: '{"name":"Alice","login":"2024-01-15","lastAction":"purchase"}', version: 2 },
+        { key: "user:103", value: '{"name":"Charlie","login":"2024-01-15"}', version: 1 },
+        { key: "config:app", value: '{"theme":"light","lang":"en","beta":true}', version: 3 }
+    ]);
+    showInput(cache, cacheUpdates);
+
+    console.log("Test 7A: Replace Matched Rows Completely");
+    cache.merge(
+        MergeGenerator.source(cacheUpdates, (t, s) => t.key === s.key)
+            .presentInBoth().update()
+            .presentInSource().insert()
+    ).log();
+}
+
+function test6() {
+    const customers = ObjectArray.createInstance([
+        { customerId: 1, name: "Acme Corp", tier: "Gold", creditLimit: 50000 },
+        { customerId: 2, name: "Beta Inc", tier: "Silver", creditLimit: 25000 },
+        { customerId: 3, name: "Gamma LLC", tier: "Bronze", creditLimit: 10000 }
+    ]);
+    const customerApplications = ObjectArray.createInstance([
+        { customerId: 1, name: "Acme Corp", tier: "Platinum", creditLimit: 100000 },       // Upgrade
+        { customerId: 4, name: "Delta Co", tier: "Gold", creditLimit: 45000 },             // New - approved
+        { customerId: 5, name: "Epsilon Ltd", tier: "Bronze", creditLimit: 5000 },         // New - below threshold
+        { customerId: 6, name: "Zeta Industries", tier: "Silver", creditLimit: 30000 }     // New - approved
+    ]);
+    showInput(customers, customerApplications);
+
+    console.log("Test 6A: Conditional Insert (Minimum Credit Limit)");
+    customers.merge(
+        MergeGenerator.source(customerApplications, (t, s) => t.customerId === s.customerId)
+            .presentInBoth().update()
+            .presentInSource().when(s => s.creditLimit >= 10000).insert()
+    ).log();
+}
+
+function test5() {
+    const salesData = ObjectArray.createInstance([
+        { region: "North", product: "Widget", quarter: "Q1", revenue: 100000, units: 500 },
+        { region: "North", product: "Gadget", quarter: "Q1", revenue: 150000, units: 300 },
+        { region: "South", product: "Widget", quarter: "Q1", revenue: 80000, units: 400 },
+        { region: "East", product: "Gizmo", quarter: "Q1", revenue: 120000, units: 600 }
+    ]);
+    const salesUpdates = ObjectArray.createInstance([
+        { region: "North", product: "Widget", quarter: "Q1", revenue: 110000, units: 550 },     // Update
+        { region: "North", product: "Gadget", quarter: "Q1", revenue: 150000, units: 300 },     // No change
+        { region: "South", product: "Gadget", quarter: "Q1", revenue: 95000, units: 475 },      // New
+        { region: "West", product: "Widget", quarter: "Q1", revenue: 105000, units: 525 }       // New region
+    ]);
+    showInput(salesData, salesUpdates);
+
+    console.log("Test 5A: Multi-Key Match with Computed Column");
+    salesData.merge(
+        MergeGenerator.source(salesUpdates, (t, s) => t.region === s.region && t.product === s.product && t.quarter === s.quarter)
+            .presentInBoth()
+            .update("revenue", "revenue").update("units", "units")
+
+            .presentInTarget().delete()
+
+            .presentInSource().insert()
+    ).log();
+}
+
+function test4() {
+    const sessions = ObjectArray.createInstance([
+        { userId: 101, sessionId: "s001", active: true, lastSeen: 1705305600000 },
+        { userId: 102, sessionId: "s002", active: true, lastSeen: 1705219200000 },
+        { userId: 103, sessionId: "s003", active: true, lastSeen: 1705132800000 },
+        { userId: 104, sessionId: "s004", active: false, lastSeen: 1705046400000 }
+    ]);
+    const activeSessions = ObjectArray.createInstance([
+        { userId: 101, sessionId: "s001", lastSeen: 1705392000000 },  // Still active
+        { userId: 105, sessionId: "s005", lastSeen: 1705392000000 }   // New session
+    ]);
+    showInput(sessions, activeSessions);
+
+    console.log("Test 4A: Soft Delete Inactive Sessions");
+    sessions.merge(
+        MergeGenerator.source(activeSessions, (t, s) => t.userId === s.userId)
+            .presentInBoth()
+            .update("lastSeen", "lastSeen")
+
+            .presentInSource()
+            .insert("userId", "userId")
+            .insert("sessionId", "sessionId")
+            .insert("lastSeen", "lastSeen")
+            .insert("active", () => true)
+
+            .presentInTarget().update("active", () => false)
+    ).log();
+}
+
+function test3() {
+    const inventory = ObjectArray.createInstance([
+        { sku: "A001", name: "Widget", stock: 100, price: 25.00, discontinued: false },
+        { sku: "A002", name: "Gadget", stock: 50, price: 45.00, discontinued: false },
+        { sku: "A003", name: "Gizmo", stock: 0, price: 30.00, discontinued: false },
+        { sku: "A004", name: "Doohickey", stock: 200, price: 15.00, discontinued: false }
+    ]);
+    const inventoryUpdates = ObjectArray.createInstance([
+        { sku: "A001", name: "Widget", stock: 150, price: 27.00, discontinued: false },    // Stock & price update
+        { sku: "A002", name: "Gadget", stock: 30, price: 45.00, discontinued: true },      // Mark discontinued
+        { sku: "A003", name: "Gizmo", stock: 0, price: 33.00, discontinued: true },        // Mark discontinued
+        { sku: "A005", name: "Thingamajig", stock: 75, price: 20.00, discontinued: false } // New product
+    ]);
+    showInput(inventory, inventoryUpdates);
+
+    console.log("Test 3A: Delete Discontinued Items");
+    inventory.merge(
+        MergeGenerator.source(inventoryUpdates, (t, s) => t.sku === s.sku)
+            .presentInBoth()
+            .when((t, s) => s.discontinued).delete()
+            .resetWhenCondition().update()
+
+            .presentInSource().insert()
+    ).log();
+
+    console.log("Test 3B: Conditional Update Based on Stock");
+    inventory.merge(
+        MergeGenerator.source(inventoryUpdates, (t, s) => t.sku === s.sku)
+            .presentInBoth()
+            .when((t, s) => s.stock > 0).update()
+            .when((t, s) => s.stock === 0 && s.discontinued).delete()
+
+            .presentInSource().insert()
+    ).log();
+}
+
+function test2() {
+    const jobRuns = ObjectArray.createInstance([
+        { jobName: "ETL-Daily", instance: "2024-01-15", status: "Running", startTime: 1705305600000, endTime: null, duration: null },
+        { jobName: "ETL-Daily", instance: "2024-01-14", status: "Success", startTime: 1705219200000, endTime: 1705222800000, duration: 3600000 },
+        { jobName: "Report-Gen", instance: "2024-01-15", status: "Pending", startTime: null, endTime: null, duration: null }
+    ]);
+    const jobUpdates = ObjectArray.createInstance([
+        { jobName: "ETL-Daily", instance: "2024-01-15", status: "Success", startTime: 1705305600000, endTime: 1705309200000 },  // Completed
+        { jobName: "ETL-Daily", instance: "2024-01-16", status: "Running", startTime: 1705392000000, endTime: null },           // New run
+        { jobName: "Report-Gen", instance: "2024-01-15", status: "Failed", startTime: 1705305600000, endTime: 1705306500000 }   // Failed
+    ]);
+    showInput(jobRuns, jobUpdates);
+
+    console.log("Test 2A: Update Specific Columns");
+    jobRuns.merge(
+        MergeGenerator.source(jobUpdates, (t, s) => t.jobName === s.jobName && t.instance === s.instance)
+            .presentInBoth()
+            .update("status", "status")
+            .update("startTime", "startTime")
+            .update("endTime", "endTime")
+            .update("duration", (t, s) => {
+                if (s.endTime) {
+                    if (t.startTime)
+                        return s.endTime - t.startTime;
+                    return s.endTime - s.startTime;
+                }
+                return null;
+            })
+
+            .presentInSource()
+            .insert("jobName", "jobName")
+            .insert("instance", "instance")
+            .insert("status", "status")
+            .insert("startTime", "startTime")
+            .insert("endTime", "endTime")
+
+    ).log();
+}
+
+function test1() {
+    const employees = ObjectArray.createInstance([
         { id: 1, name: "Alice", dept: "Engineering", salary: 90000, status: "Active" },
         { id: 2, name: "Bob", dept: "Sales", salary: 75000, status: "Active" },
         { id: 3, name: "Charlie", dept: "HR", salary: 65000, status: "Active" },
         { id: 4, name: "Diana", dept: "Engineering", salary: 95000, status: "Active" }
-    ];
-    const employeeUpdates = [
-        { mid: 1, name: "Alice", dept: "Engineering", salary: 95000, status: "Active" },  // Update salary
-        { mid: 2, name: "Bob", dept: "Marketing", salary: 80000, status: "Active" },      // Update dept & salary
-        { mid: 5, name: "Eve", dept: "Sales", salary: 70000, status: "Active" },          // New employee
-        { mid: 6, name: "Frank", dept: "Engineering", salary: 92000, status: "Active" }   // New employee
-    ];
+    ]);
+    const employeeUpdates = ObjectArray.createInstance([
+        { id: 1, name: "Alice", dept: "Engineering", salary: 95000, status: "Active" },  // Update salary
+        { id: 2, name: "Bob", dept: "Marketing", salary: 80000, status: "Active" },      // Update dept & salary
+        { id: 5, name: "Eve", dept: "Sales", salary: 70000, status: "Active" },          // New employee
+        { id: 6, name: "Frank", dept: "Engineering", salary: 92000, status: "Active" }   // New employee
+    ]);
     // Note: Charlie (id:3) and Diana (id:4) missing from source
+    showInput(employees, employeeUpdates);
 
-    const emp = ObjectArray.createInstance(employees);
-    const empUpdate = ObjectArray.createInstance(employeeUpdates).rename("mid", "id");
-
-    emp.log(0, "Before");
-    empUpdate.log(0, "Changes");
-
-    emp.merge(
-        MergeGenerator.source(empUpdate, (t, s) => t.id === s.id)
+    console.log("Test 1A: Full Sync (Update All, Insert New, Delete Orphaned)");
+    employees.merge(
+        MergeGenerator.source(employeeUpdates, (t, s) => t.id === s.id)
             .presentInSource().insert()
-            // .presentInTarget().delete()
+            .presentInTarget().delete()
             .presentInBoth().update()
-    )
-        .log(0, "After");
+    ).log();
+
+    console.log("Test 1B: Update Only (No Insert/Delete)");
+    employees.merge(
+        MergeGenerator.source(employeeUpdates, (t, s) => t.id === s.id)
+            .presentInBoth().update()
+    ).log();
+
+    console.log("Test 1C: Insert Only New Records");
+    employees.merge(
+        MergeGenerator.source(employeeUpdates, (t, s) => t.id === s.id)
+            .presentInSource().insert()
+    ).log();
+}
+
+function showInput(target, source) {
+    target.log(0, "Before");
+    source.log(0, "Changes");
+    console.log("\n\n---------------------- outputs below ----------------------------\n\n");
 }
