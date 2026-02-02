@@ -2,7 +2,7 @@ import { ObjectArray } from "../../ObjectArray.js";
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
 
-export function merge(target, { source, matchOnCondition, commandBuffer, emptyTragetRow }) {
+export function merge(target, { source, matchOnCondition, commandBuffer, emptyTargetRow }) {
     const tgtLen = target.length, srcLen = source.length, result = [];
 
     const tgtCheckRow = tgtLen > 0 ? JsonModifier.objectProxy(target[0]) : null;
@@ -51,17 +51,29 @@ export function merge(target, { source, matchOnCondition, commandBuffer, emptyTr
             const srcRow = source[j];
 
             if (matchOnCondition(tgtRow, srcRow)) {
+                if (targetMatched)
+                    throw new Error(`Cardinality violation: Multiple source rows matched below target row
+                    source row - ${JSON.stringify(srcRow)}
+                    target row - ${JSON.stringify(tgtRow)}
+                    Ensure source has unique keys for the merge condition.`);
+
+                if (matchedSourceFlags[j] === 1)
+                    throw new Error(`Cardinality violation: Source row matched multiple target rows
+                    source row - ${JSON.stringify(srcRow)}
+                    target row - ${JSON.stringify(tgtRow)}
+                    Ensure target has unique keys.`);
+
                 targetMatched = true;
                 matchedSourceFlags[j] = 1;
 
-                const updatedRow = applyCommands(tgtRow, srcRow, commandBuffer[0], emptyTragetRow);
+                const updatedRow = applyCommands(tgtRow, srcRow, commandBuffer[0], emptyTargetRow);
                 if (updatedRow !== null)
                     result.push(updatedRow);
             }
         }
 
         if (!targetMatched) {
-            const updatedRow = applyCommands(tgtRow, null, commandBuffer[2], emptyTragetRow);
+            const updatedRow = applyCommands(tgtRow, null, commandBuffer[2], emptyTargetRow);
             if (updatedRow !== null)
                 result.push(updatedRow);
         }
@@ -69,7 +81,7 @@ export function merge(target, { source, matchOnCondition, commandBuffer, emptyTr
 
     for (let i = 0; i < srcLen; i++) {
         if (matchedSourceFlags[i] === 0) {
-            const updatedRow = applyCommands(null, source[i], commandBuffer[1], emptyTragetRow);
+            const updatedRow = applyCommands(null, source[i], commandBuffer[1], emptyTargetRow);
             if (updatedRow !== null)
                 result.push(updatedRow);
         }
@@ -78,8 +90,8 @@ export function merge(target, { source, matchOnCondition, commandBuffer, emptyTr
     return result;
 }
 
-function applyCommands(tRow, sRow, commands, emptyTragetRow) {
-    let resultRow = tRow ? { ...tRow } : { ...emptyTragetRow };
+function applyCommands(tRow, sRow, commands, emptyTargetRow) {
+    let resultRow = tRow ? { ...tRow } : { ...emptyTargetRow };
     const len = commands.length;
     let commandApplied = false;     // boolean flag to check if any command is applied on the row
 
@@ -141,6 +153,11 @@ const constructorKey = Symbol("MergeGenerator");   // Symbol for object creation
  * - Then after a context function chain when(), resetWhenCondition(), insert(), update(), delete() to set the
  * operation which needs to be done for target row or any subordinate condition for any operation to take place.
  * Subordinate condition needs to be reset manually if required.
+ * @important EXECUTION BEHAVIOR:
+ * - All when() conditions are evaluated against ORIGINAL row values, not intermediate changes
+ * - Commands execute in the order they are chained
+ * - If multiple commands update the same column, the LAST one wins
+ * - Example: .when(x).update("col", val1).when(y).update("col", val2) → col gets val2 if both conditions true
  */
 export class MergeGenerator {
     #source;
@@ -164,9 +181,9 @@ export class MergeGenerator {
     }
 
     /**
-     * creates MergeGenerator instance & sets the source object and condition on which target & source rows should match
+     * creates MergeGenerator instance, sets the source object & condition on which target and source rows should match
      * @param {ObjectArray} source
-     * @param {function} matchOnCondition
+     * @param {function} matchOnCondition Signature: (targetRow, sourceRow) => boolean
      * @returns {MergeGenerator}
      */
     static source(source, matchOnCondition) {

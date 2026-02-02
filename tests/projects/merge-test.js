@@ -9,7 +9,237 @@ export async function main() {
     // test5();    // PASSED
     // test6();    // PASSED
     // test7();    // PASSED
-    test8();    // PASSED
+    // test8();    // PASSED
+    // test9();    // should fail so - PASSED
+    // test10();   // should fail as has mulitple target matched - PASSED
+    // test11();   // MAYBE PASSED
+    // test12();   // should fail as has mulitple target matched - PASSED
+    // test13();   // cardinality error thrown - PASSED
+    // test14();   // 2nd when update statement gives an interesting behaviour, otherwise OK - PASSED
+    // test15();   // PASSED
+    // test16();   // PASSED
+    // test17();   // PASSED
+    // test18();   // PASSED
+    // test19();   // PASSED
+    // test20();   // cardinality error thrown - PASSED
+}
+
+function test13() {
+    // Test: Cardinality check with composite keys
+    const target = ObjectArray.createInstance([
+        { region: "North", product: "Widget", stock: 100 },
+        { region: "North", product: "Widget", stock: 200 }  // duplicate composite key
+    ]);
+    const source = ObjectArray.createInstance([
+        { region: "North", product: "Widget", stock: 150 }
+    ]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.region === s.region && t.product === s.product)
+            .presentInBoth()
+            .update("stock", "stock")
+    ).log();
+    // Should throw: Cardinality violation on composite key
+}
+
+function test14() {
+    // Test: Multiple when() conditions with same context - all should execute independently
+    const target = ObjectArray.createInstance([
+        { id: 1, price: 100, stock: 50 },
+        { id: 2, price: 200, stock: 0 },
+        { id: 3, price: 300, stock: 100 }
+    ]);
+    const source = ObjectArray.createInstance([
+        { id: 1, discount: 10 },
+        { id: 2, discount: 20 },
+        { id: 3, discount: 30 }
+    ]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.id === s.id)
+            .presentInBoth()
+            .when((t, s) => t.price > 150).update("price", (t, s) => t.price - s.discount)
+            .when((t, s) => t.price > 150).update("stock", (t, s) => "sold out")
+            .when((t, s) => t.stock === 0).update("stock", () => 10)  // different condition
+    ).log();
+    // Expected: id:1 unchanged (price<=150, stock>0), id:2 stock->10 (price>150 but stock=0), id:3 price->270 (price>150)
+}
+
+function test15() {
+    // Test: presentInTarget with specific column update (valid use case)
+    const sessions = ObjectArray.createInstance([
+        { userId: 101, active: true, lastSeen: 1000 },
+        { userId: 102, active: true, lastSeen: 2000 },
+        { userId: 103, active: true, lastSeen: 3000 }
+    ]);
+    const activeSessions = ObjectArray.createInstance([
+        { userId: 101, lastSeen: 5000 }  // only userId 101 is active
+    ]);
+
+    sessions.merge(
+        MergeGenerator.source(activeSessions, (t, s) => t.userId === s.userId)
+            .presentInBoth()
+            .update("lastSeen", "lastSeen")
+
+            .presentInTarget()
+            .update("active", () => false)  // Should work - computed value
+    ).log();
+    // Expected: userId 101 has active:true & lastSeen:5000, others have active:false
+}
+
+function test16() {
+    // Test: Empty source, operations on presentInTarget only
+    const products = ObjectArray.createInstance([
+        { id: 1, stock: 10, discontinued: false },
+        { id: 2, stock: 0, discontinued: false },
+        { id: 3, stock: 5, discontinued: false }
+    ]);
+    const updates = ObjectArray.createEmptyInstance("id", "stock", "discontinued");
+
+    products.merge(
+        MergeGenerator.source(updates, (t, s) => t.id === s.id)
+            .presentInTarget()
+            .when(t => t.stock === 0).update("discontinued", () => true)
+    ).log();
+    // Expected: Only id:2 gets discontinued:true, others unchanged
+}
+
+function test17() {
+    // Test: presentInSource with when() condition - conditional insert
+    const inventory = ObjectArray.createInstance([
+        { sku: "A001", stock: 100 }
+    ]);
+    const newProducts = ObjectArray.createInstance([
+        { sku: "A002", stock: 50, approved: true },
+        { sku: "A003", stock: 30, approved: false },  // Should not insert
+        { sku: "A004", stock: 80, approved: true }
+    ]);
+
+    inventory.merge(
+        MergeGenerator.source(newProducts, (t, s) => t.sku === s.sku)
+            .presentInSource()
+            .when(s => s.approved === true)
+            .insert("sku", "sku")
+            .insert("stock", "stock")
+    ).log();
+    // Expected: Only A002 and A004 inserted, A003 skipped
+}
+
+function test18() {
+    // Test: resetWhenCondition() actually resets
+    const data = ObjectArray.createInstance([
+        { id: 1, status: "A", value: 10 },
+        { id: 2, status: "B", value: 20 }
+    ]);
+    const updates = ObjectArray.createInstance([
+        { id: 1, status: "A", value: 15 },
+        { id: 2, status: "B", value: 25 }
+    ]);
+
+    data.merge(
+        MergeGenerator.source(updates, (t, s) => t.id === s.id)
+            .presentInBoth()
+            .when((t, s) => s.status === "A").update("value", (t, s) => s.value + 100)  // Only id:1
+            .resetWhenCondition()
+            .update("status", "status")  // Both rows - no condition
+    ).log();
+    // Expected: id:1 -> value:115, status:A; id:2 -> value:20, status:B
+}
+
+function test19() {
+    // Test: Delete with when() in presentInBoth
+    const tasks = ObjectArray.createInstance([
+        { taskId: 1, status: "pending", priority: 1 },
+        { taskId: 2, status: "done", priority: 2 },
+        { taskId: 3, status: "pending", priority: 3 }
+    ]);
+    const taskUpdates = ObjectArray.createInstance([
+        { taskId: 1, status: "done", priority: 1 },
+        { taskId: 2, status: "archived", priority: 2 },  // Should delete
+        { taskId: 3, status: "in-progress", priority: 3 }
+    ]);
+
+    tasks.merge(
+        MergeGenerator.source(taskUpdates, (t, s) => t.taskId === s.taskId)
+            .presentInBoth()
+            .when((t, s) => s.status === "archived").delete()
+            .resetWhenCondition()
+            .update()  // Update all non-archived
+    ).log();
+    // Expected: taskId:2 deleted, others updated
+}
+
+function test20() {
+    // Test: Source has duplicate that matches different targets (should fail)
+    const accounts = ObjectArray.createInstance([
+        { accountId: 1, type: "savings", balance: 1000 },
+        { accountId: 2, type: "checking", balance: 500 }
+    ]);
+    const transactions = ObjectArray.createInstance([
+        { type: "savings", amount: 100 },  // Matches accountId:1
+        { type: "savings", amount: 200 }   // Also matches accountId:1 - DUPLICATE!
+    ]);
+
+    accounts.merge(
+        MergeGenerator.source(transactions, (t, s) => t.type === s.type)
+            .presentInBoth()
+            .update("balance", (t, s) => t.balance + s.amount)
+    ).log();
+    // Should throw: Cardinality violation - multiple sources match target
+}
+
+function test12() {
+    const target = ObjectArray.createInstance([{ id: 1, status: "active" }, { id: 1, status: "online" }]);
+    const source = ObjectArray.createInstance([{ id: 1, status: "inactive" }]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.id === s.id)
+            .presentInBoth()
+            .when((t, s) => t.status === "active").update("id", () => 99)
+            .when((t, s) => t.status === "online").update("id", () => 44)
+    ).log();
+
+}
+
+function test11() {
+    const target = ObjectArray.createEmptyInstance("id");
+    const source = ObjectArray.createInstance([{ id: 1 }]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.id === s.id)
+            .presentInSource()
+            .insert("id", "id")
+    ).log();
+
+    // with presentInSource().insert()
+}
+
+function test10() {
+    const target = ObjectArray.createInstance([
+        { id: 1, name: "Alice" },
+        { id: 1, name: "Alice Duplicate" }  // duplicate ID
+    ]);
+    const source = ObjectArray.createInstance([{ id: 1, name: "Active" }]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.id === s.id)
+            .presentInBoth()
+            .update("name", "name")
+    ).log();
+}
+
+function test9() {
+    const target = ObjectArray.createInstance([{ id: 1, name: "Alice" }]);
+    const source = ObjectArray.createInstance([
+        { id: 1, name: "A" },
+        { id: 1, name: "B" }  // duplicate match
+    ]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.id === s.id)
+            .presentInBoth()
+            .update("name", "name")
+    ).log();
 }
 
 function test8() {

@@ -974,26 +974,15 @@ export class ObjectArray {
             })
         });
 
-        const emptyTragetRow = {};  // create a empty row to sned to apply to have predefined target row in case target is empty
-        targetColumns.forEach(col => emptyTragetRow[col] = null);
+        const emptyTargetRow = {};  // create a empty row to send to apply to have predefined target row in case target is empty
+        targetColumns.forEach(col => emptyTargetRow[col] = null);
 
         return this.#internalCreateInstance(
             merge,
-            { source, matchOnCondition, commandBuffer, emptyTragetRow },
+            { source, matchOnCondition, commandBuffer, emptyTargetRow },
             targetColumns
         );
     }
-
-    /*
-        implement an upsert function similar to spark's merge
-        make it handle several things at once like -
-        conditional insert
-        conditional updateAll
-        conditional selective update
-        conditional delete
-        conditional selective delete
-        etc.
-    */
 
     /*
         LATER ADDITION:
