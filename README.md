@@ -1,2 +1,2 @@
 # BETL
-Simple browser based ETL tool with Spark like API
+Simple browser based ETL tool for advanced Data manipulations.
