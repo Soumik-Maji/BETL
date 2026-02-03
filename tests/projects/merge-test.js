@@ -22,6 +22,39 @@ export async function main() {
     // test18();   // PASSED
     // test19();   // PASSED
     // test20();   // cardinality error thrown - PASSED
+    // test21();   // PASSED
+}
+
+function test21() {
+    console.log("Insert blocked for presentInTarget context");
+
+    const target = ObjectArray.createInstance([
+        { id: 1, status: "active" },
+        { id: 2, status: "active" },
+        { id: 3, status: "active" }
+    ]);
+    const source = ObjectArray.createInstance([{ id: 3, status: "wip" }, { id: 4, status: "p" }]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.id === s.id)
+            .presentInBoth()
+            .update("status", () => "working")
+
+            .presentInSource()
+            .insert("id", "id")
+            .insert("status", () => "pending")
+
+            .presentInTarget()
+            // .update()
+            // .update("status", "status")
+            .update("status", () => "discontinued")
+        // .update("id", t => "ud:" + t.id)
+        // .insert()   // block this for presentInTarget context
+        // .insert("status", "status") // throwing error about cannot read null but block
+        // .insert("id", t => "d:" + t.id)
+    )
+        .updateColumn("id", row => String(row.id))
+        .log();
 }
 
 function test13() {

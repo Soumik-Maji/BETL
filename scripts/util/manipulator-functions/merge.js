@@ -100,12 +100,18 @@ function applyCommands(tRow, sRow, commands, emptyTargetRow) {
 
         if (cmd.condition) {    // check if when is set then apply as per context
             let conditionMet = false;
-            if (tRow !== null && sRow !== null) // context determined via null rows
-                conditionMet = cmd.condition(tRow, sRow);
-            else if (sRow === null)
-                conditionMet = cmd.condition(tRow);
-            else if (tRow === null)
-                conditionMet = cmd.condition(sRow);
+            try {    // verify with Claude if the try-catch addition is correct
+                if (tRow !== null && sRow !== null) // context determined via null rows
+                    conditionMet = cmd.condition(tRow, sRow);
+                else if (sRow === null)
+                    conditionMet = cmd.condition(tRow);
+                else if (tRow === null)
+                    conditionMet = cmd.condition(sRow);
+            } catch (e) {
+                throw new Error(`when() condition validation failed: \n${e.message}.
+                Row - ${JSON.stringify({ target: tRow, source: sRow })}
+                Check your condition syntax and ensure accessed properties exist.`);
+            }
 
             if (!conditionMet)
                 continue;
@@ -315,6 +321,10 @@ export class MergeGenerator {
      * - accepts only source row when presentInSource.
      */
     insert(targetColumn, unresolvedValue) {
+        if (this.#matchConditionIndex === 2)
+            throw new Error(`insert() makes no sense in presentInTarget context(no source row available to insert)
+            Use update(targetColumn, function) for computed values or delete() to remove rows.`);
+
         const checkTargetColumn = this.#validateArguments(targetColumn, unresolvedValue);
         return this.#addCommand("insert", checkTargetColumn, targetColumn, unresolvedValue, this.#whenCondition);  // put input into this
     }
@@ -337,6 +347,16 @@ export class MergeGenerator {
      * - accepts only source row when presentInSource.
      */
     update(targetColumn, unresolvedValue) {
+        // update() in presentInTarget context
+        if (targetColumn === undefined && this.#matchConditionIndex === 2)
+            throw new Error(`update() without column arguments has no effect in presentInTarget context(no source row available to copy from).
+            Use update(targetColumn, function) for computed values or delete() to remove rows.`);
+
+        // update(tgtCol, srcCol) in presentInTarget context
+        if (targetColumn !== undefined && typeof unresolvedValue === "string" && this.#matchConditionIndex === 2)
+            throw new Error(`update(tgtCol, srcCol) makes no sense in presentInTarget context(no source row available to copy from).
+            Use update(targetColumn, function) for computed values or delete() to remove rows.`);
+
         const checkTargetColumn = this.#validateArguments(targetColumn, unresolvedValue);
         return this.#addCommand("update", checkTargetColumn, targetColumn, unresolvedValue, this.#whenCondition);  // put input into this
     }
