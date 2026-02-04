@@ -4,9 +4,9 @@ import { WindowFrame, WindowGenerator } from "../../../scripts/util/manipulator-
 import { readJSON } from "../projects/json-reader.js";
 
 export async function main() {
-    const pn = "./tests/new/resource/window-test-data/testing-window.json";
-    const pd = "./tests/new/resource/window-test-data/testing-window-DUP_SAL.json";
-    const pl = "./tests/new/resource/window-test-data/testing-window-LONG.json";
+    const pn = "./tests/resource/window-test-data/testing-window.json";
+    const pd = "./tests/resource/window-test-data/testing-window-DUP_SAL.json";
+    const pl = "./tests/resource/window-test-data/testing-window-LONG.json";
 
     const wiNor = ObjectArray.createInstance(await readJSON(pn));
     const wiDup = ObjectArray.createInstance(await readJSON(pd));

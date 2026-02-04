@@ -2,9 +2,9 @@ import { readJSON } from "./json-reader.js";
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
 
 export async function main() {
-    const employeePath = "./tests/new/resource/join-test-data/employees.json";
-    const ordersPath = "./tests/new/resource/join-test-data/orders.json";
-    const productPath = "./tests/new/resource/join-test-data/product.json";
+    const employeePath = "./tests/resource/join-test-data/employees.json";
+    const ordersPath = "./tests/resource/join-test-data/orders.json";
+    const productPath = "./tests/resource/join-test-data/product.json";
 
     const employeeData = await readJSON(employeePath);
     const ordersData = await readJSON(ordersPath);

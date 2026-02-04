@@ -1,5 +1,5 @@
 import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { MappingGenerator } from "../../../scripts/util/manipulator-functions/mapping.js";
+import { AppendGenerator } from "../../scripts/util/manipulator-functions/appending.js";
 
 export function main() {
     const data1 = [

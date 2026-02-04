@@ -3,7 +3,7 @@ import { ObjectArray } from "../../../scripts/ObjectArray.js";
 import { DeduplicateGenerator } from "../../../scripts/util/manipulator-functions/deduplicate.js";
 
 export async function main() {
-    const detailsData = await readJSON("./tests/new/resource/test-data/fake-details.json");
+    const detailsData = await readJSON("./tests/resource/test-data/fake-details.json");
 
     const start = performance.now();
 

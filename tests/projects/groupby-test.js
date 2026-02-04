@@ -4,9 +4,9 @@ import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/gr
 import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
 
 export async function main() {
-    const path = "./tests/new/resource/window-test-data/testing-window.json";
-    const pathDup = "./tests/new/resource/window-test-data/testing-window-DUP_SAL.json";
-    const pathLong = "./tests/new/resource/window-test-data/testing-window-LONG.json";
+    const path = "./tests/resource/window-test-data/testing-window.json";
+    const pathDup = "./tests/resource/window-test-data/testing-window-DUP_SAL.json";
+    const pathLong = "./tests/resource/window-test-data/testing-window-LONG.json";
 
     const rawDataL = await readJSON(pathLong);
     const rawDataD = await readJSON(pathDup);

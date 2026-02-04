@@ -3,8 +3,8 @@ import { AppendGenerator } from "../../../scripts/util/manipulator-functions/app
 import { readJSON } from "./json-reader.js";
 
 export async function main() {
-    const detailsData = await readJSON("./tests/new/resource/test-data/fake-details.json");
-    const runsData = await readJSON("./tests/new/resource/test-data/fake-runs.json");
+    const detailsData = await readJSON("./tests/resource/test-data/fake-details.json");
+    const runsData = await readJSON("./tests/resource/test-data/fake-runs.json");
 
     const start = performance.now();
 

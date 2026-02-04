@@ -2,7 +2,7 @@ import { ObjectArray } from "../../../scripts/ObjectArray.js";
 import { readJSON } from "./json-reader.js";
 
 export async function main() {
-    const path = "./tests/new/resource/test-data/explode-test.data.json";
+    const path = "./tests/resource/test-data/explode-test.data.json";
     const data = await readJSON(path);
     const expData = ObjectArray.createInstance(data);
 

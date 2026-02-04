@@ -10,7 +10,7 @@ export async function readJSON(path) {
 }
 
 export async function devTest() {
-    const path = "./tests/new/resource/join-test-data/employees.json";
+    const path = "./tests/resource/join-test-data/employees.json";
 
     const data = await readJSON(path);
     console.table(data);

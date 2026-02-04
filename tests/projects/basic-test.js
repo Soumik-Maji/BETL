@@ -3,7 +3,7 @@ import { ObjectArray } from "../../../scripts/ObjectArray.js";
 import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
 
 export async function main() {
-    const path = "./tests/new/resource/join-test-data/employees.json";
+    const path = "./tests/resource/join-test-data/employees.json";
     const jsonData = await readJSON(path);
 
     const oa = ObjectArray.createInstance(jsonData);
