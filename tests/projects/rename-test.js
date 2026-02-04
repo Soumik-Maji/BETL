@@ -1,4 +1,4 @@
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
 import { AppendGenerator } from "../../scripts/util/manipulator-functions/appending.js";
 
 export function main() {

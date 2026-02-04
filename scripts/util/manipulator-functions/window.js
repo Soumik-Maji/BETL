@@ -162,6 +162,17 @@ export class WindowGenerator {
         this.#isWindowFunctionSet = false;
     }
 
+    static partitionBy(...columnNames) { }
+    static orderBy(sortConfig) { }
+    static customNonFrameFunction(alias, windowFunction) { }
+    static customFrameFunction(column, alias, windowFunction, frame) { }
+    static collectList(columnName, alias = undefined, frame = WindowFrame.rows(WindowFrame.beginning, WindowFrame.end)) { }
+    static count(columnName, alias = undefined, frame = WindowFrame.rows(WindowFrame.beginning, WindowFrame.end)) { }
+    static sum(columnName, alias = undefined, frame = WindowFrame.rows(WindowFrame.beginning, WindowFrame.end)) { }
+    static avg(columnName, alias = undefined, frame = WindowFrame.rows(WindowFrame.beginning, WindowFrame.end)) { }
+    static max(columnName, alias = undefined, frame = WindowFrame.rows(WindowFrame.beginning, WindowFrame.end)) { }
+    static min(columnName, alias = undefined, frame = WindowFrame.rows(WindowFrame.beginning, WindowFrame.end)) { }
+
     static {
         const functionsArray = [
             "partitionBy", "orderBy", "customNonFrameFunction", "customFrameFunction",

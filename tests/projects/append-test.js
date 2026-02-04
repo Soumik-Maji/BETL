@@ -1,5 +1,5 @@
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { AppendGenerator } from "../../../scripts/util/manipulator-functions/appending.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
+import { AppendGenerator } from "../../scripts/util/manipulator-functions/appending.js";
 import { readJSON } from "./json-reader.js";
 
 export async function main() {

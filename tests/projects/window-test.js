@@ -1,6 +1,6 @@
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
-import { WindowFrame, WindowGenerator } from "../../../scripts/util/manipulator-functions/window.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
+import { SortGenerator } from "../../scripts/util/manipulator-functions/sorting.js";
+import { WindowFrame, WindowGenerator } from "../../scripts/util/manipulator-functions/window.js";
 import { readJSON } from "../projects/json-reader.js";
 
 export async function main() {

@@ -1,6 +1,6 @@
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/grouping.js";
-import { PivotGenerator } from "../../../scripts/util/manipulator-functions/pivoting.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
+import { GroupByGenerator } from "../../scripts/util/manipulator-functions/grouping.js";
+import { PivotGenerator } from "../../scripts/util/manipulator-functions/pivoting.js";
 
 export async function main() {
     const start = performance.now();

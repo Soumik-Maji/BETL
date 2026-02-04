@@ -1,4 +1,4 @@
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
 import { readJSON } from "./json-reader.js";
 
 export async function main() {

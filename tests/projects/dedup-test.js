@@ -1,6 +1,6 @@
 import { readJSON } from "./json-reader.js";
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { DeduplicateGenerator } from "../../../scripts/util/manipulator-functions/deduplicate.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
+import { DeduplicateGenerator } from "../../scripts/util/manipulator-functions/deduplicate.js";
 
 export async function main() {
     const detailsData = await readJSON("./tests/resource/test-data/fake-details.json");

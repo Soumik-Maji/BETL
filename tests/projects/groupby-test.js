@@ -1,7 +1,7 @@
 import { readJSON } from "./json-reader.js";
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { GroupByGenerator } from "../../../scripts/util/manipulator-functions/grouping.js";
-import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
+import { GroupByGenerator } from "../../scripts/util/manipulator-functions/grouping.js";
+import { SortGenerator } from "../../scripts/util/manipulator-functions/sorting.js";
 
 export async function main() {
     const path = "./tests/resource/window-test-data/testing-window.json";
