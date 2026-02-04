@@ -2,36 +2,26 @@ import { ObjectArray } from "../../ObjectArray.js";
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
 
-export function merge(target, { source, matchOnCondition, commandBuffer, emptyTargetRow }) {
+export function merge(target, { source, matchOnCondition, commandBuffer, emptyTargetRow, emptySourceRow }) {
     const tgtLen = target.length, srcLen = source.length, result = [];
 
-    const tgtCheckRow = tgtLen > 0 ? JsonModifier.objectProxy(target[0]) : null;
-    const srcCheckRow = srcLen > 0 ? JsonModifier.objectProxy(source[0]) : null;
+    const tgtCheckRow = tgtLen > 0 ? JsonModifier.objectProxy(target[0]) : JsonModifier.objectProxy(emptyTargetRow);
+    const srcCheckRow = srcLen > 0 ? JsonModifier.objectProxy(source[0]) : JsonModifier.objectProxy(emptySourceRow);
 
     // VALIDATE: match on condition function return type
-    if (tgtLen > 0 && srcLen > 0) {
-        const moc = matchOnCondition(tgtCheckRow, srcCheckRow);
-        validateDataType(moc, DataTypes.boolean, "Match On condition in merge has to return a boolean");
-    }
-
-    /*
-        REFACTOR NOTICE (commandBuffer): This may need refactoring in if statments.
-            Especially the first one as either can be empty resulting in null tgtCheckRow, srcCheckRow.
-            Though why would user check for row presenece in both if target is empty in first place.
-            I guess to make the code IDIOT PROOF.
-            But it'll require someone on either end of the spectrum to mess it up.
-    */
+    const moc = matchOnCondition(tgtCheckRow, srcCheckRow);
+    validateDataType(moc, DataTypes.boolean, "Match On condition in merge has to return a boolean");
 
     // VALIDATE: all when conditions inside command buffer
     commandBuffer.forEach((commands, ctxIndex) => {
         commands.forEach(cmd => {
             if (cmd.condition) {
                 let testResult;
-                if (ctxIndex === 0 && tgtLen > 0 && srcLen > 0)     // present in both
+                if (ctxIndex === 0)     // present in both
                     testResult = cmd.condition(tgtCheckRow, srcCheckRow);
-                else if (ctxIndex === 1 && srcLen > 0)              // present in source
+                else if (ctxIndex === 1)              // present in source
                     testResult = cmd.condition(srcCheckRow);
-                else if (ctxIndex === 2 && tgtLen > 0)              // present in target
+                else if (ctxIndex === 2)              // present in target
                     testResult = cmd.condition(tgtCheckRow);
 
                 if (testResult !== undefined)
@@ -321,6 +311,12 @@ export class MergeGenerator {
      * - accepts only source row when presentInSource.
      */
     insert(targetColumn, unresolvedValue) {
+        // MAYBE NEED TO BLOCK for presentInBoth
+        if (this.#matchConditionIndex === 0)
+            throw new Error(`insert() makes no sense in presentInBoth context(data is present in both source & target).
+            Use update() to make changes or delete() to remove rows.`);
+
+        // BLOCKED for presentInTarget
         if (this.#matchConditionIndex === 2)
             throw new Error(`insert() makes no sense in presentInTarget context(no source row available to insert)
             Use update(targetColumn, function) for computed values or delete() to remove rows.`);
@@ -347,12 +343,17 @@ export class MergeGenerator {
      * - accepts only source row when presentInSource.
      */
     update(targetColumn, unresolvedValue) {
-        // update() in presentInTarget context
-        if (targetColumn === undefined && this.#matchConditionIndex === 2)
+        // BLOCKED for presentInSource
+        if (this.#matchConditionIndex === 1)
+            throw new Error(`update() makes no sense in presentInSource context(no target row available to copy to).
+            Source rows don't exist in target yet - use insert() to add them.`);
+
+        // BLOCKED update() for presentInTarget
+        if (targetColumn === undefined && unresolvedValue === undefined && this.#matchConditionIndex === 2)
             throw new Error(`update() without column arguments has no effect in presentInTarget context(no source row available to copy from).
             Use update(targetColumn, function) for computed values or delete() to remove rows.`);
 
-        // update(tgtCol, srcCol) in presentInTarget context
+        // BLOCKED update(tgtCol, srcCol) for presentInTarget
         if (targetColumn !== undefined && typeof unresolvedValue === "string" && this.#matchConditionIndex === 2)
             throw new Error(`update(tgtCol, srcCol) makes no sense in presentInTarget context(no source row available to copy from).
             Use update(targetColumn, function) for computed values or delete() to remove rows.`);
@@ -366,6 +367,11 @@ export class MergeGenerator {
      * @returns {MergeGenerator}
      */
     delete() {
+        // BLOCKED for presentInSource
+        if (this.#matchConditionIndex === 1)
+            throw new Error(`delete() makes no sense in presentInSource context(no target row available to delete).
+            Source rows don't exist in target yet - nothing to delete.`);
+
         const checkTargetColumn = false;
         return this.#addCommand("delete", checkTargetColumn, null, null, this.#whenCondition);  // put input into this
     }

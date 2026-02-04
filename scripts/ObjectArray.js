@@ -977,9 +977,12 @@ export class ObjectArray {
         const emptyTargetRow = {};  // create a empty row to send to apply to have predefined target row in case target is empty
         targetColumns.forEach(col => emptyTargetRow[col] = null);
 
+        const emptySourceRow = {};
+        sourceColumns.forEach(col => emptySourceRow[col] = null);
+
         return this.#internalCreateInstance(
             merge,
-            { source, matchOnCondition, commandBuffer, emptyTargetRow },
+            { source, matchOnCondition, commandBuffer, emptyTargetRow, emptySourceRow },
             targetColumns
         );
     }

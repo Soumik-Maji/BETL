@@ -23,6 +23,31 @@ export async function main() {
     // test19();   // PASSED
     // test20();   // cardinality error thrown - PASSED
     // test21();   // PASSED
+    // test22();   // should fail as non-existent column accessed - PASSED
+}
+
+function test22() {
+    // rename interchange the source & target vars to see the difference
+    // working as expected
+    const target = ObjectArray.createEmptyInstance("id", "status");
+    const source = ObjectArray.createInstance([
+        { id: 1, status: "active" },
+        { id: 2, status: "active" },
+        { id: 3, status: "active" }
+    ]);
+
+    target.merge(
+        MergeGenerator.source(source, (t, s) => t.id === s.i)
+            .presentInBoth()
+            .update("status", () => "starting")
+
+            .presentInSource()
+            .insert()
+
+            .presentInTarget()
+            .update("status", () => "discontinued")
+    )
+        .log();
 }
 
 function test21() {
