@@ -1,7 +1,7 @@
-import { ObjectArray } from "../../../scripts/ObjectArray.js";
-import { MeltGenerator } from "../../../scripts/util/manipulator-functions/melting.js";
-import { PivotGenerator } from "../../../scripts/util/manipulator-functions/pivoting.js";
-import { SortGenerator } from "../../../scripts/util/manipulator-functions/sorting.js";
+import { ObjectArray } from "../../scripts/ObjectArray.js";
+import { MeltGenerator } from "../../scripts/util/manipulator-functions/melting.js";
+import { PivotGenerator } from "../../scripts/util/manipulator-functions/pivoting.js";
+import { SortGenerator } from "../../scripts/util/manipulator-functions/sorting.js";
 
 export async function main() {
     test1();

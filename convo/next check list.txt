@@ -1,4 +1,7 @@
 Next check these
 
+- write method docs for window generator (check code & doc in ObjectArray.js & window.js)
+- range between is not implemented in windowing (check code & doc in ObjectArray.js & window.js)
+- optimize windowing (check code & doc in ObjectArray.js & window.js)
+- OPTIMIZE THE DEDUPLICATE FUNCTION FOR SAVING MEMORY & TIME (check code & doc in ObjectArray.js & deduplicate.js)
 - rename-test.js for maintaing order during bulk renaming (avoiding overwriting columns & things like that)
-- write method docs for window generator

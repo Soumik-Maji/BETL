@@ -1,4 +1,4 @@
-import { JsonModifier } from "../../../scripts/util/JsonModifier.js";
+import { JsonModifier } from "../../scripts/util/JsonModifier.js";
 
 export function main() {
     // empid, name, role, managerid

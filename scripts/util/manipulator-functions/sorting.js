@@ -84,13 +84,26 @@ export class SortGenerator {
         this.#logics = [];
     }
 
-    static {
-        ["asc", "desc"].forEach(method => {
-            SortGenerator[method] = function (column, transformationFunction) {
-                const obj = new SortGenerator(constructorKey);
-                return obj[method](column, transformationFunction);
-            }
-        });
+    /**
+     * to sort in ascending order, can send temporary transformation function to be applied before sorting
+     * @param {string} column
+     * @param {Function} transformationFunction
+     * @returns {SortGenerator}
+     */
+    static asc(column, transformationFunction = item => item) {
+        const obj = new SortGenerator(constructorKey);
+        return obj.asc(column, transformationFunction);
+    }
+
+    /**
+      * to sort in descending order, can send temporary transformation function to be applied before sorting
+      * @param {string} column
+      * @param {Function} transformationFunction
+      * @returns {SortGenerator}
+      */
+    static desc(column, transformationFunction = item => item) {
+        const obj = new SortGenerator(constructorKey);
+        return obj.desc(column, transformationFunction);
     }
 
     /**

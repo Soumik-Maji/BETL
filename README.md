@@ -5,4 +5,4 @@ A simple browser based ETL tool for advanced Data manipulations.
 
 Detailed documentations are on the way.
 
-For now, refer to the [GitHub repository](https://github.com/Soumik-Maji/BETL), especially the test directory, for usage examples.
+For now, refer to the [GitHub repository](https://github.com/Soumik-Maji/BETL/tree/release/tests/projects), especially the test directory, for usage examples.
