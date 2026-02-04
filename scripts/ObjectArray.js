@@ -13,7 +13,13 @@ import { MeltGenerator, melt } from "./util/manipulator-functions/melting.js";
 import { MergeGenerator, merge } from "./util/manipulator-functions/merge.js";
 
 const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
-
+/**
+ * ObjectArray - A lazy-evaluation data manipulation library for JavaScript objects.
+ *
+ * Provides a fluent API for transforming arrays of uniform objects (similar to pandas/dplyr).
+ * Operations are stacked in a logic plan and only executed when explicitly triggered via
+ * execute(), log(), printJSON(), or count().
+ */
 export class ObjectArray {
 
     #data;      // actual data of the table (array of objects)
@@ -949,11 +955,16 @@ export class ObjectArray {
     }
 
     /**
-     *
+     * Merges data from another ObjectArray into this one based on matching conditions.
+     * Similar to SQL MERGE statement - supports INSERT, UPDATE, and DELETE operations
+     * when rows match or don't match between source and target.
      * @param {MergeGenerator} mergeConfig
      * @returns {ObjectArray}
      */
     merge(mergeConfig) {
+        if (!(mergeConfig instanceof MergeGenerator))
+            throw new Error("Configuration must be an instance of MergeGenerator.");
+
         const { source, sourceColumns, matchOnCondition, commandBuffer } = mergeConfig.build();
         const targetColumns = this.columns;
 
@@ -994,5 +1005,4 @@ export class ObjectArray {
             idea is to have a predfined map of which methods call execute like joins & map-generator (so maybe indirectly maps) do but others don't
         - also make logicPlan getter to be able to take some argument to determine how much information to show to user
     */
-
 }
