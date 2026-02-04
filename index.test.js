@@ -1,17 +1,43 @@
-/*
-    NOTE TO SELF:
-    START vscode live-server on index.test.html
-    IT WILL USE index.test.js FOR TESTING
-    I CAN NOW PUT THE TESTING CODE IN ./tests/new/projects/{rest_of_testing_file_path}
-    CALL THEN FROM index.test.js FOR CONSOLE TESTING IN BROWSER
-    CHECK HOW json-reader.js IS USED CURRENTLY
+const start = performance.now();
 
-    FROM HERE ON CREATE A SEPARATE BRANCHES FOR EVERY CODE CHANGE IN MAIN PEOJECT,
-    TO KEEP THIS TILL HERE CLEAN
+// import { main } from "./tests/projects/basic-test.js";
+// await main();
 
-    UNEXPECTED BENEFIT: CALLING FOR RESOURCE (JSONs) FROM TESTING FOLDER NOW USES ABSOLUTE PATH
-*/
+// import { main } from "./tests/projects/join-test.js";
+// await main();
 
-import { devTest } from "./tests/new/projects/json-reader.js";
+// import { main } from "./tests/projects/explode-test.js";
+// await main();
 
-await devTest();
+// import { main } from "./tests/projects/map-test.js";
+// await main();
+
+// import { main } from "./tests/projects/dedup-test.js";
+// await main();
+
+// import { main } from "./tests/projects/groupby-test.js";
+// await main();
+
+// import { main } from "./tests/projects/rename-test.js";
+// await main();
+
+// import { main } from "./tests/projects/jsonmodifier-test.js";
+// await main();
+
+// import { main } from "./tests/projects/window-test.js";
+// await main();
+
+// import { main } from "./tests/projects/pivot-test.js";
+// await main();
+
+// import { main } from "./tests/projects/generator-test.js";
+// await main();
+
+// import { main } from "./tests/projects/melt-test.js";
+// await main();
+
+import { main } from "./tests/projects/merge-test.js";
+await main();
+
+const end = performance.now();
+console.log(`${end - start} ms`);

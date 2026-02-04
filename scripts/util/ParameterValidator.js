@@ -1,0 +1,79 @@
+export const DataTypes = Object.freeze({
+    string: "string",
+    number: "number",
+    boolean: "boolean",
+    object: "object",
+    function: "function"
+});
+/**
+ * throws error if the data type not matched with above provided types
+ * @param {*} n
+ * @param {DataTypes} type
+ * @param {string} customMsg
+ */
+export function validateDataType(n, type, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
+
+    if (!(type in DataTypes))
+        throw new Error(`Invalid data type passed. Only below ones can be verified.\n${JSON.stringify(DataTypes, null, 2)}${customMsg}`);
+
+    if (typeof n !== type)
+        throw new Error(`Data type of "${n}" is not ${type}.${customMsg}`);
+}
+
+/**
+ * throws Error if column name not present in any Object. checked via columns member
+ * @param {string[]} columnsPresent
+ * @param {string} columnName
+ * @param {string} customMsg
+ */
+export function validateColumnPresence(columnsPresent, columnName, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
+
+    validateDataType(columnName, DataTypes.string);
+
+    columnName = columnName.trim();
+    if (columnName === "")
+        throw new Error(`Column Name must be a non-empty String${customMsg}`);
+
+    // no need to check for every object as they are validated before
+    if (!(columnsPresent.includes(columnName)))
+        throw new Error(`"${columnName}" - No such column in data${customMsg}`);
+}
+
+const newColumnAdditionPattern = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+/**
+ * throws Error if column name does not match regex pattern /^[a-zA-Z][a-zA-Z0-9_]*$/
+ *
+ * column name must start with a letter, then it can have either letters, underscores & numbers only, nothing else.
+ * @param {string[]} columnsPresent
+ * @param {string} columnName
+ * @param {string} customMsg
+ */
+export function validateNewColumn(columnsPresent, columnName, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
+
+    validateDataType(columnName, DataTypes.string);
+
+    if (!(newColumnAdditionPattern.test(columnName)))    // empty string check is done by regex
+        throw new Error(`"${columnName}" is not a valid column name to use.${customMsg}`);
+
+    // no need to check for every object as they are validated before
+    if (columnsPresent.includes(columnName))
+        throw new Error(`"${columnName}" - already exists in data.${customMsg}`);
+}
+
+/**
+ * validates if column name is string
+ * @param {string} columnName
+ * @param {RegExp} pattern
+ * @param {string} customMsg
+ */
+export function validateColumnName(columnName, customMsg = undefined) {
+    customMsg = customMsg ? `\n${customMsg}` : "";
+
+    validateDataType(columnName, DataTypes.string);
+
+    // if (!(pattern.test(columnName)))    // empty string check is done by regex
+    //     throw new Error(`"${columnName}" is not a valid column name to use.${customMsg}`);
+}

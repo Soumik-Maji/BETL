@@ -1,0 +1,4 @@
+Next check these
+
+- rename-test.js for maintaing order during bulk renaming (avoiding overwriting columns & things like that)
+- write method docs for window generator
