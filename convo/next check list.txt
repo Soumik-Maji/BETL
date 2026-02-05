@@ -1,5 +1,6 @@
 Next check these
 
+- commented out 1 source match multiple target (sql has this) - VALIDATE IT (investigate test14 for more details)
 - write method docs for window generator (check code & doc in ObjectArray.js & window.js)
 - range between is not implemented in windowing (check code & doc in ObjectArray.js & window.js)
 - optimize windowing (check code & doc in ObjectArray.js & window.js)

@@ -47,11 +47,12 @@ source row - ${JSON.stringify(srcRow)}
 target row - ${JSON.stringify(tgtRow)}
 Ensure source has unique keys for the merge condition.`);
 
-                if (matchedSourceFlags[j] === 1)
-                    throw new Error(`Cardinality violation: Source row matched multiple target rows
-                    source row - ${JSON.stringify(srcRow)}
-                    target row - ${JSON.stringify(tgtRow)}
-                    Ensure target has unique keys.`);
+                // https://github.com/Soumik-Maji/BETL/issues/4 VALIDATE IT
+                // if (matchedSourceFlags[j] === 1)
+                //     throw new Error(`Cardinality violation: Source row matched multiple target rows
+                //     source row - ${JSON.stringify(srcRow)}
+                //     target row - ${JSON.stringify(tgtRow)}
+                //     Ensure target has unique keys.`);
 
                 targetMatched = true;
                 matchedSourceFlags[j] = 1;
