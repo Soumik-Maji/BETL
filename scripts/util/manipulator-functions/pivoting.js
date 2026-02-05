@@ -27,8 +27,8 @@ export function pivot(arr, { pivotConfig, columnsTillHere }) {
 
             // if a group has same pivot-column row data then throw error
             if (groupRow.hasOwnProperty(colName)) {
-                throw new Error(`ROW + PIVOT column '${key}' group is present more than once in data.` +
-                    "\nUse aggregation or deduplication to resolve them before pivoting.");
+                throw new Error(`ROW + PIVOT column '${key}' group is present more than once in data.
+Use aggregation or deduplication to resolve them before pivoting.`);
             }
             groupRow[colName] = row[vc];    // increamentally collect the value columns
         }

@@ -29,7 +29,7 @@ export class ObjectArray {
 
     constructor(passedKey) {
         if (passedKey !== constructorKey)
-            throw new Error("Cannot initialize ObjectArray using 'new'. Call static method createInstance() instead.");
+            throw new Error("Cannot initialize ObjectArray using 'new'. Call static method createInstance() or createEmptyInstance() instead.");
 
         this.#data = [];
         this.#logicPlan = [];
@@ -294,10 +294,10 @@ export class ObjectArray {
     renameRegex(oldRegex, replacementRegex) {
         validateDataType(oldRegex, DataTypes.string);
         if (oldRegex.trim() === "")
-            throw new Error(`Passed regex cannot be empty string`);
+            throw new Error(`Passed regex cannot be empty string oldRegex: ${oldRegex}`);
         validateDataType(replacementRegex, DataTypes.string);
         if (replacementRegex.trim() === "")
-            throw new Error(`Passed regex cannot be empty string`);
+            throw new Error(`Passed regex cannot be empty string replacementRegex: ${replacementRegex}`);
 
         const updatedColumnList = renameRegexMapper(this.#columns, oldRegex, replacementRegex);
         let tempInstance = this;

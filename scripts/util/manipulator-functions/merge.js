@@ -43,9 +43,9 @@ export function merge(target, { source, matchOnCondition, commandBuffer, emptyTa
             if (matchOnCondition(tgtRow, srcRow)) {
                 if (targetMatched)
                     throw new Error(`Cardinality violation: Multiple source rows matched below target row
-                    source row - ${JSON.stringify(srcRow)}
-                    target row - ${JSON.stringify(tgtRow)}
-                    Ensure source has unique keys for the merge condition.`);
+source row - ${JSON.stringify(srcRow)}
+target row - ${JSON.stringify(tgtRow)}
+Ensure source has unique keys for the merge condition.`);
 
                 if (matchedSourceFlags[j] === 1)
                     throw new Error(`Cardinality violation: Source row matched multiple target rows
@@ -99,8 +99,8 @@ function applyCommands(tRow, sRow, commands, emptyTargetRow) {
                     conditionMet = cmd.condition(sRow);
             } catch (e) {
                 throw new Error(`when() condition validation failed: \n${e.message}.
-                Row - ${JSON.stringify({ target: tRow, source: sRow })}
-                Check your condition syntax and ensure accessed properties exist.`);
+Row - ${JSON.stringify({ target: tRow, source: sRow })}
+Check your condition syntax and ensure accessed properties exist.`);
             }
 
             if (!conditionMet)
@@ -314,12 +314,12 @@ export class MergeGenerator {
         // MAYBE NEED TO BLOCK for presentInBoth
         if (this.#matchConditionIndex === 0)
             throw new Error(`insert() makes no sense in presentInBoth context(data is present in both source & target).
-            Use update() to make changes or delete() to remove rows.`);
+Use update() to make changes or delete() to remove rows.`);
 
         // BLOCKED for presentInTarget
         if (this.#matchConditionIndex === 2)
             throw new Error(`insert() makes no sense in presentInTarget context(no source row available to insert)
-            Use update(targetColumn, function) for computed values or delete() to remove rows.`);
+Use update(targetColumn, function) for computed values or delete() to remove rows.`);
 
         const checkTargetColumn = this.#validateArguments(targetColumn, unresolvedValue);
         return this.#addCommand("insert", checkTargetColumn, targetColumn, unresolvedValue, this.#whenCondition);  // put input into this
@@ -346,17 +346,17 @@ export class MergeGenerator {
         // BLOCKED for presentInSource
         if (this.#matchConditionIndex === 1)
             throw new Error(`update() makes no sense in presentInSource context(no target row available to copy to).
-            Source rows don't exist in target yet - use insert() to add them.`);
+Source rows don't exist in target yet - use insert() to add them.`);
 
         // BLOCKED update() for presentInTarget
         if (targetColumn === undefined && unresolvedValue === undefined && this.#matchConditionIndex === 2)
             throw new Error(`update() without column arguments has no effect in presentInTarget context(no source row available to copy from).
-            Use update(targetColumn, function) for computed values or delete() to remove rows.`);
+Use update(targetColumn, function) for computed values or delete() to remove rows.`);
 
         // BLOCKED update(tgtCol, srcCol) for presentInTarget
         if (targetColumn !== undefined && typeof unresolvedValue === "string" && this.#matchConditionIndex === 2)
             throw new Error(`update(tgtCol, srcCol) makes no sense in presentInTarget context(no source row available to copy from).
-            Use update(targetColumn, function) for computed values or delete() to remove rows.`);
+Use update(targetColumn, function) for computed values or delete() to remove rows.`);
 
         const checkTargetColumn = this.#validateArguments(targetColumn, unresolvedValue);
         return this.#addCommand("update", checkTargetColumn, targetColumn, unresolvedValue, this.#whenCondition);  // put input into this
@@ -370,7 +370,7 @@ export class MergeGenerator {
         // BLOCKED for presentInSource
         if (this.#matchConditionIndex === 1)
             throw new Error(`delete() makes no sense in presentInSource context(no target row available to delete).
-            Source rows don't exist in target yet - nothing to delete.`);
+Source rows don't exist in target yet - nothing to delete.`);
 
         const checkTargetColumn = false;
         return this.#addCommand("delete", checkTargetColumn, null, null, this.#whenCondition);  // put input into this
