@@ -15,7 +15,7 @@ export async function main() {
     // test11();   // MAYBE PASSED
     // test12();   // should fail as has mulitple target matched - PASSED
     // test13();   // cardinality error thrown - PASSED
-    // test14();   // 2nd when update statement gives an interesting behaviour, otherwise OK - PASSED
+    // test14();   // 2nd when update statement gives an interesting behaviour, otherwise OK - MOST PROBABLY PASSED
     // test15();   // PASSED
     // test16();   // PASSED
     // test17();   // PASSED
