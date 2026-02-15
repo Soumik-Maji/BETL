@@ -1,6 +1,6 @@
 import { addColumn, drop, explode, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
 import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
-import { regexMatch, renameRegexMapper } from "./util/regex-helper.js";
+import { regexMatch, renameRegexMapper, validateNoDuplicateColumns } from "./util/regex-helper.js";
 import { SortGenerator, sort } from "./util/manipulator-functions/sorting.js";
 import { DataTypes, validateColumnName, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 import { AppendGenerator, append } from "./util/manipulator-functions/appending.js";
@@ -299,10 +299,45 @@ export class ObjectArray {
         if (replacementRegex.trim() === "")
             throw new Error(`Passed regex cannot be empty string replacementRegex: ${replacementRegex}`);
 
-        const updatedColumnList = renameRegexMapper(this.#columns, oldRegex, replacementRegex);
-        let tempInstance = this;
+        const { renamed, unchanged } = renameRegexMapper(this.#columns, oldRegex, replacementRegex);
+        validateNoDuplicateColumns([...unchanged, ...renamed.map(obj => obj.newKey)]);
 
-        updatedColumnList.forEach(({ oldKey, newKey }) => {
+        let tempInstance = this;
+        renamed.forEach(({ oldKey, newKey }) => {
+            tempInstance = tempInstance.#internalCreateInstance(
+                rename,
+                { oldKey, newKey },
+                tempInstance.#columns.map(col => col === oldKey ? newKey : col)  // replacing the column name
+            );
+        });
+        return tempInstance;
+    }
+
+    /**
+     * Renames all columns by applying a transformation function to each column name.
+     * @param {function(string): string} renameFn - Function that takes a column name and returns the new name
+     * @throws {Error} If renameFn is not a function, returns non-string values, returns empty strings, or creates duplicate column names
+     * @example
+     * _.renameWith(col => col.toLowerCase()) // converts all column names to lowercase
+     * _.renameWith(col => col.replace(/_/g, "-")) // replaces underscores with hyphens
+     * _.renameWith(col => col.trim()) // trims whitespace from all column names
+     * _.renameWith(col => `prefix_${col}`) // adds prefix to all columns
+     * @returns {ObjectArray}
+     */
+    renameAll(renameFn) {
+        validateDataType(renameFn, DataTypes.function);
+
+        const newColumns = this.#columns.map(col => {
+            const newKey = renameFn(col);
+            validateDataType(newKey, DataTypes.string);
+            if (newKey.trim() === "")
+                throw new Error(`New column name became empty string for ${col}`);
+            return { oldKey: col, newKey };
+        });
+        validateNoDuplicateColumns(newColumns.map(c => c.newKey));
+
+        let tempInstance = this;
+        newColumns.forEach(({ oldKey, newKey }) => {
             tempInstance = tempInstance.#internalCreateInstance(
                 rename,
                 { oldKey, newKey },

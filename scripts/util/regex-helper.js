@@ -26,15 +26,34 @@ export function renameRegexMapper(list, pattern, replace) {
     // Escape regex metacharacters except *
     const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
     // Replace * with capture group for allowed characters
-    const regex = new RegExp('^' + escaped.replace(/\*/g, '([A-Za-z0-9_]+)') + '$');
+    const regex = new RegExp('^' + escaped.replace(/\*/g, '(.+?)') + '$');
 
-    return list.map(str => {
+    const renamed = [], unchanged = [];
+
+    list.forEach(str => {
         const match = str.match(regex);
-        if (!match) return null;
-        // Replace $n with captured group n
-        const newStr = replace.replace(/\$(\d+)/g, (_, n) => match[+n + 1] || '');
-        return { oldKey: str, newKey: newStr };
-    }).filter(Boolean);
+        if (!match)
+            unchanged.push(str);
+        else {
+            // Replace $n with captured group n
+            const newStr = replace.replace(/\$(\d+)/g, (_, n) => match[+n + 1] ?? '');
+            renamed.push({ oldKey: str, newKey: newStr });
+        }
+    });
+
+    return { renamed, unchanged };
+}
+
+export function validateNoDuplicateColumns(columns) {
+    const seen = new Set(), duplicates = new Set();
+    for (const col of columns) {
+        if (seen.has(col))
+            duplicates.add(col);
+        else
+            seen.add(col);
+    }
+    if (duplicates.size > 0)
+        throw new Error(`Duplicate column names detected: ${[...duplicates].join(', ')}`);
 }
 
 /**
@@ -50,7 +69,7 @@ export function regexMatch(list, pattern) {
     // Escape regex metacharacters except *
     const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
     // Replace * with capture group for allowed characters
-    const regex = new RegExp('^' + escaped.replace(/\*/g, '([A-Za-z0-9_]+)') + '$');
+    const regex = new RegExp('^' + escaped.replace(/\*/g, '(.+?)') + '$');
 
     return list.filter(str => regex.test(str));
 }
