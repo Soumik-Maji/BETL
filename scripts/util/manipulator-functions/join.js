@@ -26,6 +26,8 @@ export function getJoinColumns(leftCols, rightCols) {
 
     return {
         "duplicateColumnFound": false,
+        "leftMapping": Object.fromEntries(leftCols.map(c => [c, c])),
+        "rightMapping": Object.fromEntries(rightCols.map(c => [c, c])),
         "allColumns": [...leftCols, ...rightCols]
     };
 }
@@ -35,9 +37,9 @@ function mergeRows(leftRow, leftMapping, rightRow, rightMapping, duplicateColumn
     if (duplicateColumnFound) {
         const merged = {};
         for (const k in leftRow)
-            merged[leftMapping[k] || k] = leftRow[k];
+            merged[k in leftMapping ? leftMapping[k] : k] = leftRow[k];
         for (const k in rightRow)
-            merged[rightMapping[k] || k] = rightRow[k];
+            merged[k in rightMapping ? rightMapping[k] : k] = rightRow[k];
         return merged;
     }
     return { ...leftRow, ...rightRow };

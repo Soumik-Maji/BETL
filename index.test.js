@@ -4,7 +4,8 @@ const start = performance.now();
 // await main();
 
 // import { main } from "./tests/projects/join-test.js";
-// await main();
+import { main } from "./tests/projects/join-test2.js";
+await main();
 
 // import { main } from "./tests/projects/explode-test.js";
 // await main();
