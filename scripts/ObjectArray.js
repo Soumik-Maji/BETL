@@ -1,22 +1,21 @@
-import { addColumn, drop, explode, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
-import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
-import { regexMatch, renameRegexMapper, validateNoDuplicateColumns } from "./util/regex-helper.js";
-import { SortGenerator, sort } from "./util/manipulator-functions/sorting.js";
-import { DataTypes, validateColumnName, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
+import { privateConstructorKey } from "./PrivateConstructorKey.js";
 import { AppendGenerator, append } from "./util/manipulator-functions/appending.js";
-import { deepFreeze } from "./util/deep-freeze-helper.js";
+import { addColumn, drop, explode, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
 import { GroupByGenerator, groupBy } from "./util/manipulator-functions/grouping.js";
-import { WindowGenerator, windowing } from "./util/manipulator-functions/window.js";
-import { PivotGenerator, pivot } from "./util/manipulator-functions/pivoting.js";
+import { full, fullAnti, getJoinColumns, innerJoin, leftAnti, leftJoin, leftSemi, rightAnti, rightJoin, rightSemi, unionAll } from "./util/manipulator-functions/join.js";
 import { MeltGenerator, melt } from "./util/manipulator-functions/melting.js";
 import { MergeGenerator, merge } from "./util/manipulator-functions/merge.js";
+import { PivotGenerator, pivot } from "./util/manipulator-functions/pivoting.js";
+import { SortGenerator, sort } from "./util/manipulator-functions/sorting.js";
+import { WindowGenerator, windowing } from "./util/manipulator-functions/window.js";
+import { DataTypes, validateColumnName, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
+import { regexMatch, renameRegexMapper, validateNoDuplicateColumns } from "./util/regex-helper.js";
 
-const constructorKey = Symbol("ObjectArray");   // Symbol for object creation via private constructor
 /**
- * ObjectArray - A lazy-evaluation data manipulation library for JavaScript objects.
+ * ObjectArray - A lazy-evaluation data manipulation library using JavaScript objects.
  *
- * Provides a fluent API for transforming arrays of uniform objects (similar to pandas/dplyr).
+ * Provides a fluent API for transforming arrays of uniform objects.
  * Operations are stacked in a logic plan and only executed when explicitly triggered via
  * execute(), log(), printJSON(), or count().
  */
@@ -25,16 +24,14 @@ export class ObjectArray {
     #data;      // actual data of the table (array of objects)
     #logicPlan; // to store the operations which are to be applied (array of nested objects)
     #columns;   // store the most recent column names after an operation is registered (array)
-    #isFrozen;  // manual check if #data is frozen or not (boolean)
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize ObjectArray using 'new'. Call static method createInstance() or createEmptyInstance() instead.");
 
         this.#data = [];
         this.#logicPlan = [];
         this.#columns = [];
-        this.#isFrozen = false;
     }
 
     // ---------------------- INSTANCE CREATOR ----------------------
@@ -76,7 +73,7 @@ export class ObjectArray {
             throw new Error("Provided data array does not have uniform objects.");
 
         // creating the instance
-        const obj = new ObjectArray(constructorKey);
+        const obj = new ObjectArray(privateConstructorKey);
         obj.#columns = firstKeys;
         obj.#data = structuredClone(jsonData);
 
@@ -98,7 +95,7 @@ export class ObjectArray {
         for (const col of columnNames)
             validateColumnName(col, `Failed to create empty ObjectArray instance as column name '${col}' is not valid`);
 
-        const obj = new ObjectArray(constructorKey);
+        const obj = new ObjectArray(privateConstructorKey);
         obj.#columns = columnNames;
         return obj;
     }
@@ -115,7 +112,7 @@ export class ObjectArray {
             THIS METHOD IS USED BY THE MANIPULATION METHOD FOR STACKING UP LOGIC PLAN.
             COLUMN NAME VALIDATION IS DONE IN THEM, NO NEED HERE. [MOST PROBABLY]
         */
-        const obj = new ObjectArray(constructorKey);
+        const obj = new ObjectArray(privateConstructorKey);
         obj.#data = this.#data;
         const addedLogicPlan = { "method": operationName, "param": parameter };
         obj.#logicPlan = [...this.#logicPlan, addedLogicPlan];
@@ -133,8 +130,8 @@ export class ObjectArray {
     }
 
     /**
-     * gets a deep copy of the operations (ordered) to be applied on the data
-     * @returns {Array}
+     * gets the operations to be applied on the data for analysis purpose
+     * @returns {string}
      */
     get logicPlan() {
         const retVal = this.#logicPlan.map(operation => {
@@ -157,23 +154,32 @@ export class ObjectArray {
     }
 
     /**
-    * gets a deep copy of the current state of source data
-    * @returns {Object[]}
-    */
+     * non-destructive peek into the data.
+     * computes pipeline till here whenever called, does not clear the logic plan.
+     *
+     * USE WITH CAUTION to avoid unnecessary computations.
+     * @returns {Object[]}
+     */
     get data() {
-        return structuredClone(this.#data);
+        return this.#compute();
     }
 
     /**
-    * gets the current state of source data as deep frozen
-    * @returns {Object[]}
-    */
-    get readOnlyData() {
-        if (this.#isFrozen)
-            return this.#data;
+     * non-destructive peek into the count of the data.
+     * computes pipeline till here whenever called, does not clear the logic plan.
+     *
+     * USE WITH CAUTION to avoid unnecessary computations.
+     * @returns {number}
+     */
+    get count() {
+        if (this.#logicPlan.length === 0)
+            return this.#data.length;
+        return this.#compute().length;
+    }
 
-        this.#isFrozen = true;
-        return deepFreeze(this.#data);
+    // returns a deep copy of the current state of source data
+    #getDataClone() {
+        return structuredClone(this.#data);
     }
 
     // ---------------------- EXECUTION METHODS ----------------------
@@ -181,12 +187,9 @@ export class ObjectArray {
 
     // NOTE: need a pipeline optimizer step as well to call before #compute()
 
-    /**
-     * internal method which actually does the computation
-     * @returns
-     */
+    // internal method which actually does the computation. returns array of objects.
     #compute() {
-        let workingData = this.data;  // create a clone
+        let workingData = this.#getDataClone();  // create a clone
 
         // loop through all operations applying them 1 by 1
         this.#logicPlan.forEach(operation => {
@@ -198,27 +201,13 @@ export class ObjectArray {
     }
 
     /**
-     * non-destructive peek into the count of the data.
-     * computes pipeline till here whenever called, does not clear the logic plan.
-     *
-     * USE WITH CAUTION to avoid unnecessary computations.
-     * @returns {number}
-     */
-    count() {
-        if (this.#logicPlan.length === 0)
-            return this.#data.length;
-        return this.#compute().length;
-    }
-
-    /**
      * executes the current pipeline & clears logic plan.
-     * use this to compute the pipeline till here & get a branch new clone of result.
+     * use this to compute the pipeline till here.
      * @returns {ObjectArray}
      */
     execute() {
-        const resultData = this.#compute();
-        const resultObject = new ObjectArray(constructorKey);
-        resultObject.#data = resultData;
+        const resultObject = new ObjectArray(privateConstructorKey);
+        resultObject.#data = this.#compute();
         resultObject.#columns = this.columns;
 
         return resultObject;
@@ -955,7 +944,7 @@ export class ObjectArray {
         );
 
         const { resultData, resultColumns } = pivot(dataTillHere, { pivotConfig, columnsTillHere });
-        const resultObject = new ObjectArray(constructorKey);
+        const resultObject = new ObjectArray(privateConstructorKey);
         resultObject.#data = resultData;
         resultObject.#columns = resultColumns;
         return resultObject;
