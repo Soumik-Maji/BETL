@@ -1,4 +1,3 @@
-import { privateConstructorKey } from "./PrivateConstructorKey.js";
 import { AppendGenerator, append } from "./util/manipulator-functions/appending.js";
 import { addColumn, drop, explode, filter, rename, select, take, updateColumn } from "./util/manipulator-functions/basic.js";
 import { DeduplicateGenerator, deduplicate } from "./util/manipulator-functions/deduplicate.js";
@@ -11,6 +10,11 @@ import { SortGenerator, sort } from "./util/manipulator-functions/sorting.js";
 import { WindowGenerator, windowing } from "./util/manipulator-functions/window.js";
 import { DataTypes, validateColumnName, validateColumnPresence, validateDataType, validateNewColumn } from "./util/ParameterValidator.js";
 import { regexMatch, renameRegexMapper, validateNoDuplicateColumns } from "./util/regex-helper.js";
+
+// SYMBOL KEYS FOR INTERNAL USE ONLY
+export const privateConstructorKey = Symbol("private-constructor-key");
+export const unsafeData = Symbol("unsafe");
+// SYMBOL KEYS FOR INTERNAL USE ONLY
 
 /**
  * ObjectArray - A lazy-evaluation data manipulation library using JavaScript objects.
@@ -154,14 +158,19 @@ export class ObjectArray {
     }
 
     /**
-     * non-destructive peek into the data.
-     * computes pipeline till here whenever called, does not clear the logic plan.
-     *
-     * USE WITH CAUTION to avoid unnecessary computations.
+     * gets a deep copy of the current state of source data
      * @returns {Object[]}
      */
     get data() {
-        return this.#compute();
+        return structuredClone(this.#data);
+    }
+
+    /**
+     * gets refernce of the current state of source data
+     * @returns {Object[]}
+     */
+    get [unsafeData]() {
+        return this.#data;
     }
 
     /**
@@ -177,11 +186,6 @@ export class ObjectArray {
         return this.#compute().length;
     }
 
-    // returns a deep copy of the current state of source data
-    #getDataClone() {
-        return structuredClone(this.#data);
-    }
-
     // ---------------------- EXECUTION METHODS ----------------------
     // below methods are for executing the pipeline
 
@@ -189,7 +193,7 @@ export class ObjectArray {
 
     // internal method which actually does the computation. returns array of objects.
     #compute() {
-        let workingData = this.#getDataClone();  // create a clone
+        let workingData = this.data;  // create a clone
 
         // loop through all operations applying them 1 by 1
         this.#logicPlan.forEach(operation => {
@@ -209,7 +213,6 @@ export class ObjectArray {
         const resultObject = new ObjectArray(privateConstructorKey);
         resultObject.#data = this.#compute();
         resultObject.#columns = this.columns;
-
         return resultObject;
     }
 

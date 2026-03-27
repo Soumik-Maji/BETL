@@ -11,10 +11,10 @@ export async function main() {
     // test7();    // PASSED
     // test8();    // PASSED
     // test9();    // should fail so - PASSED
-    // test10();   // should fail as has mulitple target matched - PASSED
+    // test10();   // PASSED though mulitple target matched. same as spark.
     // test11();   // MAYBE PASSED
-    // test12();   // should fail as has mulitple target matched - PASSED
-    // test13();   // cardinality error thrown - PASSED
+    // test12();   // PASSED though mulitple target matched. same as spark
+    // test13();   // PASSED though mulitple target matched. same as spark
     // test14();   // 2nd when update statement gives an interesting behaviour, otherwise OK - MOST PROBABLY PASSED
     // test15();   // PASSED
     // test16();   // PASSED

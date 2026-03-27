@@ -1,3 +1,4 @@
+import { privateConstructorKey } from "../../ObjectArray.js"
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
@@ -8,11 +9,14 @@ export function deduplicate(arr, { deduplicationConfig }) {
     if (len === 0)
         return [];
 
+    const colLen = columns.length;
     const uniques = new Map();
     for (let i = 0; i < len; i++) {
         const item = arr[i];
         // building key
-        const key = columns.map(col => item[col]).join("\u0001");
+        let key = "";
+        for (let j = 0; j < colLen; j++)
+            key += (j ? "\u0001" : "") + item[columns[j]];
 
         let group = uniques.get(key);
         if (!group) {
@@ -26,7 +30,7 @@ export function deduplicate(arr, { deduplicationConfig }) {
     // validating the resolve function for illegal operations
     resolveFunction(JsonModifier.arrayOfObjectsProxy(uniques.get(keyForCheck)));
 
-    const newData = [];
+    let writeIndex = 0;
     for (const value of uniques.values()) {
         const resolvedRow = resolveFunction(value);
 
@@ -36,14 +40,13 @@ export function deduplicate(arr, { deduplicationConfig }) {
         if (!value.includes(resolvedRow))
             throw new Error("Resolve function must return an unmodified row from the duplicate group");
 
-        newData.push(resolvedRow);
+        arr[writeIndex++] = resolvedRow;
     }
-    return newData;
+    arr.length = writeIndex;
+    return arr;
 }
 
 // --------------- Configuration Object creator for deduplication ---------------
-
-const constructorKey = Symbol("DeduplicateGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Deduplicating.
  * Call static method setDeduplicatingColumns() with columns to deduplicate (spread operator syntax) for creating a instance of this class.
@@ -56,7 +59,7 @@ export class DeduplicateGenerator {
     #isResolveSet;
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize DeduplicateGenerator using 'new'. Call static method setDeduplicatingColumns() instead.");
 
         this.#columns = [];
@@ -72,7 +75,7 @@ export class DeduplicateGenerator {
     static setDeduplicatingColumns(...columns) {
         columns.forEach(col => validateDataType(col, DataTypes.string));
 
-        const tmpObj = new DeduplicateGenerator(constructorKey);
+        const tmpObj = new DeduplicateGenerator(privateConstructorKey);
         tmpObj.#columns = [...(new Set(columns))];
         return tmpObj;
     }

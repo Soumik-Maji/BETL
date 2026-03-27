@@ -1,3 +1,4 @@
+import { privateConstructorKey } from "../../ObjectArray.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function melt(arr, { meltConfig, restColumns }) {
@@ -29,8 +30,6 @@ export function melt(arr, { meltConfig, restColumns }) {
 }
 
 // --------------- Configuration Object creator for melt ---------------
-
-const constructorKey = Symbol("MeltGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Melting / Unpivoting.
  * Call fromColumns() static method to create it's instance & set the columns which you want to melt.
@@ -46,7 +45,7 @@ export class MeltGenerator {
     #newValueColumnName;    // column name for the row data from source columns
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize MeltGenerator using 'new'. Call static method fromColumns() instead.");
 
         this.#sourceColumns = [];
@@ -64,7 +63,7 @@ export class MeltGenerator {
             throw new Error("No source column names passed for melting.");
         sourceColumns.forEach(col => validateDataType(col, DataTypes.string));
 
-        const tmpObj = new MeltGenerator(constructorKey);
+        const tmpObj = new MeltGenerator(privateConstructorKey);
         tmpObj.#sourceColumns = Object.freeze(sourceColumns);
         return tmpObj;
     }

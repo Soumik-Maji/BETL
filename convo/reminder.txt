@@ -1,8 +1,11 @@
 Next check these
 
-- commented out 1 source match multiple target (sql has this) - VALIDATE IT (investigate test14 for more details)
+- [checked spark allows 1 source matching multiple target but not multiple source matching 1 target] commented out 1 source match multiple target (sql has this) - VALIDATE IT (investigate test14 for more details)
+
 - write method docs for window generator (check code & doc in ObjectArray.js & window.js)
 - range between is not implemented in windowing (check code & doc in ObjectArray.js & window.js)
 - optimize windowing (check code & doc in ObjectArray.js & window.js)
-- OPTIMIZE THE DEDUPLICATE FUNCTION FOR SAVING MEMORY & TIME (check code & doc in ObjectArray.js & deduplicate.js)
+
 - rename-test.js for maintaing order during bulk renaming (avoiding overwriting columns & things like that)
+
+- OPTIMIZE THE DEDUPLICATE FUNCTION FOR SAVING MEMORY & TIME (no need to create new array, use same technique as filter. drop rows in-place)

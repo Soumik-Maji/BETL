@@ -1,4 +1,4 @@
-import { ObjectArray } from "../../ObjectArray.js";
+import { ObjectArray, privateConstructorKey, unsafeData } from "../../ObjectArray.js";
 import { DataTypes, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
 
 export function append(arr, { appendRelations, currentColumns }) {
@@ -22,8 +22,6 @@ export function append(arr, { appendRelations, currentColumns }) {
 }
 
 // --------------- Configuration Object creator for mapping ---------------
-
-const constructorKey = Symbol("AppendGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Appending/ Mapping.
  * More flexible version of union, where source & target tables can have different table structures.
@@ -36,7 +34,7 @@ export class AppendGenerator {
     #srcColumns;    // this is for storing the source's columns for fast look up validation
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize AppendGenerator using 'new'. Call static method setSource() instead.");
 
         this.#source = null;
@@ -53,10 +51,10 @@ export class AppendGenerator {
         if (!(src instanceof ObjectArray))
             throw new Error("Source must be an ObjectArray instance.");
 
-        const tmpObj = new AppendGenerator(constructorKey);
+        const tmpObj = new AppendGenerator(privateConstructorKey);
         const resolved = src.execute();     // resolve the pipeline before proceeding to map it to target
         tmpObj.#srcColumns = resolved.columns;
-        tmpObj.#source = resolved.readOnlyData;     // setting up source to be data directly
+        tmpObj.#source = resolved[unsafeData];     // setting up source to be data directly
         return tmpObj;
     }
 

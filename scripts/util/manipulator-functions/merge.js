@@ -1,4 +1,4 @@
-import { ObjectArray } from "../../ObjectArray.js";
+import { ObjectArray, privateConstructorKey, unsafeData } from "../../ObjectArray.js";
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
 
@@ -47,7 +47,7 @@ source row - ${JSON.stringify(srcRow)}
 target row - ${JSON.stringify(tgtRow)}
 Ensure source has unique keys for the merge condition.`);
 
-                // https://github.com/Soumik-Maji/BETL/issues/4 VALIDATE IT
+                // VALIDATED-> 1 Source row matching multiple Target rows: Spark does allow this. So, commented out is correct in this case.
                 // if (matchedSourceFlags[j] === 1)
                 //     throw new Error(`Cardinality violation: Source row matched multiple target rows
                 //     source row - ${JSON.stringify(srcRow)}
@@ -140,8 +140,7 @@ Check your condition syntax and ensure accessed properties exist.`);
     return resultRow;
 }
 
-
-const constructorKey = Symbol("MergeGenerator");   // Symbol for object creation via private constructor
+// --------------- Configuration Object creator for sorting ---------------
 /**
  * This class generates the configuration object for Merging.
  * Use for upsert like operation where the target is modified based on a incoming change data (source).
@@ -166,7 +165,7 @@ export class MergeGenerator {
     #sourceColumns;         // stores the column names of the source table
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize MergeGenerator using 'new'. Call static method source() instead.");
 
         this.#source = null;
@@ -188,9 +187,9 @@ export class MergeGenerator {
             throw new Error("Source must instance of ObjectArray");
         validateDataType(matchOnCondition, DataTypes.function, "Match On condition for merge needs to be a function");
 
-        const tmpObj = new MergeGenerator(constructorKey);
+        const tmpObj = new MergeGenerator(privateConstructorKey);
         const resolvedSource = source.execute();
-        tmpObj.#source = resolvedSource.readOnlyData;
+        tmpObj.#source = resolvedSource[unsafeData];
         tmpObj.#sourceColumns = resolvedSource.columns;
         tmpObj.#matchOnCondition = matchOnCondition;
         return tmpObj;

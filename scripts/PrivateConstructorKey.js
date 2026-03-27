@@ -1,1 +1,0 @@
-export const privateConstructorKey = Symbol("private-constructor-key");
