@@ -47,8 +47,8 @@ function mergeRows(leftRow, leftMapping, rightRow, rightMapping, duplicateColumn
 }
 
 export function innerJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
-    // execute the other table's pipeline to get latest data till this call
-    right = right.execute()[unsafeData];
+    // accept if array OR execute the other table's pipeline to get latest data till this call
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -146,7 +146,7 @@ export function rightJoin(left, { right, joinCondition, duplicateColumnFound, le
 }
 
 export function leftAnti(left, { right, joinCondition }) {
-    right = right.execute()[unsafeData];
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -176,7 +176,7 @@ export function leftAnti(left, { right, joinCondition }) {
 }
 
 export function rightAnti(left, { right, joinCondition }) {
-    right = right.execute()[unsafeData];
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -217,7 +217,7 @@ export function unionAll(left, { right }) {
 // LATER OPTIMIZATION: use single pass on full anti join & keep it standalone, as right.execute() can be expensive
 export function fullAnti(left, params) {
     let { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping } = params;
-    right = right.execute();    // running execute on right to cache result & cut out repeatitive pipeline execution
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];    // running execute on right to cache result & cut out repeatitive pipeline execution
 
     // empty row addition to left anti join
     const emptyRightRow = {}, rightColumns = Object.keys(rightMapping), rightColumnsLength = rightColumns.length;
@@ -248,7 +248,7 @@ export function fullAnti(left, params) {
 // LATER OPTIMIZATION: use single pass on full join & keep it standalone, as right.execute() can be expensive
 export function full(left, params) {
     let { right, ...rest } = params;
-    right = right.execute();    // running execute on right to cache result & cut out repeatitive pipeline execution
+    right = right.execute()[unsafeData];    // running execute on right to cache result & cut out repeatitive pipeline execution
     params = { right, ...rest };
 
     const fullAntiJoinedData = fullAnti(left, params);
