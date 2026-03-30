@@ -3,6 +3,7 @@ import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateColumnPresence, validateDataType } from "../ParameterValidator.js";
 
 export function merge(target, { source, matchOnCondition, commandBuffer, emptyTargetRow, emptySourceRow }) {
+    source = source.execute()[unsafeData];
     const tgtLen = target.length, srcLen = source.length, result = [];
 
     const tgtCheckRow = tgtLen > 0 ? JsonModifier.objectProxy(target[0]) : JsonModifier.objectProxy(emptyTargetRow);
@@ -178,19 +179,18 @@ export class MergeGenerator {
 
     /**
      * creates MergeGenerator instance, sets the source object & condition on which target and source rows should match
-     * @param {ObjectArray} source
+     * @param {ObjectArray} src
      * @param {function} matchOnCondition Signature: (targetRow, sourceRow) => boolean
      * @returns {MergeGenerator}
      */
-    static source(source, matchOnCondition) {
-        if (!(source instanceof ObjectArray))
+    static source(src, matchOnCondition) {
+        if (!(src instanceof ObjectArray))
             throw new Error("Source must instance of ObjectArray");
         validateDataType(matchOnCondition, DataTypes.function, "Match On condition for merge needs to be a function");
 
         const tmpObj = new MergeGenerator(privateConstructorKey);
-        const resolvedSource = source.execute();
-        tmpObj.#source = resolvedSource[unsafeData];
-        tmpObj.#sourceColumns = resolvedSource.columns;
+        tmpObj.#source = src;    // source is the unresolved ObjectArray instance
+        tmpObj.#sourceColumns = src.columns;
         tmpObj.#matchOnCondition = matchOnCondition;
         return tmpObj;
     }

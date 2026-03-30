@@ -3,13 +3,15 @@ import { DataTypes, validateColumnPresence, validateDataType } from "../Paramete
 
 export function append(arr, { appendRelations, currentColumns }) {
     const { source, relations } = appendRelations;
-    const srcLength = source.length, relationsLength = relations.length;
+    const src = source.execute()[unsafeData],
+        srcLength = src.length,
+        relationsLength = relations.length;
 
     const targetDataStructure = {};
     currentColumns.forEach(key => targetDataStructure[key] = null);
 
     for (let i = 0; i < srcLength; i++) {
-        const row = source[i], newRow = { ...targetDataStructure };
+        const row = src[i], newRow = { ...targetDataStructure };
 
         for (let j = 0; j < relationsLength; j++) {
             const relation = relations[j];
@@ -52,9 +54,8 @@ export class AppendGenerator {
             throw new Error("Source must be an ObjectArray instance.");
 
         const tmpObj = new AppendGenerator(privateConstructorKey);
-        const resolved = src.execute();     // resolve the pipeline before proceeding to map it to target
-        tmpObj.#srcColumns = resolved.columns;
-        tmpObj.#source = resolved[unsafeData];     // setting up source to be data directly
+        tmpObj.#source = src;   // source is the unresolved ObjectArray instance
+        tmpObj.#srcColumns = src.columns;
         return tmpObj;
     }
 
