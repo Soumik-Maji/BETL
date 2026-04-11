@@ -2,7 +2,7 @@ import { ObjectArray } from "../../scripts/ObjectArray.js";
 import { MergeGenerator } from "../../scripts/util/manipulator-functions/merge.js";
 
 export async function main() {
-    // test1();    // PASSED
+    test1();    // PASSED
     // test2();    // PASSED
     // test3();    // PASSED
     // test4();    // PASSED
@@ -11,10 +11,10 @@ export async function main() {
     // test7();    // PASSED
     // test8();    // PASSED
     // test9();    // should fail so - PASSED
-    // test10();   // should fail as has mulitple target matched - PASSED
+    // test10();   // PASSED though mulitple target matched. same as spark.
     // test11();   // MAYBE PASSED
-    // test12();   // should fail as has mulitple target matched - PASSED
-    // test13();   // cardinality error thrown - PASSED
+    // test12();   // PASSED though mulitple target matched. same as spark
+    // test13();   // PASSED though mulitple target matched. same as spark
     // test14();   // 2nd when update statement gives an interesting behaviour, otherwise OK - MOST PROBABLY PASSED
     // test15();   // PASSED
     // test16();   // PASSED

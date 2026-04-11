@@ -1,3 +1,4 @@
+import { privateConstructorKey } from "../../ObjectArray.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function groupBy(arr, { groupingConfig }) {
@@ -47,8 +48,6 @@ export function groupBy(arr, { groupingConfig }) {
 }
 
 // --------------- Configuration Object creator for group by ---------------
-
-const constructorKey = Symbol("GroupByGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for GroupBy.
  * Call static method setGroupingColumns() with column names to group by for creating a instance of this class.
@@ -59,7 +58,7 @@ export class GroupByGenerator {
     #logics;    // array which contains the logics for aggregation
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize GroupByGenerator using 'new'. Call static method setGroupingColumns() instead.");
 
         this.#columns = [];
@@ -78,7 +77,7 @@ export class GroupByGenerator {
 
         columnNames.forEach(col => validateDataType(col, DataTypes.string, "Grouping column name is not string."));
 
-        const tmpObj = new GroupByGenerator(constructorKey);
+        const tmpObj = new GroupByGenerator(privateConstructorKey);
         tmpObj.#columns = [...(new Set(columnNames))];
         return tmpObj;
     }

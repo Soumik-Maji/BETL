@@ -1,0 +1,23 @@
+removal of readOnlyData (deep frozen data) will create issues in core functions (joins, append, merge). rectify them as per new ObjectArray code.
+OPTIMIZE THE DEDUPLICATE FUNCTION FOR SAVING MEMORY & TIME (no need to create new array, use same technique as filter. drop rows in-place)
+use the privateConstructorKey used in ObjectArray for all other private constructor creations
+
+optimize full & full-anti join to reduce structuredClone calls due to execute()
+implement a logic plan optimizer to fuse row-only based operations - rename, select, drop, updateColumn, addColumn, filter, take.
+
+-- todo from claude --
+Step 1 — Fusion
+Fuse consecutive row-only ops (rename, renameRegex, renameAll, select, selectRegex, drop, dropRegex, filter, addColumn, updateColumn, take) into single pass
+Fusion group building logic in #compute()
+take counter-based row flow inside fused loop
+filter continue, take break behavior inside fused loop
+
+Step 2 — Validation decoupling
+validated flag approach inside fused hot loop
+Proxy wrapping on first surviving row before pure execution begins
+
+Step 3 — Remaining optimizations
+merge → applyCommands() spread fix
+explode() spread fix
+window completion + sliding window pointers
+full / fullAnti single execute call fix

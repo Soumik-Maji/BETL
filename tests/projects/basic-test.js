@@ -36,6 +36,7 @@ export async function main() {
         .take(2, 1)
         ;
 
+    // console.log(newOA.logicPlan);
     newOA.log(0, "After changes");
 
 }
