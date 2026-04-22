@@ -1,3 +1,4 @@
+import { unsafeData } from "../../ObjectArray.js";
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
@@ -26,6 +27,8 @@ export function getJoinColumns(leftCols, rightCols) {
 
     return {
         "duplicateColumnFound": false,
+        "leftMapping": Object.fromEntries(leftCols.map(c => [c, c])),
+        "rightMapping": Object.fromEntries(rightCols.map(c => [c, c])),
         "allColumns": [...leftCols, ...rightCols]
     };
 }
@@ -35,17 +38,17 @@ function mergeRows(leftRow, leftMapping, rightRow, rightMapping, duplicateColumn
     if (duplicateColumnFound) {
         const merged = {};
         for (const k in leftRow)
-            merged[leftMapping[k] || k] = leftRow[k];
+            merged[k in leftMapping ? leftMapping[k] : k] = leftRow[k];
         for (const k in rightRow)
-            merged[rightMapping[k] || k] = rightRow[k];
+            merged[k in rightMapping ? rightMapping[k] : k] = rightRow[k];
         return merged;
     }
     return { ...leftRow, ...rightRow };
 }
 
 export function innerJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
-    // execute the other table's pipeline to get latest data till this call
-    right = right.execute().readOnlyData;
+    // accept if array OR execute the other table's pipeline to get latest data till this call
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -69,7 +72,7 @@ export function innerJoin(left, { right, joinCondition, duplicateColumnFound, le
 export function leftJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
     right = right.execute();
     const rightColumns = right.columns;
-    right = right.readOnlyData;
+    right = right[unsafeData];
 
     const emptyRightRow = {}, rightColumnsLength = rightColumns.length;
     for (let i = 0; i < rightColumnsLength; i++)
@@ -106,7 +109,7 @@ export function leftJoin(left, { right, joinCondition, duplicateColumnFound, lef
 }
 
 export function rightJoin(left, { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping }) {
-    right = right.execute().readOnlyData;
+    right = right.execute()[unsafeData];
 
     const emptyLeftRow = {}, leftColumns = Object.keys(leftMapping), leftColumnsLength = leftColumns.length;
     for (let i = 0; i < leftColumnsLength; i++)
@@ -143,7 +146,7 @@ export function rightJoin(left, { right, joinCondition, duplicateColumnFound, le
 }
 
 export function leftAnti(left, { right, joinCondition }) {
-    right = right.execute().readOnlyData;
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -173,7 +176,7 @@ export function leftAnti(left, { right, joinCondition }) {
 }
 
 export function rightAnti(left, { right, joinCondition }) {
-    right = right.execute().readOnlyData;
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -203,7 +206,7 @@ export function rightAnti(left, { right, joinCondition }) {
 }
 
 export function unionAll(left, { right }) {
-    right = right.execute().readOnlyData;
+    right = right.execute()[unsafeData];
 
     const rightLength = right.length;
     for (let i = 0; i < rightLength; i++)
@@ -214,7 +217,7 @@ export function unionAll(left, { right }) {
 // LATER OPTIMIZATION: use single pass on full anti join & keep it standalone, as right.execute() can be expensive
 export function fullAnti(left, params) {
     let { right, joinCondition, duplicateColumnFound, leftMapping, rightMapping } = params;
-    right = right.execute();    // running execute on right to cache result & cut out repeatitive pipeline execution
+    right = Array.isArray(right) ? right : right.execute()[unsafeData];    // running execute on right to cache result & cut out repeatitive pipeline execution
 
     // empty row addition to left anti join
     const emptyRightRow = {}, rightColumns = Object.keys(rightMapping), rightColumnsLength = rightColumns.length;
@@ -245,7 +248,7 @@ export function fullAnti(left, params) {
 // LATER OPTIMIZATION: use single pass on full join & keep it standalone, as right.execute() can be expensive
 export function full(left, params) {
     let { right, ...rest } = params;
-    right = right.execute();    // running execute on right to cache result & cut out repeatitive pipeline execution
+    right = right.execute()[unsafeData];    // running execute on right to cache result & cut out repeatitive pipeline execution
     params = { right, ...rest };
 
     const fullAntiJoinedData = fullAnti(left, params);
@@ -259,7 +262,7 @@ export function full(left, params) {
 }
 
 export function leftSemi(left, { right, joinCondition }) {
-    right = right.execute().readOnlyData;
+    right = right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 
@@ -287,7 +290,7 @@ export function leftSemi(left, { right, joinCondition }) {
 }
 
 export function rightSemi(left, { right, joinCondition }) {
-    right = right.execute().readOnlyData;
+    right = right.execute()[unsafeData];
 
     const retval = [], leftLength = left.length, rightLength = right.length;
 

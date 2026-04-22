@@ -1,9 +1,10 @@
 const start = performance.now();
 
-// import { main } from "./tests/projects/basic-test.js";
-// await main();
+import { main } from "./tests/projects/basic-test.js";
+await main();
 
 // import { main } from "./tests/projects/join-test.js";
+// import { main } from "./tests/projects/join-test2.js";
 // await main();
 
 // import { main } from "./tests/projects/explode-test.js";

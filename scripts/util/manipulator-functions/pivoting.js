@@ -1,3 +1,4 @@
+import { privateConstructorKey } from "../../ObjectArray.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function pivot(arr, { pivotConfig, columnsTillHere }) {
@@ -54,8 +55,6 @@ Use aggregation or deduplication to resolve them before pivoting.`);
 }
 
 // --------------- Configuration Object creator for pivot ---------------
-
-const constructorKey = Symbol("PivotGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Pivoting.
  * - Call static method pivotOn() with a column name to pivot by for creating a instance of this class.
@@ -70,7 +69,7 @@ export class PivotGenerator {
     #fillMissing;   // missing value (default is null)
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize PivotGenerator using 'new'. Call static method pivotOn() instead.");
 
         this.#pivotCol = null;
@@ -86,7 +85,7 @@ export class PivotGenerator {
     static pivotOn(column) {
         validateDataType(column, DataTypes.string);
 
-        const obj = new PivotGenerator(constructorKey);
+        const obj = new PivotGenerator(privateConstructorKey);
         obj.#pivotCol = column;
         return obj;
     }

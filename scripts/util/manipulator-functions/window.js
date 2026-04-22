@@ -1,3 +1,4 @@
+import { privateConstructorKey } from "../../ObjectArray.js";
 import { JsonModifier } from "../JsonModifier.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 import { SortGenerator, sort } from "./sorting.js";
@@ -24,11 +25,14 @@ export function windowing(arr, { windowConfig, newColumns }) {
     if (len === 0)
         return [];
 
+    const colLen = groupingColumns.length;
     const uniques = new Map();
     for (let i = 0; i < len; i++) {
         const item = arr[i];
         // building key
-        const key = groupingColumns.map(col => item[col]).join("\u0001");
+        let key = "";
+        for (let j = 0; j < colLen; j++)
+            key += (j ? "\u0001" : "") + item[groupingColumns[j]];
 
         let group = uniques.get(key);
         if (!group) {
@@ -128,7 +132,6 @@ export const WindowFrame = {
     end: Number.POSITIVE_INFINITY
 };
 
-const constructorKey = Symbol("WindowGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Windowing.
  * partitionBy, orderBy, customNonFrameFunction, customFrameFunction, count, sum, avg, max, min
@@ -150,7 +153,7 @@ export class WindowGenerator {
     #isWindowFunctionSet;
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize WindowGenerator using 'new'. Call static methods instead.");
 
         this.#groupingColumns = [];
@@ -180,7 +183,7 @@ export class WindowGenerator {
         ];
         functionsArray.forEach(method => {
             WindowGenerator[method] = function (...args) {
-                const obj = new WindowGenerator(constructorKey);
+                const obj = new WindowGenerator(privateConstructorKey);
                 return obj[method](...args);
             }
         });

@@ -1,3 +1,4 @@
+import { privateConstructorKey } from "../../ObjectArray.js";
 import { DataTypes, validateDataType } from "../ParameterValidator.js";
 
 export function sort(arr, { comparisonLogics }) {
@@ -61,8 +62,6 @@ export function sort(arr, { comparisonLogics }) {
 }
 
 // --------------- Configuration Object creator for sorting ---------------
-
-const constructorKey = Symbol("SortGenerator");   // Symbol for object creation via private constructor
 /**
  * This class generates the configuration object for Sorting.
  * Then chain the asc() & desc() methods to create what sorting order is requried.
@@ -78,7 +77,7 @@ export class SortGenerator {
     #logics;    // to store the sorting configuration
 
     constructor(passedKey) {
-        if (passedKey !== constructorKey)
+        if (passedKey !== privateConstructorKey)
             throw new Error("Cannot initialize SortGenerator using 'new'. Call static methods asc() & desc() instead.");
 
         this.#logics = [];
@@ -91,7 +90,7 @@ export class SortGenerator {
      * @returns {SortGenerator}
      */
     static asc(column, transformationFunction = item => item) {
-        const obj = new SortGenerator(constructorKey);
+        const obj = new SortGenerator(privateConstructorKey);
         return obj.asc(column, transformationFunction);
     }
 
@@ -102,7 +101,7 @@ export class SortGenerator {
       * @returns {SortGenerator}
       */
     static desc(column, transformationFunction = item => item) {
-        const obj = new SortGenerator(constructorKey);
+        const obj = new SortGenerator(privateConstructorKey);
         return obj.desc(column, transformationFunction);
     }
 
